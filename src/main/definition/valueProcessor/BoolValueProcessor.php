@@ -1,0 +1,47 @@
+<?php
+
+declare(strict_types=1);
+
+namespace vinyl\di\definition\valueProcessor;
+
+use vinyl\di\definition\BoolValue;
+use vinyl\di\definition\constructorMetadata\ConstructorValue;
+use vinyl\di\definition\DefinitionValue;
+use vinyl\di\definition\IncompatibleTypeException;
+use vinyl\di\definition\NullValueException;
+use vinyl\di\definition\UnmodifiableDefinitionMap;
+use vinyl\di\definition\ValueProcessor;
+use vinyl\di\definition\ValueProcessorResult;
+use vinyl\di\factory\argument\BuiltinFactoryValue;
+use function assert;
+
+/**
+ * Class BoolValueProcessor
+ */
+final class BoolValueProcessor implements ValueProcessor
+{
+    /**
+     * {@inheritDoc}
+     */
+    public function process(
+        DefinitionValue $value,
+        ConstructorValue $constructorValue,
+        UnmodifiableDefinitionMap $definitionMap
+    ): ValueProcessorResult
+    {
+        assert($value instanceof BoolValue);
+
+        $boolValue = $value->value();
+        $type = $constructorValue->type();
+
+        if ($boolValue === null && !$constructorValue->isNullable()) {
+            throw NullValueException::create();
+        }
+
+        if ($type !== 'bool' && $type !== 'mixed') {
+            throw IncompatibleTypeException::create($type, 'bool');
+        }
+
+        return new ValueProcessorResult(new BuiltinFactoryValue($boolValue, false));
+    }
+}

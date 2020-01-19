@@ -1,0 +1,8 @@
+# User-specific
+.idea/*
+
+# Project-specific
+vendor/*
+resources/phpbench_storage/*
+composer.lock
+.phpunit.result.cache
