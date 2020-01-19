@@ -26,3 +26,6 @@ jobs:
     
     - name: Run tests
       run: vendor/bin/phpunit --configuration phpunit.xml.dist
+
+    - name: Run Static Analysis
+      run: composer analyse
