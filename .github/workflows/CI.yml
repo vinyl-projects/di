@@ -28,4 +28,4 @@ jobs:
       run: vendor/bin/phpunit --configuration phpunit.xml.dist
 
     - name: Run Static Analysis
-      run: composer analyse
+      run: vendor/bin/phpstan analyse src/main --level=8
