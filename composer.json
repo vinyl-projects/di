@@ -1,0 +1,47 @@
+{
+  "name": "vinyl/di",
+  "description": "Dependency injection container for PHP",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Rostyslav Tymoshenko",
+      "email": "krifollk@gmail.com"
+    }
+  ],
+  "config": {
+    "sort-packages": true,
+    "preferred-install": {
+      "*": "dist"
+    }
+  },
+  "require": {
+    "php": "^7.4",
+    "ocramius/proxy-manager": "2.6.*",
+    "psr/container": "^1.0",
+    "psr/log": "^1.0"
+  },
+  "require-dev": {
+    "phpbench/phpbench": "0.*",
+    "phpstan/phpstan": "0.*",
+    "phpunit/phpunit": "8.5.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "vinyl\\di\\": "src/main"
+    },
+    "files": [
+      "functions.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "vinyl\\diTest\\": "src/test",
+      "vinyl\\diBenchmark\\": "src/benchmark"
+    }
+  },
+  "scripts": {
+    "analyse": "vendor/bin/phpstan analyse src/main --level=8",
+    "test": "vendor/bin/phpunit --configuration phpunit.xml.dist"
+  }
+}
