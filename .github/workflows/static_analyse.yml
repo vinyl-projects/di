@@ -1,4 +1,4 @@
-name: CI
+name: Static Analyse
 
 on:
   - pull_request
@@ -8,7 +8,7 @@ jobs:
   run:
     strategy:
       matrix:
-        operating-system: [ubuntu-latest, windows-latest]
+        operating-system: [ubuntu-latest]
         php-versions: ['7.4']
     runs-on: ${{ matrix.operating-system }}
     name: PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }}
@@ -23,9 +23,6 @@ jobs:
     
     - name: Install Dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
-    
-    - name: Run tests
-      run: vendor/bin/phpunit --configuration phpunit.xml.dist
 
     - name: Run Static Analysis
       run: vendor/bin/phpstan analyse src/main --level=8
