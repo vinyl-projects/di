@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace vinyl\di\factory;
 
-use function vinyl\di\class_find_parents;
+use function assert;
+use function is_array;
 
 /**
  * Class ParentClassesProvider
@@ -12,14 +13,16 @@ use function vinyl\di\class_find_parents;
 class ParentClassesProvider
 {
     /**
-     *
-     *
-     * @param string $className
+     * Returns parent classes
      *
      * @return string[]
      */
     public function find(string $className): array
     {
-        return class_find_parents($className);
+        $classParents = class_parents($className);
+
+        assert(is_array($classParents));
+
+        return $classParents;
     }
 }
