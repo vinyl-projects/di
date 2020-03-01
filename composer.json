@@ -17,7 +17,7 @@
   },
   "require": {
     "php": "^7.4",
-    "ocramius/proxy-manager": "2.6.*",
+    "ocramius/proxy-manager": "2.7.*",
     "psr/container": "^1.0",
     "psr/log": "^1.0"
   },
