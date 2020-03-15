@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\di\definition;
 
+use InvalidArgumentException;
 use vinyl\di\Definition;
 use vinyl\di\definition\value\NoValue;
 use vinyl\di\definition\valueProcessor\ValueProcessorCompositor;
@@ -17,7 +18,7 @@ use function implode;
  */
 final class RecursiveDefinitionTransformer implements DefinitionTransformer
 {
-    private ConstructorMetadataExtractor $constructorMetadataExtractor;
+    private ConstructorValueExtractor $constructorValueExtractor;
     private ClassResolver $classResolver;
     private ValueProcessor $valueProcessor;
     private ValueCollector $valueCollector;
@@ -29,11 +30,11 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         ?ValueProcessor $valueProcessor = null,
         ?ClassResolver $classResolver = null,
         ?ValueCollector $valueCollector = null,
-        ?ConstructorMetadataExtractor $constructorMetadataExtractor = null
+        ?ConstructorValueExtractor $constructorValueExtractor = null
     ) {
         $this->classResolver = $classResolver ?? new RecursionFreeClassResolver();
         $this->valueProcessor = $valueProcessor ?? new ValueProcessorCompositor(null, $this->classResolver);
-        $this->constructorMetadataExtractor = $constructorMetadataExtractor ?? new ConstructorMetadataExtractor();
+        $this->constructorValueExtractor = $constructorValueExtractor ?? new ConstructorValueExtractor();
         $this->valueCollector = $valueCollector ?? new RecursionFreeValueCollector();
     }
 
@@ -81,19 +82,18 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         }
 
         $visitedClasses[$class] = $id;
-        $constructorMethod = $definition->constructorMethodName();
-        $factoryMetadata = new FactoryMetadata($id, $class, $constructorMethod);
+        $objectInstantiator = $definition->instantiator();
+        $factoryMetadata = new FactoryMetadata($id, $class, $objectInstantiator ? $objectInstantiator->value() : null);
         $factoryMetadataMap->put($factoryMetadata);
 
-        $valueMap = $this->valueCollector->collect($definition, $definitionMap);
         try {
-            $constructorValueMap = $this->constructorMetadataExtractor->extract($class, $constructorMethod);
+            $constructorValueMap = $this->constructorValueExtractor->extract($objectInstantiator ?? new ConstructorInstantiator($class));
         } catch (ArgumentTypeNotFoundException $e) {
             throw DefinitionTransformerException::createFromException(
                 "An argument of [{$id}<{$class}>] constructor depend on class that not actually exists. Details: {$e->getMessage()}",
                 $e
             );
-        } catch (InvalidConstructorMethodException $e) {
+        } catch (InvalidArgumentException $e) {
             throw DefinitionTransformerException::createFromException(
                 "[{$id}<{$class}>] contains invalid constructor method. Details: {$e->getMessage()}",
                 $e
@@ -105,6 +105,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
             );
         }
 
+        $valueMap = $this->valueCollector->collect($definition, $definitionMap);
         $isComplete = true;
         /** @var \vinyl\di\definition\constructorMetadata\ConstructorValue $constructorValue */
         foreach ($constructorValueMap as $argumentName => $constructorValue) {

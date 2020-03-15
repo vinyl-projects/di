@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace vinyl\di;
 
 use vinyl\di\definition\Lifetime;
+use vinyl\di\definition\Instantiator;
 use vinyl\di\definition\ValueMap;
 
 /**
@@ -20,19 +21,15 @@ interface Definition
     public function id(): string;
 
     /**
-     * Returns static method name which should be used as constructor
+     * Returns {@see Instantiator} instance that holds callable string that must be used to instantiate new object
      * If null is returned, default constructor must be used
      */
-    public function constructorMethodName(): ?string;
+    public function instantiator(): ?Instantiator;
 
     /**
-     * Change constructor method
-     *
-     * The new method must be 'public' and 'static'
-     * Pay attention that validation will not be performed during method set, it will be triggered lately during factory building for
-     * this definition
+     * Change instantiator
      */
-    public function changeConstructorMethod(string $methodName): void;
+    public function changeInstantiator(?Instantiator $objectInstantiator): void;
 
     /**
      * Changes definition lifetime

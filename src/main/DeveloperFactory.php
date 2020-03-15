@@ -12,6 +12,8 @@ use vinyl\di\factory\argument\ArrayValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
 use vinyl\di\factory\FactoryMetadataMap;
 use function array_key_exists;
+use function assert;
+use function is_callable;
 use function sprintf;
 
 /**
@@ -102,10 +104,12 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
             $resolvedArguments[] = $value;
         }
 
-        $constructorMethod = $factoryMetadata->constructorMethodName;
+        $constructor = $factoryMetadata->constructor;
 
-        if ($factoryMetadata->constructorMethodName !== null) {
-            return $factoryMetadata->class::$constructorMethod(...$resolvedArguments);
+        if ($constructor !== null) {
+            assert(is_callable($constructor));
+
+            return $constructor(...$resolvedArguments);
         }
 
         return new $factoryMetadata->class(...$resolvedArguments);

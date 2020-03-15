@@ -18,8 +18,8 @@ final class FactoryMetadata
     /** @var array<string, \vinyl\di\factory\FactoryValue> indexed by argument name */
     public array $values = [];
 
-    /** contains public static method name which should be used as constructor, if value is null, default constructor must be used */
-    public ?string $constructorMethodName;
+    /** @var string|null Contains callable string which should be used as constructor, if value is null, default class constructor must be used */
+    public ?string $constructor;
 
     /** This value will be <code>False</code> in case this factory contain {@see FactoryValue} that are missed */
     public bool $isComplete = true;
@@ -27,10 +27,10 @@ final class FactoryMetadata
     /**
      * FactoryMetadata constructor.
      */
-    public function __construct(string $id, string $class, ?string $constructorMethodName)
+    public function __construct(string $id, string $class, ?string $constructor)
     {
         $this->id = $id;
         $this->class = $class;
-        $this->constructorMethodName = $constructorMethodName;
+        $this->constructor = $constructor;
     }
 }

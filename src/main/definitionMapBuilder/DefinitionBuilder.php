@@ -7,6 +7,7 @@ namespace vinyl\di\definitionMapBuilder;
 use vinyl\di\Definition;
 use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\Lifetime;
+use vinyl\di\definition\Instantiator;
 use vinyl\di\DefinitionMapBuilder;
 use vinyl\di\definitionMapBuilder\definitionBuilder\Arguments;
 
@@ -55,9 +56,9 @@ class DefinitionBuilder
         return $this;
     }
 
-    public function changeConstructorMethod(string $methodName): self
+    public function changeInstantiator(Instantiator $instantiator): self
     {
-        $this->definition->changeConstructorMethod($methodName);
+        $this->definition->changeInstantiator($instantiator);
 
         return $this;
     }

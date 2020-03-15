@@ -95,14 +95,14 @@ final class FactoryPerServiceCompiler implements Compiler
      */
     private static function renderNewPattern(FactoryMetadata $metadata, array $arguments = []): string
     {
-        $constructorMethodName = $metadata->constructorMethodName;
+        $constructor = $metadata->constructor;
         $concatArguments = implode(',', $arguments);
 
-        if ($constructorMethodName !== null) {
-            return "return \\{$metadata->class}::{$constructorMethodName}({$concatArguments});";
+        if ($constructor === null) {
+            return "return new \\{$metadata->class}({$concatArguments});";
         }
 
-        return "return new \\{$metadata->class}({$concatArguments});";
+        return "return \\{$constructor}({$concatArguments});";
     }
 
     private function makeFactoryMethodBody(FactoryMetadata $factoryMetadata, string $factoryClass): string

@@ -12,10 +12,12 @@ use stdClass;
 use vinyl\di\Container;
 use vinyl\di\definition\ClassCircularReferenceFoundException;
 use vinyl\di\definition\DefinitionTransformerException;
+use vinyl\di\definition\FunctionInstantiator;
 use vinyl\di\definition\PrototypeLifetime;
 use vinyl\di\definition\ProxyValue;
 use vinyl\di\definition\RecursionFreeClassResolver;
 use vinyl\di\definition\RecursiveDefinitionTransformer;
+use vinyl\di\definition\StaticMethodInstantiator;
 use vinyl\di\definition\valueProcessor\ProxyValueProcessor;
 use vinyl\di\definition\valueProcessor\ValueProcessorCompositor;
 use vinyl\di\DefinitionMapBuilder;
@@ -1020,18 +1022,19 @@ abstract class AbstractContainerTest extends TestCase
     /**
      * @test
      */
-    public function instantiateObjectWithStaticConstructor():void
+    public function instantiateObjectWithStaticMethodAsInstantiator(): void
     {
         $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
+            $testClass = testAsset\instantiateObjectWithStaticConstructor\ClassA::class;
             $definitionMapBuilder
-                ->classDefinition(testAsset\instantiateObjectWithStaticConstructor\ClassA::class)
-                    ->changeConstructorMethod('create')
+                ->classDefinition($testClass)
+                    ->changeInstantiator(StaticMethodInstantiator::create($testClass,'create'))
                     ->arguments()
                         ->stringArgument('data', 'hello world')
                     ->endArguments()
                 ->end()
-                ->alias('without.arguments', testAsset\instantiateObjectWithStaticConstructor\ClassA::class)
-                    ->changeConstructorMethod('createWithoutArguments')
+                ->alias('without.arguments', $testClass)
+                    ->changeInstantiator(StaticMethodInstantiator::create($testClass,'createWithoutArguments'))
                 ->end();
         });
 
@@ -1048,6 +1051,27 @@ abstract class AbstractContainerTest extends TestCase
             $alias
         );
         self::assertEquals('without arguments', $alias->data);
+    }
+
+    /**
+     * @test
+     */
+    public function instantiateObjectWithFunctionAsInstantiator(): void
+    {
+        $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
+            $function = 'vinyl\diTest\integration\testAsset\instantiateObjectWithFunctionAsInstantiator\create_class_a';
+            $definitionMapBuilder
+                ->classDefinition(testAsset\instantiateObjectWithFunctionAsInstantiator\ClassA::class)
+                    ->changeInstantiator(FunctionInstantiator::create($function))
+                    ->arguments()
+                        ->stringArgument('message', 'Hello World')
+                    ->endArguments()
+                ->end();
+        });
+
+        $obj = $di->get(testAsset\instantiateObjectWithFunctionAsInstantiator\ClassA::class);
+        self::assertInstanceOf(testAsset\instantiateObjectWithFunctionAsInstantiator\ClassA::class, $obj);
+        self::assertEquals('Hello World', $obj->message);
     }
 
     /**

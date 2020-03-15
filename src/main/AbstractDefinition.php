@@ -7,6 +7,7 @@ namespace vinyl\di;
 use InvalidArgumentException;
 use LogicException;
 use vinyl\di\definition\Lifetime;
+use vinyl\di\definition\Instantiator;
 use vinyl\di\definition\SingletonLifetime;
 use vinyl\di\definition\ValueMap;
 use function class_exists;
@@ -22,15 +23,13 @@ abstract class AbstractDefinition implements Definition
     private Lifetime $lifetime;
     private bool $argumentInheritance = false;
     private ValueMap $argumentValues;
-    private ?string $constructorMethodName = null;
+    private ?Instantiator $instantiator = null;
 
     /**
      * AbstractDefinition constructor.
      */
-    public function __construct(
-        string $id,
-        ?string $class
-    ) {
+    public function __construct(string $id, ?string $class)
+    {
         $this->id = $id;
 
         if ($class !== null && !class_exists($class)) {
@@ -57,21 +56,17 @@ abstract class AbstractDefinition implements Definition
     /**
      * {@inheritDoc}
      */
-    public function constructorMethodName(): ?string
+    public function instantiator(): ?Instantiator
     {
-        return $this->constructorMethodName;
+        return $this->instantiator;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function changeConstructorMethod(string $methodName): void
+    public function changeInstantiator(?Instantiator $objectInstantiator): void
     {
-        if ($methodName === '') {
-            throw new InvalidArgumentException('Method name could not be empty.');
-        }
-
-        $this->constructorMethodName = $methodName;
+        $this->instantiator = $objectInstantiator;
     }
 
     /**

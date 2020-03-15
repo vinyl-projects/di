@@ -37,7 +37,10 @@
     "psr-4": {
       "vinyl\\diTest\\": "src/test",
       "vinyl\\diBenchmark\\": "src/benchmark"
-    }
+    },
+    "files": [
+      "src/test/integration/functions.php"
+    ]
   },
   "scripts": {
     "analyse": "vendor/bin/phpstan analyse src/main --level=8",
