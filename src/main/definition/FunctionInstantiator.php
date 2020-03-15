@@ -15,8 +15,7 @@ use function function_exists;
  */
 final class FunctionInstantiator implements Instantiator
 {
-    /** @var string */
-    private $function;
+    private string $function;
 
     /** @var \ReflectionParameter[] */
     private array $parameters;
