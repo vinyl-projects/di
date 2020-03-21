@@ -8,7 +8,6 @@ use Error;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
-use RuntimeException;
 use function assert;
 use function class_exists;
 
@@ -53,11 +52,11 @@ final class ConstructorInstantiator implements Instantiator
     }
 
     /**
-     * This implementation always throws {@see \RuntimeException}
+     * {@inheritDoc}
      */
-    public function value(): string
+    public function value(): ?string
     {
-        throw new RuntimeException('Method must not be called.');
+        return null;
     }
 
     /**

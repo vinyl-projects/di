@@ -10,9 +10,9 @@ namespace vinyl\di\definition;
 interface Instantiator
 {
     /**
-     * Returns callable string
+     * Returns callable string or null if default constructor must be used
      */
-    public function value(): string;
+    public function value(): ?string;
 
     /**
      * Returns instantiator parameters
