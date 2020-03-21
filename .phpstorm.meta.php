@@ -35,4 +35,10 @@ namespace PHPSTORM_META {
         0,
         argumentsSet('instantiators')
     );
+
+    expectedArguments(
+        \vinyl\di\Definition::changeInstantiator(),
+        0,
+        argumentsSet('instantiators')
+    );
 }
