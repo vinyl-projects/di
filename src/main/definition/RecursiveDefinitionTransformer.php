@@ -22,6 +22,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
     private ClassResolver $classResolver;
     private ValueProcessor $valueProcessor;
     private ValueCollector $valueCollector;
+    private InstantiatorResolver $instantiatorResolver;
 
     /**
      * ClassFactoryMetadataBuilder constructor.
@@ -29,6 +30,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
     public function __construct(
         ?ValueProcessor $valueProcessor = null,
         ?ClassResolver $classResolver = null,
+        ?InstantiatorResolver $instantiatorResolver = null,
         ?ValueCollector $valueCollector = null,
         ?ConstructorValueExtractor $constructorValueExtractor = null
     ) {
@@ -36,6 +38,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         $this->valueProcessor = $valueProcessor ?? new ValueProcessorCompositor(null, $this->classResolver);
         $this->constructorValueExtractor = $constructorValueExtractor ?? new ConstructorValueExtractor();
         $this->valueCollector = $valueCollector ?? new RecursionFreeValueCollector();
+        $this->instantiatorResolver = $instantiatorResolver ?? new RecursionFreeInstantiatorResolver($this->classResolver);
     }
 
     /**
@@ -82,12 +85,12 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         }
 
         $visitedClasses[$class] = $id;
-        $objectInstantiator = $definition->instantiator();
-        $factoryMetadata = new FactoryMetadata($id, $class, $objectInstantiator ? $objectInstantiator->value() : null);
+        $objectInstantiator = $this->instantiatorResolver->resolve($definition, $definitionMap);
+        $factoryMetadata = new FactoryMetadata($id, $class, $objectInstantiator->value());
         $factoryMetadataMap->put($factoryMetadata);
 
         try {
-            $constructorValueMap = $this->constructorValueExtractor->extract($objectInstantiator ?? new ConstructorInstantiator($class));
+            $constructorValueMap = $this->constructorValueExtractor->extract($objectInstantiator);
         } catch (ArgumentTypeNotFoundException $e) {
             throw DefinitionTransformerException::createFromException(
                 "An argument of [{$id}<{$class}>] constructor depend on class that not actually exists. Details: {$e->getMessage()}",
