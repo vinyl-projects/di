@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace vinyl\di;
 
 use vinyl\di\definition\UnmodifiableDefinitionMap;
+use vinyl\std\ClassObject;
 use function assert;
 
 /**
@@ -12,9 +13,9 @@ use function assert;
  */
 final class ShadowClassDefinition extends AbstractDefinition
 {
-    public function __construct(string $class)
+    public function __construct(ClassObject $class)
     {
-        parent::__construct(self::makeShadowId($class), $class);
+        parent::__construct(self::makeShadowId($class->className()), $class);
     }
 
     public static function resolveShadowDefinition(string $className, UnmodifiableDefinitionMap $definitionMap): self
@@ -28,7 +29,7 @@ final class ShadowClassDefinition extends AbstractDefinition
             return $definition;
         }
 
-        return new self($className);
+        return new self(ClassObject::create($className));
     }
 
     private static function makeShadowId(string $className): string

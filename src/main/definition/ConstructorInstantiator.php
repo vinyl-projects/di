@@ -6,10 +6,8 @@ namespace vinyl\di\definition;
 
 use Error;
 use InvalidArgumentException;
-use ReflectionClass;
 use ReflectionException;
-use function assert;
-use function class_exists;
+use vinyl\std\ClassObject;
 
 /**
  * Class ConstructorInstantiator
@@ -26,12 +24,10 @@ final class ConstructorInstantiator implements Instantiator
      *
      * @throws \InvalidArgumentException if constructor for given class have private or protected visibility
      */
-    public function __construct(string $class)
+    public function __construct(ClassObject $class)
     {
-        assert(class_exists($class));
-
         try {
-            $classReflection = new ReflectionClass($class);
+            $classReflection = $class->toReflectionClass();
 
             if (!$classReflection->hasMethod('__construct')) {
                 $this->parameterList = [];
@@ -45,7 +41,7 @@ final class ConstructorInstantiator implements Instantiator
         }
 
         if (!$constructor->isPublic()) {
-            throw new InvalidArgumentException("Method [{$class}::__construct] must not be private or protected.");
+            throw new InvalidArgumentException("Method [{$class->className()}::__construct] must not be private or protected.");
         }
 
         $this->parameterList = $constructor->getParameters();

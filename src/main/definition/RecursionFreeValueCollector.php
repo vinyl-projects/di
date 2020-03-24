@@ -57,14 +57,15 @@ final class RecursionFreeValueCollector implements ValueCollector
                 continue;
             }
 
-            $parentClasses = $this->parentClassesProvider->find($currentDefinition->className());
+            $parentClasses = $this->parentClassesProvider->find($currentDefinition->classObject());
 
             foreach ($parentClasses as $parentClass) {
-                if (!$definitionMap->contains($parentClass)) {
+                $parentClassName = $parentClass->className();
+                if (!$definitionMap->contains($parentClassName)) {
                     break;
                 }
 
-                $parentDefinition = $definitionMap->get($parentClass);
+                $parentDefinition = $definitionMap->get($parentClassName);
 
                 #could happen for definition with replaced class
                 if ($parentDefinition === $currentDefinition) {
@@ -78,8 +79,10 @@ final class RecursionFreeValueCollector implements ValueCollector
                 }
             }
 
-            if ($currentDefinition->id() !== $currentDefinition->className() && $definitionMap->contains($currentDefinition->className())) {
-                $stack->push($definitionMap->get($currentDefinition->className()));
+            $currentDefinitionClassName = $currentDefinition->classObject()->className();
+            if ($currentDefinition->id() !== $currentDefinitionClassName
+                && $definitionMap->contains($currentDefinitionClassName)) {
+                $stack->push($definitionMap->get($currentDefinitionClassName));
                 continue;
             }
         }

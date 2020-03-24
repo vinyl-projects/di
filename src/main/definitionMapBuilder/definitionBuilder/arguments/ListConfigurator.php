@@ -14,6 +14,7 @@ use vinyl\di\definition\arrayValue\OrderableStringValue;
 use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\value\ArrayListValue;
 use vinyl\di\definitionMapBuilder\definitionBuilder\Arguments;
+use vinyl\std\ClassObject;
 
 /**
  * Class ListConfigurator
@@ -61,7 +62,7 @@ final class ListConfigurator
     public function classItem(string $className, ?int $sortOrder = null): self
     {
         if (!$this->definitionMap->contains($className)) {
-            $this->definitionMap->insert(new ClassDefinition($className));
+            $this->definitionMap->insert(new ClassDefinition(ClassObject::create($className)));
         }
 
         $this->value->add(new OrderableStringValue($className, $sortOrder));

@@ -15,6 +15,7 @@ use vinyl\di\definition\RecursionFreeValueCollector;
 use vinyl\di\definition\value\IntValue;
 use vinyl\di\definition\value\StringValue;
 use vinyl\di\factory\ParentClassesProvider;
+use vinyl\std\ClassObject;
 use function get_class;
 
 /**
@@ -31,7 +32,7 @@ class RecursionFreeValueCollectorTest extends TestCase
         {
         };
 
-        $definition = new ClassDefinition(get_class($testClass));
+        $definition = new ClassDefinition(ClassObject::create(get_class($testClass)));
         $firstValueHolder = new IntValue(1);
         $secondValueHolder = new StringValue('hello world');
         $definition->argumentValues()->put('first', $firstValueHolder);
@@ -65,13 +66,15 @@ class RecursionFreeValueCollectorTest extends TestCase
         {
         };
 
+        $secondClassObject = ClassObject::create(get_class($second));
+        $firstClassObject = ClassObject::create(get_class($first));
         $classesProviderMock = $this->createParentClassesProviderMock([
-            [get_class($first), [get_class($second)]],
+            [$firstClassObject, [$secondClassObject]],
         ]);
 
-        $mainDefinition = new ClassDefinition(get_class($first));
+        $mainDefinition = new ClassDefinition($firstClassObject);
         $mainDefinition->toggleArgumentInheritance(true);
-        $secondDefinition = new ClassDefinition(get_class($second));
+        $secondDefinition = new ClassDefinition($secondClassObject);
         $secondDefinition->toggleArgumentInheritance(true);
 
         $mainDefinition->argumentValues()->put('first', new IntValue(1));

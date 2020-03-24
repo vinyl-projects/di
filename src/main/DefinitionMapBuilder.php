@@ -8,6 +8,7 @@ use LogicException;
 use OutOfBoundsException;
 use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definitionMapBuilder\DefinitionBuilder;
+use vinyl\std\ClassObject;
 
 /**
  * Class DefinitionMapBuilder
@@ -31,7 +32,7 @@ class DefinitionMapBuilder
      */
     public function interfaceImplementation(string $interface, string $className): self
     {
-        $this->definitionMap->insert(new InterfaceImplementationDefinition($interface, $className));
+        $this->definitionMap->insert(new InterfaceImplementationDefinition($interface, ClassObject::create($className)));
 
         return $this;
     }
@@ -44,7 +45,7 @@ class DefinitionMapBuilder
             throw new LogicException("Definition with id [{$class}] already defined.");
         }
 
-        $typeDefinition = new ClassDefinition($class);
+        $typeDefinition = new ClassDefinition(ClassObject::create($class));
         $this->definitionMap->insert($typeDefinition);
 
         $this->definitionBuilder->_updateDefinition($typeDefinition);
@@ -60,7 +61,7 @@ class DefinitionMapBuilder
             throw new LogicException("Definition with id [{$definitionId}] already defined.");
         }
 
-        $typeDefinition = new AliasDefinition($definitionId, $class);
+        $typeDefinition = new AliasDefinition($definitionId, ClassObject::create($class));
         $this->definitionMap->insert($typeDefinition);
 
         $this->definitionBuilder->_updateDefinition($typeDefinition);

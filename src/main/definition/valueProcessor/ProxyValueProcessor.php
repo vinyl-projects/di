@@ -27,6 +27,7 @@ use vinyl\di\proxy\LazyLoadingValueHolderProxyGenerator;
 use vinyl\di\proxy\ProxyGenerator;
 use vinyl\di\proxy\ProxyGeneratorException;
 use vinyl\di\ShadowClassDefinition;
+use vinyl\std\ClassObject;
 use function assert;
 use function class_exists;
 use function crc32;
@@ -74,7 +75,7 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         $definition = self::resolveProxyDefinition($definitionMap, $definitionId);
 
         try {
-            $class = $this->classResolver->resolve($definition, $definitionMap);
+            $classObject = $this->classResolver->resolve($definition, $definitionMap);
         } catch (ClassResolverException $e) {
             throw new ValueProcessorException(
                 "An error occurred during class resolving. {$e->getMessage()}"
@@ -82,13 +83,13 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         }
 
         $type = $constructorValue->type();
-        $className = $class->className();
+        $className = $classObject->className();
         if (!is_a($className, $type, true) && $type !== 'object' && $type !== 'mixed') {
             throw IncompatibleTypeException::create($type, "{$className} -> {$definitionId}");
         }
 
         try {
-            $proxy = $this->proxyGenerator->generate($className);
+            $proxy = $this->proxyGenerator->generate($classObject);
         } catch (ProxyGeneratorException $e) {
             throw new ValueProcessorException(
                 "An error occurred during proxy generation. {$e->getMessage()}"
@@ -154,7 +155,7 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
             crc32($definition->id())
         );
 
-        $proxyDefinition = new AliasDefinition($proxyId, $proxyClassName);
+        $proxyDefinition = new AliasDefinition($proxyId, ClassObject::create($proxyClassName));
         $proxyDefinition->changeLifetime($definition->lifetime());
         #todo create ProxyDefinition and move this logic to it
         $proxyDefinition->argumentValues()->put(

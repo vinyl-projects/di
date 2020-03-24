@@ -14,6 +14,7 @@ use vinyl\di\definition\arrayValue\OrderableStringValue;
 use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\value\ArrayMapValue;
 use vinyl\di\definitionMapBuilder\definitionBuilder\Arguments;
+use vinyl\std\ClassObject;
 use function assert;
 
 /**
@@ -42,7 +43,7 @@ final class MapConfigurator
         assert($this->mapValue !== null);
 
         if (!$this->definitionMap->contains($className)) {
-            $this->definitionMap->insert(new ClassDefinition($className));
+            $this->definitionMap->insert(new ClassDefinition(ClassObject::create($className)));
         }
 
         $this->mapValue->put($key, new OrderableStringValue($className, $order));

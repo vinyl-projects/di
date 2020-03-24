@@ -20,6 +20,7 @@ use vinyl\di\definition\value\StringValue;
 use vinyl\di\definitionMapBuilder\DefinitionBuilder;
 use vinyl\di\definitionMapBuilder\definitionBuilder\arguments\ListConfigurator;
 use vinyl\di\definitionMapBuilder\definitionBuilder\arguments\MapConfigurator;
+use vinyl\std\ClassObject;
 
 /**
  * Class Arguments
@@ -130,7 +131,7 @@ class Arguments
     public function classArgument(string $name, string $className): self
     {
         if (!$this->definitionMap->contains($className)) {
-            $this->definitionMap->insert(new ClassDefinition($className));
+            $this->definitionMap->insert(new ClassDefinition(ClassObject::create($className)));
         }
 
         $this->definition->argumentValues()->put($name, new StringValue($className));

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace vinyl\di\proxy;
 
+use vinyl\std\ClassObject;
+
 /**
  * Interface ProxyGenerator
  */
@@ -14,9 +16,8 @@ interface ProxyGenerator
     /**
      * Generates proxy for provided class
      *
-     * @param string $class
-     *
+     * @return \vinyl\di\proxy\ProxyGeneratorResult
      * @throws \vinyl\di\proxy\ProxyGeneratorException
      */
-    public function generate(string $class): ProxyGeneratorResult;
+    public function generate(ClassObject $class): ProxyGeneratorResult;
 }

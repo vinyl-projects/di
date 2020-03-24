@@ -47,14 +47,14 @@ final class RecursionFreeClassResolver implements ClassResolver
                 continue;
             }
 
-            if (!$definitionMap->contains($currentDefinition->className())) {
-                return new ClassObject($currentDefinition->className());
+            if (!$definitionMap->contains($currentDefinition->classObject()->className())) {
+                return $currentDefinition->classObject();
             }
 
-            $definitionFromMap = $definitionMap->get($currentDefinition->className());
+            $definitionFromMap = $definitionMap->get($currentDefinition->classObject()->className());
 
             if ($definitionFromMap === $currentDefinition) {
-                return new ClassObject($currentDefinition->className());
+                return $currentDefinition->classObject();
             }
 
             $stack->push($definitionFromMap);

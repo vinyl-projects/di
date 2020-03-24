@@ -10,6 +10,7 @@ use vinyl\di\definition\Lifetime;
 use vinyl\di\definition\Instantiator;
 use vinyl\di\definition\SingletonLifetime;
 use vinyl\di\definition\ValueMap;
+use vinyl\std\ClassObject;
 use function class_exists;
 
 /**
@@ -19,7 +20,7 @@ abstract class AbstractDefinition implements Definition
 {
     private string $id;
     /** todo remove this property from abstract */
-    protected ?string $className;
+    protected ?ClassObject $classObject;
     private Lifetime $lifetime;
     private bool $argumentInheritance = false;
     private ValueMap $argumentValues;
@@ -28,19 +29,19 @@ abstract class AbstractDefinition implements Definition
     /**
      * AbstractDefinition constructor.
      */
-    public function __construct(string $id, ?string $class)
+    public function __construct(string $id, ?ClassObject $class)
     {
         $this->id = $id;
 
-        if ($class !== null && !class_exists($class)) {
-            throw new InvalidArgumentException("Class {$class} for definition with id {$id} not exists.");
+        if ($class !== null && !class_exists($class->className())) {
+            throw new InvalidArgumentException("Class {$class->className()} for definition with id {$id} not exists.");
         }
 
-        if ($class !== null && $class[0] === '\\') {
+        if ($class !== null && $class->className()[0] === '\\') {
             throw new InvalidArgumentException('The class name of definition can\'t be started from backslash.');
         }
 
-        $this->className = $class;
+        $this->classObject = $class;
         $this->lifetime = SingletonLifetime::get();
         $this->argumentValues = new ValueMap();
     }
@@ -110,34 +111,26 @@ abstract class AbstractDefinition implements Definition
     /**
      * {@inheritDoc}
      */
-    public function className(): string
+    public function classObject(): ClassObject
     {
-        if ($this->className === null) {
-            throw new LogicException('Class name must be initialized.');
+        if ($this->classObject === null) {
+            throw new LogicException('Class object must be initialized.');
         }
 
-        return $this->className;
+        return $this->classObject;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function replaceClass(string $newCLass): string
+    public function replaceClass(ClassObject $newCLass): ClassObject
     {
-        if ($this->className === null) {
+        if ($this->classObject === null) {
             throw new LogicException('You have to initialize class first, before trying replacing it.');
         }
 
-        if ($newCLass === '') {
-            throw new InvalidArgumentException('Class name could not be empty.');
-        }
-
-        if (!class_exists($newCLass)) {
-            throw new InvalidArgumentException("Given class [{$newCLass}] not exists.");
-        }
-
-        $oldClass = $this->className;
-        $this->className = $newCLass;
+        $oldClass = $this->classObject;
+        $this->classObject = $newCLass;
 
         return $oldClass;
     }

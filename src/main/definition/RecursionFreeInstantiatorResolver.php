@@ -37,6 +37,6 @@ final class RecursionFreeInstantiatorResolver implements InstantiatorResolver
             throw new LogicException($e->getMessage(), $e->getCode(), $e);
         }
 
-        return new ConstructorInstantiator($class->className());
+        return new ConstructorInstantiator($class);
     }
 }

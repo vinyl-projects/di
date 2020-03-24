@@ -7,6 +7,7 @@ namespace vinyl\di;
 use vinyl\di\definition\Lifetime;
 use vinyl\di\definition\Instantiator;
 use vinyl\di\definition\ValueMap;
+use vinyl\std\ClassObject;
 
 /**
  * Interface Definition
@@ -58,17 +59,15 @@ interface Definition
 
     /**
      * Returns class name of definition
-     *
-     * @return string
      */
-    public function className(): string;
+    public function classObject(): ClassObject;
 
     /**
      * Replaces the class for current definition instance
      *
-     * @return string An old class
+     * @return ClassObject Previous class object
      */
-    public function replaceClass(string $newCLass): string;
+    public function replaceClass(ClassObject $newCLass): ClassObject;
 
     /**
      * Returns argument values

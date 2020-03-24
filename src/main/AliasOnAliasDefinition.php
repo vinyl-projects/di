@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace vinyl\di;
 
 use RuntimeException;
+use vinyl\std\ClassObject;
 
 /**
  * Class AliasOnAliasDefinition
@@ -36,7 +37,7 @@ final class AliasOnAliasDefinition extends AbstractDefinition
     /**
      * Unsupported operation. Always throws {@see RuntimeException}
      */
-    public function replaceClass(string $newCLass): string
+    public function replaceClass(ClassObject $newCLass): ClassObject
     {
         //TODO maybe we should allow changing class for type with parent id
         //TODO so that it could be possible to change class only for particular alias

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\di\factory;
 
-use function assert;
-use function is_array;
+use vinyl\std\ClassObject;
 
 /**
  * Class ParentClassesProvider
@@ -15,14 +14,10 @@ class ParentClassesProvider
     /**
      * Returns parent classes
      *
-     * @return string[]
+     * @return ClassObject[]
      */
-    public function find(string $className): array
+    public function find(ClassObject $classObject): array
     {
-        $classParents = class_parents($className);
-
-        assert(is_array($classParents));
-
-        return $classParents;
+        return $classObject->toParentClassObjectList();
     }
 }

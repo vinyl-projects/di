@@ -10,6 +10,7 @@ use vinyl\di\definition\Lifetime;
 use vinyl\di\definition\Instantiator;
 use vinyl\di\DefinitionMapBuilder;
 use vinyl\di\definitionMapBuilder\definitionBuilder\Arguments;
+use vinyl\std\ClassObject;
 
 /**
  * Class DefinitionBuilder
@@ -65,7 +66,7 @@ class DefinitionBuilder
 
     public function replaceClass(string $newClass): self
     {
-        $this->definition->replaceClass($newClass);
+        $this->definition->replaceClass(ClassObject::create($newClass));
 
         return $this;
     }

@@ -6,6 +6,7 @@ namespace vinyl\di;
 
 use InvalidArgumentException;
 use RuntimeException;
+use vinyl\std\ClassObject;
 use function interface_exists;
 use function is_a;
 
@@ -16,7 +17,7 @@ use function is_a;
  */
 final class InterfaceImplementationDefinition extends AbstractDefinition
 {
-    public function __construct(string $interface, string $class)
+    public function __construct(string $interface, ClassObject $class)
     {
         if (!interface_exists($interface)) {
             throw new InvalidArgumentException("Interface {$interface} not exists.");
@@ -24,8 +25,8 @@ final class InterfaceImplementationDefinition extends AbstractDefinition
 
         parent::__construct($interface, $class);
 
-        if (!is_a($class, $interface, true)) {
-            throw new InvalidArgumentException("Class [{$class}] must be an instance of [{$interface}].");
+        if (!is_a($class->className(), $interface, true)) {
+            throw new InvalidArgumentException("Class [{$class->className()}] must be an instance of [{$interface}].");
         }
     }
 

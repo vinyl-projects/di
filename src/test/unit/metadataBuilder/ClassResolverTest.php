@@ -15,6 +15,7 @@ use vinyl\di\definition\ClassResolver;
 use vinyl\di\definition\DefinitionCircularReferenceFoundException;
 use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\RecursionFreeClassResolver;
+use vinyl\std\ClassObject;
 use function get_class;
 
 /**
@@ -40,7 +41,7 @@ class ClassResolverTest extends TestCase
         $testClass = new class
         {
         };
-        $definition = new ClassDefinition(get_class($testClass));
+        $definition = new ClassDefinition(ClassObject::create(get_class($testClass)));
         $config = new DefinitionMap([$definition->id() => $definition]);
 
         $resolve = $this->classResolver->resolve($definition, $config);
@@ -56,7 +57,7 @@ class ClassResolverTest extends TestCase
         $testClass = new class
         {
         };
-        $definition = new ClassDefinition(get_class($testClass));
+        $definition = new ClassDefinition(ClassObject::create(get_class($testClass)));
         $config = new DefinitionMap([]);
         $resolve = $this->classResolver->resolve($definition, $config);
 
@@ -73,7 +74,7 @@ class ClassResolverTest extends TestCase
         };
 
         $type = new AliasOnAliasDefinition('some.id', 'parent.id');
-        $type2 = new AliasDefinition('parent.id', get_class($testClass));
+        $type2 = new AliasDefinition('parent.id', ClassObject::create(get_class($testClass)));
         $config = new DefinitionMap([
             $type->id()  => $type,
             $type2->id() => $type2,
