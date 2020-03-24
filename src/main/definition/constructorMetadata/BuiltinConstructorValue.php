@@ -10,7 +10,7 @@ namespace vinyl\di\definition\constructorMetadata;
 final class BuiltinConstructorValue implements ConstructorValue
 {
     /** @var string|float|bool|int|null|array<int|string, mixed> */
-    public $defaultValue;
+    private $defaultValue;
     private string $type;
     private bool $isNullable;
     private bool $isOptional;
