@@ -74,7 +74,7 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         $definition = self::resolveProxyDefinition($definitionMap, $definitionId);
 
         try {
-            $className = $this->classResolver->resolve($definition, $definitionMap);
+            $class = $this->classResolver->resolve($definition, $definitionMap);
         } catch (ClassResolverException $e) {
             throw new ValueProcessorException(
                 "An error occurred during class resolving. {$e->getMessage()}"
@@ -82,7 +82,7 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         }
 
         $type = $constructorValue->type();
-
+        $className = $class->className();
         if (!is_a($className, $type, true) && $type !== 'object' && $type !== 'mixed') {
             throw IncompatibleTypeException::create($type, "{$className} -> {$definitionId}");
         }

@@ -76,34 +76,35 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
             );
         }
 
-        if (array_key_exists($class, $visitedClasses)) {
-            throw ClassCircularReferenceFoundException::create($class, $visitedClasses);
+        $className = $class->className();
+        if (array_key_exists($className, $visitedClasses)) {
+            throw ClassCircularReferenceFoundException::create($className, $visitedClasses);
         }
 
         if ($factoryMetadataMap->contains($id)) {
             return $factoryMetadataMap;
         }
 
-        $visitedClasses[$class] = $id;
+        $visitedClasses[$className] = $id;
         $objectInstantiator = $this->instantiatorResolver->resolve($definition, $definitionMap);
-        $factoryMetadata = new FactoryMetadata($id, $class, $objectInstantiator->value());
+        $factoryMetadata = new FactoryMetadata($id, $className, $objectInstantiator->value());
         $factoryMetadataMap->put($factoryMetadata);
 
         try {
             $constructorValueMap = $this->constructorValueExtractor->extract($objectInstantiator);
         } catch (ArgumentTypeNotFoundException $e) {
             throw DefinitionTransformerException::createFromException(
-                "An argument of [{$id}<{$class}>] constructor depend on class that not actually exists. Details: {$e->getMessage()}",
+                "An argument of [{$id}<{$className}>] constructor depend on class that not actually exists. Details: {$e->getMessage()}",
                 $e
             );
         } catch (InvalidArgumentException $e) {
             throw DefinitionTransformerException::createFromException(
-                "[{$id}<{$class}>] contains invalid constructor method. Details: {$e->getMessage()}",
+                "[{$id}<{$className}>] contains invalid constructor method. Details: {$e->getMessage()}",
                 $e
             );
         } catch (ConstructorMetadataExtractorException $e) {
             throw DefinitionTransformerException::createFromException(
-                "An error occurred, during argument metadata extraction from [{$id}<{$class}>]. Details: {$e->getMessage()}",
+                "An error occurred, during argument metadata extraction from [{$id}<{$className}>]. Details: {$e->getMessage()}",
                 $e
             );
         }
@@ -145,7 +146,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
                 try {
                     $this->internalTransform($newDefinition, $definitionMap, $factoryMetadataMap, $classes);
                 } catch (DefinitionTransformerException $e) {
-                    $e->add($id, $class, $argumentName);
+                    $e->add($id, $className, $argumentName);
                     throw $e;
                 }
             }

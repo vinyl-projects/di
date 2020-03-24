@@ -8,6 +8,7 @@ use LogicException;
 use SplStack;
 use vinyl\di\AliasOnAliasDefinition;
 use vinyl\di\Definition;
+use vinyl\std\ClassObject;
 use function array_key_exists;
 use function assert;
 
@@ -19,7 +20,7 @@ final class RecursionFreeClassResolver implements ClassResolver
     /**
      * {@inheritDoc}
      */
-    public function resolve(Definition $definition, UnmodifiableDefinitionMap $definitionMap): string
+    public function resolve(Definition $definition, UnmodifiableDefinitionMap $definitionMap): ClassObject
     {
         assert(self::assertGivenDefinitionAreSame($definition, $definitionMap));
 
@@ -47,13 +48,13 @@ final class RecursionFreeClassResolver implements ClassResolver
             }
 
             if (!$definitionMap->contains($currentDefinition->className())) {
-                return $currentDefinition->className();
+                return new ClassObject($currentDefinition->className());
             }
 
             $definitionFromMap = $definitionMap->get($currentDefinition->className());
 
             if ($definitionFromMap === $currentDefinition) {
-                return $currentDefinition->className();
+                return new ClassObject($currentDefinition->className());
             }
 
             $stack->push($definitionFromMap);

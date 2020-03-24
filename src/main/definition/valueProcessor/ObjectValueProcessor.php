@@ -58,8 +58,8 @@ final class ObjectValueProcessor implements ValueProcessor, ClassResolverAware
         $objectTypeValue = new DefinitionFactoryValue($definition->id(), false);
         $resolvedClass = $this->classResolver->resolve($definition, $definitionMap);
 
-        if (!is_a($resolvedClass, $type, true) && $type !== 'object' && $type !== 'mixed') {
-            throw IncompatibleTypeException::create($type, "{$resolvedClass} -> {$definitionId}");
+        if (!is_a($resolvedClass->className(), $type, true) && $type !== 'object' && $type !== 'mixed') {
+            throw IncompatibleTypeException::create($type, "{$resolvedClass->className()} -> {$definitionId}");
         }
 
         $definitionBoolMap->insert($definition, true);
