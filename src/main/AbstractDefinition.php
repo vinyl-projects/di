@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace vinyl\di;
 
-use InvalidArgumentException;
 use LogicException;
-use vinyl\di\definition\Lifetime;
 use vinyl\di\definition\Instantiator;
+use vinyl\di\definition\Lifetime;
 use vinyl\di\definition\SingletonLifetime;
 use vinyl\di\definition\ValueMap;
 use vinyl\std\ClassObject;
-use function class_exists;
 
 /**
  * Class AbstractDefinition
@@ -32,15 +30,6 @@ abstract class AbstractDefinition implements Definition
     public function __construct(string $id, ?ClassObject $class)
     {
         $this->id = $id;
-
-        if ($class !== null && !class_exists($class->className())) {
-            throw new InvalidArgumentException("Class {$class->className()} for definition with id {$id} not exists.");
-        }
-
-        if ($class !== null && $class->className()[0] === '\\') {
-            throw new InvalidArgumentException('The class name of definition can\'t be started from backslash.');
-        }
-
         $this->classObject = $class;
         $this->lifetime = SingletonLifetime::get();
         $this->argumentValues = new ValueMap();
