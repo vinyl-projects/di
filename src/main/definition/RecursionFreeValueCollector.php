@@ -7,7 +7,6 @@ namespace vinyl\di\definition;
 use SplStack;
 use vinyl\di\AliasOnAliasDefinition;
 use vinyl\di\Definition;
-use vinyl\di\factory\ParentClassesProvider;
 use function array_pop;
 use function array_reverse;
 use function assert;

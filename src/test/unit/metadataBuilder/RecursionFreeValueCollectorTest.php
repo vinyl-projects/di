@@ -14,7 +14,7 @@ use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\RecursionFreeValueCollector;
 use vinyl\di\definition\value\IntValue;
 use vinyl\di\definition\value\StringValue;
-use vinyl\di\factory\ParentClassesProvider;
+use vinyl\di\definition\ParentClassesProvider;
 use vinyl\std\ClassObject;
 use function get_class;
 

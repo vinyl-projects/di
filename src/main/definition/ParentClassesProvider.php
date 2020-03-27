@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace vinyl\di\factory;
+namespace vinyl\di\definition;
 
 use vinyl\std\ClassObject;
 
