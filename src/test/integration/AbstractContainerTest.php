@@ -931,7 +931,7 @@ abstract class AbstractContainerTest extends TestCase
                 ->end();
             // @formatter:on
         });
-        
+
         $object = $di->get(testAsset\aliasUsedAsArgument\ClassA::class);
 
         self::assertInstanceOf(
@@ -1153,6 +1153,28 @@ abstract class AbstractContainerTest extends TestCase
         $secondCall = $di->get('alias');
 
         self::assertNotSame($firstCall, $secondCall);
+    }
+
+    /**
+     * @test
+     */
+    public function aliasInheritInstantiator(): void
+    {
+        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+            // @formatter:off
+            $dmb->classDefinition(testAsset\aliasInheritInstantiator\ClassA::class)
+                ->changeInstantiator(
+                    StaticMethodInstantiator::create(testAsset\aliasInheritInstantiator\ClassA::class, 'create')
+                )
+                ->end();
+
+            $dmb->alias('test', testAsset\aliasInheritInstantiator\ClassA::class)->end();
+            $dmb->aliasOnAlias('test.2', 'test')->end();
+            // @formatter:on
+        });
+
+        self::assertInstanceOf(testAsset\aliasInheritInstantiator\ClassA::class, $di->get('test'));
+        self::assertInstanceOf(testAsset\aliasInheritInstantiator\ClassA::class, $di->get('test.2'));
     }
 
     abstract protected function createFactory(FactoryMetadataMap $classFactoryMetadataMap): ObjectFactory;

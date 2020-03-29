@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace vinyl\di\definition;
 
 use LogicException;
+use SplStack;
+use vinyl\di\AliasOnAliasDefinition;
 use vinyl\di\Definition;
 
 /**
@@ -37,6 +39,40 @@ final class RecursionFreeInstantiatorResolver implements InstantiatorResolver
             throw new LogicException($e->getMessage(), $e->getCode(), $e);
         }
 
-        return new ConstructorInstantiator($class);
+        $stack = new SplStack();
+        $stack->push($definition);
+
+        while (!$stack->isEmpty()) {
+            /** @var \vinyl\di\Definition $currentDefinition */
+            $currentDefinition = $stack->pop();
+
+            if ($currentDefinition->instantiator() !== null) {
+                return $currentDefinition->instantiator();
+            }
+
+            if ($currentDefinition instanceof AliasOnAliasDefinition) {
+                $parentDefinition = $definitionMap->get($currentDefinition->parentId());
+                if ($parentDefinition->instantiator() !== null) {
+                    return $parentDefinition->instantiator();
+                }
+
+                $stack->push($parentDefinition);
+                continue;
+            }
+
+            if (!$definitionMap->contains($currentDefinition->classObject()->className())) {
+                return new ConstructorInstantiator($class);
+            }
+
+            $parentDefinition = $definitionMap->get($currentDefinition->classObject()->className());
+
+            if ($currentDefinition === $parentDefinition) {
+                return new ConstructorInstantiator($class);
+            }
+
+            $stack->push($parentDefinition);
+        }
+
+        throw new LogicException("Unable to resolve instantiator for [{$definition->id()}]");
     }
 }
