@@ -14,5 +14,5 @@ interface InstantiatorResolver
     /**
      * Returns resolved {@see Instantiator} for given definition
      */
-    public function resolve(Definition $definition, DefinitionMap $definitionMap): Instantiator;
+    public function resolve(Definition $definition, UnmodifiableDefinitionMap $definitionMap): Instantiator;
 }

@@ -25,7 +25,7 @@ final class RecursionFreeInstantiatorResolver implements InstantiatorResolver
     /**
      * {@inheritDoc}
      */
-    public function resolve(Definition $definition, DefinitionMap $definitionMap): Instantiator
+    public function resolve(Definition $definition, UnmodifiableDefinitionMap $definitionMap): Instantiator
     {
         if ($definition->instantiator() !== null) {
             return $definition->instantiator();
