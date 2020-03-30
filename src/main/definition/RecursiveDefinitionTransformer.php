@@ -23,6 +23,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
     private ValueProcessor $valueProcessor;
     private ValueCollector $valueCollector;
     private InstantiatorResolver $instantiatorResolver;
+    private LifetimeResolver $lifetimeResolver;
 
     /**
      * ClassFactoryMetadataBuilder constructor.
@@ -31,6 +32,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         ?ValueProcessor $valueProcessor = null,
         ?ClassResolver $classResolver = null,
         ?InstantiatorResolver $instantiatorResolver = null,
+        ?LifetimeResolver $lifetimeResolver = null,
         ?ValueCollector $valueCollector = null,
         ?ConstructorValueExtractor $constructorValueExtractor = null
     ) {
@@ -39,6 +41,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         $this->constructorValueExtractor = $constructorValueExtractor ?? new ConstructorValueExtractor();
         $this->valueCollector = $valueCollector ?? new RecursionFreeValueCollector();
         $this->instantiatorResolver = $instantiatorResolver ?? new RecursionFreeInstantiatorResolver($this->classResolver);
+        $this->lifetimeResolver = $lifetimeResolver ?? new RecursionFreeLifetimeResolver();
     }
 
     /**
@@ -153,8 +156,8 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         }
 
         #todo call definition post processor here ???
-
-        if (!$isComplete && $definition->lifetime() === SingletonLifetime::get()) {
+        $lifetime =  $this->lifetimeResolver->resolve($definition, $definitionMap);
+        if (!$isComplete && $lifetime === SingletonLifetime::get()) {
             $missedArguments = [];
 
             foreach ($factoryMetadata->values as $argumentName => $value) {
