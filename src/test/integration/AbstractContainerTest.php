@@ -1146,7 +1146,7 @@ abstract class AbstractContainerTest extends TestCase
                     ->lifetime(PrototypeLifetime::get())
                 ->end()
                 ->alias('alias', testAsset\aliasInheritLifetime\ClassA::class)->end()
-                ->aliasOnAlias('alias.on.alias', 'alias');
+                ->aliasOnAlias('alias.on.alias', 'alias')->end();
         });
 
         self::assertNotSame($di->get('alias'), $di->get('alias'));
