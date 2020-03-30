@@ -1145,13 +1145,12 @@ abstract class AbstractContainerTest extends TestCase
                 ->classDefinition(testAsset\aliasInheritLifetime\ClassA::class)
                     ->lifetime(PrototypeLifetime::get())
                 ->end()
-                ->alias('alias', testAsset\aliasInheritLifetime\ClassA::class)->end();
+                ->alias('alias', testAsset\aliasInheritLifetime\ClassA::class)->end()
+                ->aliasOnAlias('alias.on.alias', 'alias');
         });
 
-        $firstCall = $di->get('alias');
-        $secondCall = $di->get('alias');
-
-        self::assertNotSame($firstCall, $secondCall);
+        self::assertNotSame($di->get('alias'), $di->get('alias'));
+        self::assertNotSame($di->get('alias.on.alias'), $di->get('alias.on.alias'));
     }
 
     /**

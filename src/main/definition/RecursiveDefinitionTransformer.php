@@ -157,6 +157,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
 
         #todo call definition post processor here ???
         $lifetime =  $this->lifetimeResolver->resolve($definition, $definitionMap);
+        $definition->changeLifetime($lifetime);
         if (!$isComplete && $lifetime === SingletonLifetime::get()) {
             $missedArguments = [];
 
