@@ -80,7 +80,9 @@ final class DefinitionMap implements UnmodifiableDefinitionMap
         $lifetimeMap = [];
         /** @var Definition $definition */
         foreach ($this->map as $definitionId => $definition) {
-            $lifetimeMap[$definitionId] = $definition->lifetime()->code();
+            $lifetimeMap[$definitionId] = $definition->lifetime() !== null
+                ? $definition->lifetime()->code()
+                : SingletonLifetime::get()->code();
         }
 
         return $lifetimeMap;

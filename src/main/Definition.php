@@ -35,12 +35,12 @@ interface Definition
     /**
      * Changes definition lifetime
      */
-    public function changeLifetime(Lifetime $lifetime): void;
+    public function changeLifetime(?Lifetime $lifetime): void;
 
     /**
-     * Returns lifetime of definition
+     * Returns definition lifetime
      */
-    public function lifetime(): Lifetime;
+    public function lifetime(): ?Lifetime;
 
     /**
      * Checks whether argument inheritance enabled

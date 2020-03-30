@@ -7,7 +7,6 @@ namespace vinyl\di;
 use LogicException;
 use vinyl\di\definition\Instantiator;
 use vinyl\di\definition\Lifetime;
-use vinyl\di\definition\SingletonLifetime;
 use vinyl\di\definition\ValueMap;
 use vinyl\std\ClassObject;
 
@@ -19,7 +18,7 @@ abstract class AbstractDefinition implements Definition
     private string $id;
     /** todo remove this property from abstract */
     protected ?ClassObject $classObject;
-    private Lifetime $lifetime;
+    private ?Lifetime $lifetime = null;
     private bool $argumentInheritance = false;
     private ValueMap $argumentValues;
     private ?Instantiator $instantiator = null;
@@ -31,7 +30,6 @@ abstract class AbstractDefinition implements Definition
     {
         $this->id = $id;
         $this->classObject = $class;
-        $this->lifetime = SingletonLifetime::get();
         $this->argumentValues = new ValueMap();
     }
 
@@ -62,7 +60,7 @@ abstract class AbstractDefinition implements Definition
     /**
      * {@inheritDoc}
      */
-    public function changeLifetime(Lifetime $lifetime): void
+    public function changeLifetime(?Lifetime $lifetime): void
     {
         $this->lifetime = $lifetime;
     }
@@ -70,7 +68,7 @@ abstract class AbstractDefinition implements Definition
     /**
      * {@inheritDoc}
      */
-    public function lifetime(): Lifetime
+    public function lifetime(): ?Lifetime
     {
         return $this->lifetime;
     }
