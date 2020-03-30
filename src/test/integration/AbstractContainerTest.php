@@ -1140,7 +1140,6 @@ abstract class AbstractContainerTest extends TestCase
      */
     public function aliasInheritLifetime(): void
     {
-        $this->markTestSkipped('Lifetime inheritance could be not desired.');
         $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
             $definitionMapBuilder
                 ->classDefinition(testAsset\aliasInheritLifetime\ClassA::class)
