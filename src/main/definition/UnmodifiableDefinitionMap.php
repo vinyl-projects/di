@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace vinyl\di\definition;
 
-use ArrayIterator;
 use Countable;
+use Iterator;
 use IteratorAggregate;
 use vinyl\di\Definition;
 
@@ -41,7 +41,7 @@ interface UnmodifiableDefinitionMap extends IteratorAggregate, Countable
     public function toLifetimeArrayMap(): array;
 
     /**
-     * @return \ArrayIterator<string, \vinyl\di\Definition>
+     * @return \Iterator<string, \vinyl\di\Definition>
      */
-    public function getIterator(): ArrayIterator;
+    public function getIterator(): Iterator;
 }

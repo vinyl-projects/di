@@ -7,6 +7,7 @@ namespace vinyl\di\definition;
 use ArrayIterator;
 use Countable;
 use InvalidArgumentException;
+use Iterator;
 use IteratorAggregate;
 use vinyl\di\definition\value\Mergeable;
 use function array_key_exists;
@@ -103,9 +104,9 @@ final class ValueMap implements IteratorAggregate, Countable
      * Retrieve an external iterator
      * @link https://php.net/manual/en/iteratoraggregate.getiterator.php
      *
-     * @return ArrayIterator<string, \vinyl\di\definition\DefinitionValue>
+     * @return \Iterator<string, \vinyl\di\definition\DefinitionValue>
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->values);
     }

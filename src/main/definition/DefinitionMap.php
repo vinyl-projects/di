@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace vinyl\di\definition;
 
 use ArrayIterator;
+use Iterator;
 use OutOfBoundsException;
 use vinyl\di\Definition;
 use function array_key_exists;
@@ -65,9 +66,9 @@ final class DefinitionMap implements UnmodifiableDefinitionMap
     }
 
     /**
-     * @return ArrayIterator<string, \vinyl\di\Definition>
+     * {@inheritDoc}
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->map);
     }
