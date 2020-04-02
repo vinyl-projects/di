@@ -11,7 +11,7 @@ use vinyl\di\definition\SingletonLifetime;
 /**
  * Class Container
  */
-final class Container implements ContainerInterface, ScopeFactory
+final class Container implements ContainerInterface
 {
     private static ?string $singletonLifetimeCode = null;
     /** @var array<string, bool> */
@@ -36,8 +36,7 @@ final class Container implements ContainerInterface, ScopeFactory
         }
 
         $this->insertSharedInstance(ObjectFactory::class, $objectFactory)
-            ->insertSharedInstance(ContainerInterface::class, $this)
-            ->insertSharedInstance(ScopeFactory::class, $this);
+            ->insertSharedInstance(ContainerInterface::class, $this);
 
         if (self::$singletonLifetimeCode === null) {
             self::$singletonLifetimeCode = SingletonLifetime::get()->code();
@@ -86,13 +85,5 @@ final class Container implements ContainerInterface, ScopeFactory
         $this->sharedInstances[$id] = $object;
 
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function createScopedContainer(): ContainerInterface
-    {
-        return new ScopedContainer($this->lifetimeProvider, $this, clone $this->objectFactory);
     }
 }
