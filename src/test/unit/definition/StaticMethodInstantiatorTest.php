@@ -142,7 +142,7 @@ final class StaticMethodInstantiatorTest extends TestCase
         self::assertNotEmpty($instantiator->parameters());
 
         array_map(
-            fn($parameter) => self::assertInstanceOf(ReflectionParameter::class, $parameter),
+            static fn($parameter) => self::assertInstanceOf(ReflectionParameter::class, $parameter),
             $instantiator->parameters()
         );
     }
