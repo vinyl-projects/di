@@ -7,8 +7,6 @@ namespace vinyl\di\definition;
 use InvalidArgumentException;
 use ReflectionException;
 use ReflectionFunction;
-use function assert;
-use function function_exists;
 
 /**
  * Class FunctionObjectInstantiator
@@ -27,12 +25,16 @@ final class FunctionInstantiator implements Instantiator
      */
     public function __construct(string $function)
     {
-        assert(function_exists($function));
-
         try {
             $functionReflection = new ReflectionFunction($function);
         } catch (ReflectionException $e) {
             throw new InvalidArgumentException($e->getMessage());
+        }
+
+        /** @var \ReflectionNamedType|null $reflectionType */
+        $reflectionType = $functionReflection->getReturnType();
+        if ($reflectionType === null || $reflectionType->getName() === 'void') {
+            throw new InvalidArgumentException("{$functionReflection->getName()} have no return type.");
         }
 
         $this->parameters = $functionReflection->getParameters();
