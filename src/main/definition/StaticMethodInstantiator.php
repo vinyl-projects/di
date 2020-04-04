@@ -25,21 +25,22 @@ final class StaticMethodInstantiator implements Instantiator
     {
         try {
             $reflectionMethod = new ReflectionMethod($class, $staticMethod);
-            if (!$reflectionMethod->isStatic()) {
-                throw new InvalidArgumentException("{$class}::{$staticMethod} not static.");
-            }
-
-            if (!$reflectionMethod->isPublic()) {
-                throw new InvalidArgumentException("{$class}::{$staticMethod} not public.");
-            }
-
-            /** @var \ReflectionNamedType|null $reflectionType */
-            $reflectionType = $reflectionMethod->getReturnType();
-            if ($reflectionType === null || $reflectionType->getName() === 'void') {
-                throw new InvalidArgumentException("{$class}::{$staticMethod} have no return type.");
-            }
         } catch (ReflectionException $e) {
             throw new InvalidArgumentException($e->getMessage());
+        }
+
+        if (!$reflectionMethod->isStatic()) {
+            throw new InvalidArgumentException("{$class}::{$staticMethod} not static.");
+        }
+
+        if (!$reflectionMethod->isPublic()) {
+            throw new InvalidArgumentException("{$class}::{$staticMethod} not public.");
+        }
+
+        /** @var \ReflectionNamedType|null $reflectionType */
+        $reflectionType = $reflectionMethod->getReturnType();
+        if ($reflectionType === null || $reflectionType->getName() === 'void') {
+            throw new InvalidArgumentException("{$class}::{$staticMethod} have no return type.");
         }
 
         $this->parameters = $reflectionMethod->getParameters();
