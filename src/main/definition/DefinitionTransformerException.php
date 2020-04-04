@@ -7,6 +7,8 @@ namespace vinyl\di\definition;
 use Exception;
 use stdClass;
 use Throwable;
+use vinyl\di\factory\FactoryMetadata;
+use function implode;
 
 /**
  * Class DefinitionTransformerException
@@ -22,6 +24,22 @@ class DefinitionTransformerException extends Exception
     public static function createFromException(string $message, Throwable $previousException): self
     {
         return new self($message, $previousException->getCode(), $previousException);
+    }
+
+    public static function createIncompleteException(FactoryMetadata $factoryMetadata): self
+    {
+        $missedArguments = [];
+
+        foreach ($factoryMetadata->values as $argumentName => $value) {
+            if ($value->isMissed()) {
+                $missedArguments[] = $argumentName;
+            }
+        }
+
+        $missedArgumentsString = implode(',', $missedArguments);
+        return new self(
+            "Definition [{$factoryMetadata->id}] with 'singleton' lifetime could not be incomplete. The next arguments must be set: [{$missedArgumentsString}]"
+        );
     }
 
     public function add(string $id, string $class, string $argumentName): void

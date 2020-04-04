@@ -11,7 +11,6 @@ use vinyl\di\definition\valueProcessor\ValueProcessorCompositor;
 use vinyl\di\factory\FactoryMetadata;
 use vinyl\di\factory\FactoryMetadataMap;
 use function array_key_exists;
-use function implode;
 
 /**
  * Class RecursiveDefinitionTransformer
@@ -156,20 +155,10 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         }
 
         #todo call definition post processor here ???
-        $lifetime =  $this->lifetimeResolver->resolve($definition, $definitionMap);
+        $lifetime = $this->lifetimeResolver->resolve($definition, $definitionMap);
         $definition->changeLifetime($lifetime);
         if (!$isComplete && $lifetime === SingletonLifetime::get()) {
-            $missedArguments = [];
-
-            foreach ($factoryMetadata->values as $argumentName => $value) {
-                if ($value->isMissed()) {
-                    $missedArguments[] = $argumentName;
-                }
-            }
-            $missedArgumentsString = implode(',', $missedArguments);
-            throw new DefinitionTransformerException(
-                "Definition [{$id}] with 'singleton' lifetime could not be incomplete. The next arguments must be set: [{$missedArgumentsString}]"
-            );
+            throw DefinitionTransformerException::createIncompleteException($factoryMetadata);
         }
 
         return $factoryMetadataMap;
