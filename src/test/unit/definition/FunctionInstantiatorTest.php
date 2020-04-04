@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionParameter;
 use vinyl\di\definition\FunctionInstantiator;
+use function array_walk;
 
 /**
  * Class FunctionInstantiatorTest
@@ -65,9 +66,9 @@ final class FunctionInstantiatorTest extends TestCase
         $parameters = (new FunctionInstantiator('vinyl\diTest\unit\definition\functionInstantiatorTestAsset\function_with_parameters'))->parameters();
         self::assertNotEmpty($parameters);
 
-        array_map(
-            static fn($parameter) => self::assertInstanceOf(ReflectionParameter::class, $parameter),
-            $parameters
+        array_walk(
+            $parameters,
+            static fn($parameter) => self::assertInstanceOf(ReflectionParameter::class, $parameter)
         );
     }
 }

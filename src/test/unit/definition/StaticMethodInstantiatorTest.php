@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionParameter;
 use vinyl\di\definition\StaticMethodInstantiator;
 use function array_map;
+use function array_walk;
 use function get_class;
 
 /**
@@ -139,11 +140,12 @@ final class StaticMethodInstantiatorTest extends TestCase
 
         $instantiator = new StaticMethodInstantiator(get_class($mock), 'test');
 
-        self::assertNotEmpty($instantiator->parameters());
+        $parameters = $instantiator->parameters();
+        self::assertNotEmpty($parameters);
 
-        array_map(
-            static fn($parameter) => self::assertInstanceOf(ReflectionParameter::class, $parameter),
-            $instantiator->parameters()
+        array_walk(
+            $parameters,
+            static fn($parameter) => self::assertInstanceOf(ReflectionParameter::class, $parameter)
         );
     }
 }
