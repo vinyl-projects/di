@@ -40,7 +40,7 @@
       "vinyl\\diBenchmark\\": "src/benchmark"
     },
     "files": [
-      "src/test/integration/functions.php"
+      "src/test/functions.php"
     ]
   },
   "scripts": {
