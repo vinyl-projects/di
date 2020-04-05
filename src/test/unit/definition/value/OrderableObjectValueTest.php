@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace vinyl\diTest\unit\value;
+namespace vinyl\diTest\unit\definition\value;
 
 use vinyl\di\definition\arrayValue\OrderableObjectValue;
 use vinyl\di\definition\DefinitionValue;

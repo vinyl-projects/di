@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace vinyl\diTest\unit\value;
+namespace vinyl\diTest\unit\definition\value;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
