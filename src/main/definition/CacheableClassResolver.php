@@ -13,10 +13,10 @@ use function spl_object_id;
  */
 final class CacheableClassResolver implements ClassResolver
 {
-    private ClassResolver $classResolver;
-
-    /** @var array<int, array<string, ClassObject>> */
+    /** @var array<string, ClassObject> */
     private array $cache = [];
+    private ClassResolver $classResolver;
+    public ?int $currentDefinitionMapId = null;
 
     /**
      * CacheablesResolver constructor.
@@ -33,6 +33,19 @@ final class CacheableClassResolver implements ClassResolver
     {
         $mapId = spl_object_id($definitionMap);
 
-        return $this->cache[$mapId][$definition->id()] ??= $this->classResolver->resolve($definition, $definitionMap);
+        if ($this->currentDefinitionMapId !== $mapId) {
+            $this->currentDefinitionMapId = $mapId;
+            $this->cleanCache();
+        }
+
+        return $this->cache[$definition->id()] ??= $this->classResolver->resolve($definition, $definitionMap);
+    }
+
+    /**
+     * Cleans resolved class cache
+     */
+    public function cleanCache(): void
+    {
+        $this->cache = [];
     }
 }
