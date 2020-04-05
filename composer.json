@@ -36,8 +36,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "vinyl\\diTest\\": "src/test",
-      "vinyl\\diBenchmark\\": "src/benchmark"
+      "vinyl\\diTest\\": "src/test"
     },
     "files": [
       "src/test/functions.php"
