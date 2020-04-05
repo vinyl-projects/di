@@ -8,7 +8,6 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionParameter;
 use vinyl\di\definition\StaticMethodInstantiator;
-use function array_map;
 use function array_walk;
 use function get_class;
 
