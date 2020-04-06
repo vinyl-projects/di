@@ -700,20 +700,35 @@ abstract class AbstractContainerTest extends TestCase
     public function proxyInheritLifetime(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+            // @formatter:off
             $containerBuilder
+                ->classDefinition(testAsset\proxyInheritLifetime\ClassC::class)
+                    ->arguments()
+                        ->proxyArgument('first', 'class.b.alias')
+                        ->proxyArgument('second', 'class.b.alias')
+                    ->endArguments()
+                ->end()
+
                 ->classDefinition(testAsset\proxyInheritLifetime\ClassA::class)
                     ->arguments()
                         ->proxyArgument('first', null)
                         ->proxyArgument('second', null)
                     ->endArguments()
                 ->end()
+
                 ->classDefinition(testAsset\proxyInheritLifetime\ClassB::class)
                     ->lifetime(PrototypeLifetime::get())
-                ->end();
+                ->end()
+
+                ->alias('class.b.alias', testAsset\proxyInheritLifetime\ClassB::class)->end();
+            // @formatter:on
         });
 
         $object = $di->get(testAsset\proxyInheritLifetime\ClassA::class);
         self::assertNotSame($object->first, $object->second);
+
+        $classC = $di->get(testAsset\proxyInheritLifetime\ClassC::class);
+        self::assertNotSame($classC->first, $classC->second);
     }
 
     /**
