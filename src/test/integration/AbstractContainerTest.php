@@ -16,6 +16,7 @@ use vinyl\di\definition\FunctionInstantiator;
 use vinyl\di\definition\PrototypeLifetime;
 use vinyl\di\definition\ProxyValue;
 use vinyl\di\definition\RecursionFreeClassResolver;
+use vinyl\di\definition\RecursionFreeLifetimeResolver;
 use vinyl\di\definition\RecursiveDefinitionTransformer;
 use vinyl\di\definition\StaticMethodInstantiator;
 use vinyl\di\definition\valueProcessor\ProxyValueProcessor;
@@ -1204,14 +1205,16 @@ abstract class AbstractContainerTest extends TestCase
     protected function createContainer(callable $builderFunction): Container
     {
         $classResolver = new RecursionFreeClassResolver();
+        $lifetimeResolver = new RecursionFreeLifetimeResolver();
         $valueProcessorComposite = new ValueProcessorCompositor([
-                ProxyValue::class => new ProxyValueProcessor(),
+                ProxyValue::class => new ProxyValueProcessor($lifetimeResolver),
             ],
             $classResolver
         );
         $typeMetadataBuilder = new RecursiveDefinitionTransformer(
             $valueProcessorComposite,
-            $classResolver
+            $classResolver,
+            $lifetimeResolver
         );
         $metadataBuilder = new DefinitionMapTransformer($typeMetadataBuilder);
         $definitionMapBuilder = new DefinitionMapBuilder();

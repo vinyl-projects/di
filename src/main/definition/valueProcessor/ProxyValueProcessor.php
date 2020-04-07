@@ -15,6 +15,8 @@ use vinyl\di\definition\constructorMetadata\ConstructorValue;
 use vinyl\di\definition\DefinitionToDependencyMap;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\IncompatibleTypeException;
+use vinyl\di\definition\Lifetime;
+use vinyl\di\definition\LifetimeResolver;
 use vinyl\di\definition\ProxyValue;
 use vinyl\di\definition\UnmodifiableDefinitionMap;
 use vinyl\di\definition\value\StringValue;
@@ -43,16 +45,19 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
     private ?ClassResolver $classResolver = null;
     private ProxyGenerator $proxyGenerator;
     private ClassMaterializer $classMaterializer;
+    private LifetimeResolver $lifetimeResolver;
 
     /**
      * ProxyValueProcessor constructor.
      */
     public function __construct(
+        LifetimeResolver $lifetimeResolver,
         ?ClassMaterializer $classMaterializer = null,
         ?ProxyGenerator $proxyGenerator = null
     ) {
         $this->classMaterializer = $classMaterializer ?? new EvalClassMaterializer();
         $this->proxyGenerator = $proxyGenerator ?? new LazyLoadingValueHolderProxyGenerator();
+        $this->lifetimeResolver = $lifetimeResolver;
     }
 
     /**
@@ -103,8 +108,8 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
                 throw new ValueProcessorException("An error occurred during proxy materialization. {$e->getMessage()}");
             }
         }
-
-        $proxyDefinition = self::createProxyDefinition($proxy->className, $definition);
+        $lifetime = $this->lifetimeResolver->resolve($definition, $definitionMap);
+        $proxyDefinition = self::createProxyDefinition($proxy->className, $definition, $lifetime);
         $proxiedDefinition = self::resolveDefinition($className, $definitionMap);
 
         $definitionBoolMap = new DefinitionToDependencyMap();
@@ -146,7 +151,7 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         return ShadowClassDefinition::resolveShadowDefinition($definitionId, $definitionMap);
     }
 
-    private static function createProxyDefinition(string $proxyClassName, Definition $definition): AliasDefinition
+    private static function createProxyDefinition(string $proxyClassName, Definition $definition, Lifetime $lifetime): AliasDefinition
     {
         #todo handle class names like 'Interface___'
         $proxyId = sprintf(
@@ -156,7 +161,7 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         );
 
         $proxyDefinition = new AliasDefinition($proxyId, ClassObject::create($proxyClassName));
-        $proxyDefinition->changeLifetime($definition->lifetime());
+        $proxyDefinition->changeLifetime($lifetime);
         #todo create ProxyDefinition and move this logic to it
         $proxyDefinition->argumentValues()->put(
             ProxyGenerator::PROXY_ARGUMENT_NAME,

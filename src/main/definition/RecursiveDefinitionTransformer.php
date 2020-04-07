@@ -30,8 +30,8 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
     public function __construct(
         ?ValueProcessor $valueProcessor = null,
         ?ClassResolver $classResolver = null,
-        ?InstantiatorResolver $instantiatorResolver = null,
         ?LifetimeResolver $lifetimeResolver = null,
+        ?InstantiatorResolver $instantiatorResolver = null,
         ?ValueCollector $valueCollector = null,
         ?ConstructorValueExtractor $constructorValueExtractor = null
     ) {

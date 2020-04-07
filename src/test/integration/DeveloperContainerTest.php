@@ -7,6 +7,7 @@ namespace vinyl\diTest\integration;
 use vinyl\di\Container;
 use vinyl\di\definition\ProxyValue;
 use vinyl\di\definition\RecursionFreeClassResolver;
+use vinyl\di\definition\RecursionFreeLifetimeResolver;
 use vinyl\di\definition\RecursiveDefinitionTransformer;
 use vinyl\di\definition\valueProcessor\ProxyValueProcessor;
 use vinyl\di\definition\valueProcessor\ValueProcessorCompositor;
@@ -32,15 +33,12 @@ class DeveloperContainerTest extends AbstractContainerTest
     protected function createContainer(callable $builderFunction): Container
     {
         $classResolver = new RecursionFreeClassResolver();
-        $valueProcessorComposite = new ValueProcessorCompositor([
-            ProxyValue::class => new ProxyValueProcessor(),
-        ],
+        $lifetimeResolver = new RecursionFreeLifetimeResolver();
+        $valueProcessorComposite = new ValueProcessorCompositor(
+            [ProxyValue::class => new ProxyValueProcessor($lifetimeResolver)],
             $classResolver
         );
-        $typeMetadataBuilder = new RecursiveDefinitionTransformer(
-            $valueProcessorComposite,
-            $classResolver
-        );
+        $typeMetadataBuilder = new RecursiveDefinitionTransformer($valueProcessorComposite, $classResolver, $lifetimeResolver);
         $definitionMapBuilder = new DefinitionMapBuilder();
         $builderFunction($definitionMapBuilder);
         $definitionMap = $definitionMapBuilder->build();
