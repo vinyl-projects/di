@@ -64,7 +64,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         DefinitionMap $definitionMap,
         FactoryMetadataMap $factoryMetadataMap,
         array $visitedClasses = []
-    ): FactoryMetadataMap {
+    ): void {
         $id = $definition->id();
 
         try {
@@ -84,7 +84,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         }
 
         if ($factoryMetadataMap->contains($id)) {
-            return $factoryMetadataMap;
+            return;
         }
 
         $visitedClasses[$className] = $id;
@@ -160,7 +160,5 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         if (!$isComplete && $lifetime === SingletonLifetime::get()) {
             throw DefinitionTransformerException::createIncompleteException($factoryMetadata);
         }
-
-        return $factoryMetadataMap;
     }
 }
