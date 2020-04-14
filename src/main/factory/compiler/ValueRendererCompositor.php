@@ -8,6 +8,7 @@ use vinyl\di\factory\argument\ArrayValue;
 use vinyl\di\factory\argument\BuiltinFactoryValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
 use vinyl\di\factory\FactoryValue;
+use function array_key_exists;
 use function array_replace;
 use function assert;
 use function get_class;
@@ -47,13 +48,11 @@ final class ValueRendererCompositor implements ValueRenderer
      */
     public function render(FactoryValue $value): string
     {
-        foreach ($this->valueRendererMap as $instanceType => $renderer) {
-            if ($value instanceof $instanceType) {
-                return $renderer->render($value);
-            }
+        $valueClass = get_class($value);
+        if (array_key_exists($valueClass, $this->valueRendererMap)) {
+            return $this->valueRendererMap[$valueClass]->render($value);
         }
 
-        $valueClass = get_class($value);
         throw new \RuntimeException("[{$valueClass}] Unsupported value type.");
     }
 }
