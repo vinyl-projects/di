@@ -154,6 +154,8 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
             }
         }
 
+        $factoryMetadata->isComplete = $isComplete;
+
         #todo call definition post processor here ???
         $lifetime = $this->lifetimeResolver->resolve($definition, $definitionMap);
         $definition->changeLifetime($lifetime);
