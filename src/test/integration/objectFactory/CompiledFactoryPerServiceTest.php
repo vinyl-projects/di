@@ -25,9 +25,9 @@ class CompiledFactoryPerServiceTest extends AbstractFactoryTest
      */
     public function createFactory(FactoryMetadataMap $classFactoryMetadataMap, array $lifetimeArrayMap): ObjectFactory
     {
-        $factoryClass = self::getNextClassName();
+        $factoryClassName = self::getNextClassName();
         $compiler = new FactoryPerServiceCompiler();
-        $compiler->compile($factoryClass, $classFactoryMetadataMap);
+        $factoryClass = $compiler->compile($factoryClassName, $classFactoryMetadataMap);
         $factory = new CompiledFactory($factoryClass);
 
         new Container(new LifetimeProvider($lifetimeArrayMap), $factory);

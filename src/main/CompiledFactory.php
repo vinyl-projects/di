@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace vinyl\di;
 
-use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
-use function class_exists;
+use vinyl\std\ClassObject;
+use function assert;
 
 /**
  * Class CompiledFactory
@@ -18,16 +18,13 @@ final class CompiledFactory implements ObjectFactory, ContainerAware
 
     /**
      * Compiled constructor.
-     *
-     * @param string $factoryClass factory class name
      */
-    public function __construct(string $factoryClass)
+    public function __construct(ClassObject $factoryClass)
     {
-        if (!class_exists($factoryClass)) {
-            throw new InvalidArgumentException("Factory class [$factoryClass] not exists.");
-        }
+        $factory = $factoryClass->toReflectionClass()->newInstanceWithoutConstructor();
+        assert($factory instanceof ObjectFactory && $factory instanceof ContainerAware);
 
-        $this->factory = new $factoryClass();
+        $this->factory = $factory;
     }
 
     /**

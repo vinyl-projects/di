@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace vinyl\di\factory;
 
+use vinyl\std\ClassObject;
+
 /**
  * Interface Compiler
  */
@@ -14,5 +16,5 @@ interface Compiler
      *
      * @throws \vinyl\di\factory\CompilerException
      */
-    public function compile(string $factoryClassName, FactoryMetadataMap $factoryMetadataMap): void;
+    public function compile(string $factoryClassName, FactoryMetadataMap $factoryMetadataMap): ClassObject;
 }

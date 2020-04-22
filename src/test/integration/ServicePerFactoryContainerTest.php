@@ -26,9 +26,9 @@ class ServicePerFactoryContainerTest extends AbstractContainerTest
         $factoryClassName = self::getNextClassName();
 
         $compiler = new FactoryPerServiceCompiler();
-        $compiler->compile($factoryClassName, $classFactoryMetadataMap);
+        $factoryClass = $compiler->compile($factoryClassName, $classFactoryMetadataMap);
 
-        return new CompiledFactory($factoryClassName);
+        return new CompiledFactory($factoryClass);
     }
 
     private static function getNextClassName(): string
