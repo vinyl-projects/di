@@ -8,7 +8,7 @@ use vinyl\di\Container;
 use vinyl\di\DefinitionMapBuilder;
 use vinyl\di\DeveloperFactory;
 use vinyl\di\factory\FactoryMetadataMap;
-use vinyl\di\LifetimeProvider;
+use vinyl\di\ModifiableLifetimeCodeMap;
 use vinyl\di\ObjectFactory;
 
 /**
@@ -33,7 +33,7 @@ class DeveloperFactoryTest extends AbstractFactoryTest
 
         $definitionMap = $definitionMapBuilder->build();
 
-        $lifetimeMap = new LifetimeProvider($definitionMap->toLifetimeArrayMap());
+        $lifetimeMap = new ModifiableLifetimeCodeMap($definitionMap->toLifetimeArrayMap());
         $factory = new DeveloperFactory($definitionMap, $lifetimeMap);
         new Container($lifetimeMap, $factory);
 

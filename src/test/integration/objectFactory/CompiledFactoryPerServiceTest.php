@@ -10,8 +10,8 @@ use vinyl\di\CompiledFactory;
 use vinyl\di\Container;
 use vinyl\di\factory\FactoryMetadataMap;
 use vinyl\di\factory\FactoryPerServiceCompiler;
-use vinyl\di\LifetimeProvider;
 use vinyl\di\ObjectFactory;
+use vinyl\di\UnmodifiableLifetimeCodeMap;
 use function md5;
 use function random_bytes;
 
@@ -30,7 +30,7 @@ class CompiledFactoryPerServiceTest extends AbstractFactoryTest
         $factoryClass = $compiler->compile($factoryClassName, $classFactoryMetadataMap);
         $factory = new CompiledFactory($factoryClass);
 
-        new Container(new LifetimeProvider($lifetimeArrayMap), $factory);
+        new Container(new UnmodifiableLifetimeCodeMap($lifetimeArrayMap), $factory);
 
         return $factory;
     }

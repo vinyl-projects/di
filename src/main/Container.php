@@ -18,7 +18,7 @@ final class Container implements ContainerInterface
     private static array $allowedLifetimeMap = [];
 
     private ObjectFactory $objectFactory;
-    private LifetimeProvider $lifetimeProvider;
+    private LifetimeCodeMap $lifetimeCodeMap;
 
     /** @var array<string, object> */
     private array $sharedInstances = [];
@@ -26,10 +26,10 @@ final class Container implements ContainerInterface
     /**
      * Container constructor.
      */
-    public function __construct(LifetimeProvider $lifetimeProvider, ObjectFactory $objectFactory)
+    public function __construct(LifetimeCodeMap $lifetimeCodeMap, ObjectFactory $objectFactory)
     {
         $this->objectFactory = $objectFactory;
-        $this->lifetimeProvider = $lifetimeProvider;
+        $this->lifetimeCodeMap = $lifetimeCodeMap;
 
         if ($this->objectFactory instanceof ContainerAware) {
             $this->objectFactory->injectContainer($this);
@@ -57,7 +57,7 @@ final class Container implements ContainerInterface
         }
 
         $object = $this->objectFactory->create($id);
-        $lifetime = $this->lifetimeProvider->get($id);
+        $lifetime = $this->lifetimeCodeMap->get($id);
 
         if (!isset(self::$allowedLifetimeMap[$lifetime])) {
             throw new ContainerException(

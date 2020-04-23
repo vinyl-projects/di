@@ -27,14 +27,14 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
     private ContainerInterface $container;
     private DefinitionTransformer $definitionTransformer;
     private FactoryMetadataMap $factoryMetadataMap;
-    private LifetimeProvider $lifetimeMap;
+    private ModifiableLifetimeCodeMap $lifetimeMap;
 
     /**
      * RuntimeFactory constructor.
      */
     public function __construct(
         DefinitionMap $metadataCollection,
-        LifetimeProvider $lifetimeMap,
+        ModifiableLifetimeCodeMap $lifetimeMap,
         ?DefinitionTransformer $definitionTransformer = null
     ) {
         $this->definitionMap = $metadataCollection;
@@ -64,7 +64,9 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
             );
 
             $this->factoryMetadataMap->add($factoryMetadataMap);
-            $this->lifetimeMap->add(new LifetimeProvider($this->definitionMap->toLifetimeArrayMap()));
+            foreach ($this->definitionMap->toLifetimeArrayMap() as $key => $value) {
+                $this->lifetimeMap->insert($key, $value);
+            }
         }
 
         $factoryMetadata = $this->factoryMetadataMap->get($definitionId);

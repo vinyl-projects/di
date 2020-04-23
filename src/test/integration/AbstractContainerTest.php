@@ -24,10 +24,10 @@ use vinyl\di\definition\valueProcessor\ValueProcessorCompositor;
 use vinyl\di\DefinitionMapBuilder;
 use vinyl\di\factory\DefinitionMapTransformer;
 use vinyl\di\factory\FactoryMetadataMap;
-use vinyl\di\LifetimeProvider;
 use vinyl\di\NotEnoughArgumentsPassedException;
 use vinyl\di\NotFoundException;
 use vinyl\di\ObjectFactory;
+use vinyl\di\UnmodifiableLifetimeCodeMap;
 use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassA;
 use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassB;
 use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassC;
@@ -1224,7 +1224,7 @@ abstract class AbstractContainerTest extends TestCase
         $metadataCollection = $metadataBuilder->transform($definitionMap);
 
         return new Container(
-            new LifetimeProvider($definitionMap->toLifetimeArrayMap()),
+            new UnmodifiableLifetimeCodeMap($definitionMap->toLifetimeArrayMap()),
             $this->createFactory($metadataCollection)
         );
     }

@@ -14,7 +14,7 @@ use vinyl\di\definition\valueProcessor\ValueProcessorCompositor;
 use vinyl\di\DefinitionMapBuilder;
 use vinyl\di\DeveloperFactory;
 use vinyl\di\factory\FactoryMetadataMap;
-use vinyl\di\LifetimeProvider;
+use vinyl\di\ModifiableLifetimeCodeMap;
 use vinyl\di\ObjectFactory;
 
 /**
@@ -43,11 +43,11 @@ class DeveloperContainerTest extends AbstractContainerTest
         $builderFunction($definitionMapBuilder);
         $definitionMap = $definitionMapBuilder->build();
 
-        $lifetimeProvider = new LifetimeProvider($definitionMap->toLifetimeArrayMap());
+        $lifetimeCodeMap = new ModifiableLifetimeCodeMap($definitionMap->toLifetimeArrayMap());
 
         return new Container(
-            $lifetimeProvider,
-            new DeveloperFactory($definitionMap, $lifetimeProvider, $typeMetadataBuilder)
+            $lifetimeCodeMap,
+            new DeveloperFactory($definitionMap, $lifetimeCodeMap, $typeMetadataBuilder)
         );
     }
 }
