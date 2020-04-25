@@ -23,9 +23,11 @@ class ServicePerFactoryContainerTest extends AbstractContainerTest
         $builderFunction($definitionMapBuilder);
         $definitionMap = $definitionMapBuilder->build();
 
+        $factoryClassName = self::getNextClassName();
+        $lifetimeMapName = "{$factoryClassName}_LifetimeMap";
         return ContainerBuilder::create($definitionMap)
             ->useEvalMaterializerStrategy()
-            ->useCompiledFactory(self::getNextClassName(), '')
+            ->useCompiledFactory($factoryClassName, $lifetimeMapName)
             ->build();
     }
 

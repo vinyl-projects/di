@@ -36,6 +36,7 @@ final class ContainerBuilder
     private ?string $factory = null;
     private bool $composerPluginRegister = false;
     private string $factoryClassName;
+    private string $lifetimeMapName;
     private bool $isUsed = false;
 
     private function __construct(DefinitionMap $definitionMap, ?LoggerInterface $logger)
@@ -94,6 +95,7 @@ final class ContainerBuilder
 
         $this->factory = self::COMPILED_FACTORY;
         $this->factoryClassName = $factoryClassName;
+        $this->lifetimeMapName = $lifetimeMapName;
 
         return $this;
     }
@@ -150,7 +152,7 @@ final class ContainerBuilder
         assert($objectFactory instanceof ObjectFactory);
 
         $lifetimeMapCompiler = new LifetimeMapCompiler($lifetimeResolver, $materializer);
-        $lifetimeMapClassObject = $lifetimeMapCompiler->compile("{$factoryClassName}LifeTimeMap", $this->definitionMap);
+        $lifetimeMapClassObject = $lifetimeMapCompiler->compile($this->lifetimeMapName, $this->definitionMap);
         $lifetimeCodeMap = $lifetimeMapClassObject->toReflectionClass()->newInstanceWithoutConstructor();
         assert($lifetimeCodeMap instanceof LifetimeCodeMap);
 
