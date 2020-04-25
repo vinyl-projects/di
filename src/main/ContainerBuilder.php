@@ -140,6 +140,7 @@ final class ContainerBuilder
             $lifetime = new ModifiableLifetimeCodeMap([]);
             $factory = new DeveloperFactory($this->definitionMap, $lifetime, $definitionTransformer, $lifetimeResolver);
             $this->definitionMap = null;
+            $this->isUsed = true;
 
             return new Container($lifetime, $factory);
         }
