@@ -149,11 +149,14 @@ final class ContainerBuilder
         $objectFactory = $factoryClass->toReflectionClass()->newInstanceWithoutConstructor();
         assert($objectFactory instanceof ObjectFactory);
 
-        $lifetime = $this->definitionMap->toLifetimeArrayMap();#todo we have to compile lifetime map as well
+        $lifetimeMapCompiler = new LifetimeMapCompiler($lifetimeResolver, $materializer);
+        $lifetimeMapClassObject = $lifetimeMapCompiler->compile("{$factoryClassName}LifeTimeMap", $this->definitionMap);
+        $lifetimeCodeMap = $lifetimeMapClassObject->toReflectionClass()->newInstanceWithoutConstructor();
+        assert($lifetimeCodeMap instanceof LifetimeCodeMap);
 
         $this->isUsed = true;
 
-        return new Container(new UnmodifiableLifetimeCodeMap($lifetime), $objectFactory);
+        return new Container($lifetimeCodeMap, $objectFactory);
     }
 
     private function resolveMaterializer(): EvalClassMaterializer
