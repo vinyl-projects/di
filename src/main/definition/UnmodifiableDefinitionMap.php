@@ -34,13 +34,6 @@ interface UnmodifiableDefinitionMap extends IteratorAggregate, Countable
     public function find(string $definitionId): ?Definition;
 
     /**
-     * Returns lifetime array map
-     *
-     * @return array<string, string> indexed by definition id
-     */
-    public function toLifetimeArrayMap(): array;
-
-    /**
      * @return \Iterator<string, \vinyl\di\Definition>
      */
     public function getIterator(): Iterator;
