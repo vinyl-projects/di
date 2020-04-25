@@ -158,6 +158,7 @@ final class ContainerBuilder
         assert($lifetimeCodeMap instanceof LifetimeCodeMap);
 
         $this->isUsed = true;
+        $this->definitionMap = null;
 
         return new Container($lifetimeCodeMap, $objectFactory);
     }
