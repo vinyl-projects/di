@@ -129,6 +129,6 @@ abstract class AbstractFactoryTest extends TestCase
 
         $definitionMap = $definitionMapBuilder->build();
 
-        return $this->createFactory($metadataBuilder->transform($definitionMap), $definitionMap->toLifetimeArrayMap());
+        return $this->createFactory($metadataBuilder->transform($definitionMap), []);
     }
 }

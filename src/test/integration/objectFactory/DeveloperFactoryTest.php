@@ -33,7 +33,7 @@ class DeveloperFactoryTest extends AbstractFactoryTest
 
         $definitionMap = $definitionMapBuilder->build();
 
-        $lifetimeMap = new ModifiableLifetimeCodeMap($definitionMap->toLifetimeArrayMap());
+        $lifetimeMap = new ModifiableLifetimeCodeMap([]);
         $factory = new DeveloperFactory($definitionMap, $lifetimeMap);
         new Container($lifetimeMap, $factory);
 

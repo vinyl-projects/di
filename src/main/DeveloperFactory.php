@@ -7,6 +7,8 @@ namespace vinyl\di;
 use Psr\Container\ContainerInterface;
 use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\DefinitionTransformer;
+use vinyl\di\definition\LifetimeResolver;
+use vinyl\di\definition\RecursionFreeLifetimeResolver;
 use vinyl\di\definition\RecursiveDefinitionTransformer;
 use vinyl\di\factory\argument\ArrayValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
@@ -28,6 +30,7 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
     private DefinitionTransformer $definitionTransformer;
     private FactoryMetadataMap $factoryMetadataMap;
     private ModifiableLifetimeCodeMap $lifetimeMap;
+    private LifetimeResolver $lifetimeResolver;
 
     /**
      * RuntimeFactory constructor.
@@ -35,12 +38,14 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
     public function __construct(
         DefinitionMap $metadataCollection,
         ModifiableLifetimeCodeMap $lifetimeMap,
-        ?DefinitionTransformer $definitionTransformer = null
+        ?DefinitionTransformer $definitionTransformer = null,
+        ?LifetimeResolver $lifetimeResolver = null
     ) {
         $this->definitionMap = $metadataCollection;
         $this->definitionTransformer = $definitionTransformer ?? new RecursiveDefinitionTransformer();
         $this->factoryMetadataMap = new FactoryMetadataMap();
         $this->lifetimeMap = $lifetimeMap;
+        $this->lifetimeResolver = $lifetimeResolver ?? new RecursionFreeLifetimeResolver();
     }
 
     /**
@@ -64,8 +69,9 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
             );
 
             $this->factoryMetadataMap->add($factoryMetadataMap);
-            foreach ($this->definitionMap->toLifetimeArrayMap() as $key => $value) {
-                $this->lifetimeMap->insert($key, $value);
+            foreach ($this->definitionMap as $definition) {
+                $lifetime = $this->lifetimeResolver->resolve($definition, $this->definitionMap);
+                $this->lifetimeMap->insert($definition->id(), $lifetime->code());
             }
         }
 

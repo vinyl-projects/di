@@ -76,22 +76,6 @@ final class DefinitionMap implements UnmodifiableDefinitionMap
     /**
      * {@inheritDoc}
      */
-    public function toLifetimeArrayMap(): array
-    {
-        $lifetimeMap = [];
-        /** @var Definition $definition */
-        foreach ($this->map as $definitionId => $definition) {
-            $lifetimeMap[$definitionId] = $definition->lifetime() !== null
-                ? $definition->lifetime()->code()
-                : SingletonLifetime::get()->code();
-        }
-
-        return $lifetimeMap;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function count(): int
     {
         return count($this->map);

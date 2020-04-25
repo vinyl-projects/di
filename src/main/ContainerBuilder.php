@@ -136,7 +136,7 @@ final class ContainerBuilder
 
         if ($this->factory === self::DEVELOPER_FACTORY) {
             $lifetime = new ModifiableLifetimeCodeMap([]);
-            $factory = new DeveloperFactory($this->definitionMap, $lifetime, $definitionTransformer);
+            $factory = new DeveloperFactory($this->definitionMap, $lifetime, $definitionTransformer, $lifetimeResolver);
             $this->definitionMap = null;
 
             return new Container($lifetime, $factory);
