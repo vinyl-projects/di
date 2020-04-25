@@ -14,7 +14,7 @@ use function implode;
 /**
  * Class LifetimeMapCompiler
  */
-class LifetimeMapCompiler
+final class LifetimeMapCompiler
 {
     private ClassMaterializer $classMaterializer;
     private LifetimeResolver $lifetimeResolver;
