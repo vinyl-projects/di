@@ -9,25 +9,14 @@ namespace vinyl\diTest\integration;
 use PHPUnit\Framework\TestCase;
 use ProxyManager\Proxy\VirtualProxyInterface;
 use stdClass;
-use vinyl\di\Container;
 use vinyl\di\definition\ClassCircularReferenceFoundException;
 use vinyl\di\definition\DefinitionTransformerException;
 use vinyl\di\definition\FunctionInstantiator;
 use vinyl\di\definition\PrototypeLifetime;
-use vinyl\di\definition\ProxyValue;
-use vinyl\di\definition\RecursionFreeClassResolver;
-use vinyl\di\definition\RecursionFreeLifetimeResolver;
-use vinyl\di\definition\RecursiveDefinitionTransformer;
 use vinyl\di\definition\StaticMethodInstantiator;
-use vinyl\di\definition\valueProcessor\ProxyValueProcessor;
-use vinyl\di\definition\valueProcessor\ValueProcessorCompositor;
 use vinyl\di\DefinitionMapBuilder;
-use vinyl\di\factory\DefinitionMapTransformer;
-use vinyl\di\factory\FactoryMetadataMap;
 use vinyl\di\NotEnoughArgumentsPassedException;
 use vinyl\di\NotFoundException;
-use vinyl\di\ObjectFactory;
-use vinyl\di\UnmodifiableLifetimeCodeMap;
 use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassA;
 use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassB;
 use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassC;
@@ -1191,8 +1180,6 @@ abstract class AbstractContainerTest extends TestCase
         self::assertInstanceOf(testAsset\aliasInheritInstantiator\ClassA::class, $di->get('test.2'));
     }
 
-    abstract protected function createFactory(FactoryMetadataMap $classFactoryMetadataMap): ObjectFactory;
-
     /**
      * Returns di container
      *
@@ -1202,30 +1189,5 @@ abstract class AbstractContainerTest extends TestCase
      * @throws \vinyl\di\definition\ClassCircularReferenceFoundException
      * @throws \vinyl\di\definition\DefinitionTransformerException
      */
-    protected function createContainer(callable $builderFunction): Container
-    {
-        $classResolver = new RecursionFreeClassResolver();
-        $lifetimeResolver = new RecursionFreeLifetimeResolver();
-        $valueProcessorComposite = new ValueProcessorCompositor([
-                ProxyValue::class => new ProxyValueProcessor($lifetimeResolver),
-            ],
-            $classResolver
-        );
-        $typeMetadataBuilder = new RecursiveDefinitionTransformer(
-            $valueProcessorComposite,
-            $classResolver,
-            $lifetimeResolver
-        );
-        $metadataBuilder = new DefinitionMapTransformer($typeMetadataBuilder);
-        $definitionMapBuilder = new DefinitionMapBuilder();
-        $builderFunction($definitionMapBuilder);
-        $definitionMap = $definitionMapBuilder->build();
-
-        $metadataCollection = $metadataBuilder->transform($definitionMap);
-
-        return new Container(
-            new UnmodifiableLifetimeCodeMap($definitionMap->toLifetimeArrayMap()),
-            $this->createFactory($metadataCollection)
-        );
-    }
+    abstract protected function createContainer(callable $builderFunction): \Psr\Container\ContainerInterface;
 }

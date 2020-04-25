@@ -6,10 +6,9 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\integration;
 
-use vinyl\di\CompiledFactory;
-use vinyl\di\factory\FactoryMetadataMap;
-use vinyl\di\factory\FactoryPerServiceCompiler;
-use vinyl\di\ObjectFactory;
+use Psr\Container\ContainerInterface;
+use vinyl\di\ContainerBuilder;
+use vinyl\di\DefinitionMapBuilder;
 use function md5;
 use function random_bytes;
 
@@ -18,17 +17,16 @@ use function random_bytes;
  */
 class ServicePerFactoryContainerTest extends AbstractContainerTest
 {
-    /**
-     * {@inheritDoc}
-     */
-    protected function createFactory(FactoryMetadataMap $classFactoryMetadataMap): ObjectFactory
+    protected function createContainer(callable $builderFunction): ContainerInterface
     {
-        $factoryClassName = self::getNextClassName();
+        $definitionMapBuilder = new DefinitionMapBuilder();
+        $builderFunction($definitionMapBuilder);
+        $definitionMap = $definitionMapBuilder->build();
 
-        $compiler = new FactoryPerServiceCompiler();
-        $factoryClass = $compiler->compile($factoryClassName, $classFactoryMetadataMap);
-
-        return new CompiledFactory($factoryClass);
+        return ContainerBuilder::create($definitionMap)
+            ->useEvalMaterializerStrategy()
+            ->useCompiledFactory(self::getNextClassName(), '')
+            ->build();
     }
 
     private static function getNextClassName(): string
