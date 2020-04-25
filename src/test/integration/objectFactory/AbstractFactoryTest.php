@@ -10,8 +10,6 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use vinyl\di\definition\PrototypeLifetime;
 use vinyl\di\DefinitionMapBuilder;
-use vinyl\di\factory\DefinitionMapTransformer;
-use vinyl\di\factory\FactoryMetadataMap;
 use vinyl\di\NotFoundException;
 use vinyl\di\ObjectFactory;
 use vinyl\diTest\integration\objectFactory\testAsset\instantiateObjectWithNullableArgument\ClassA;
@@ -22,19 +20,11 @@ use vinyl\diTest\integration\objectFactory\testAsset\instantiateObjectWithNullab
 abstract class AbstractFactoryTest extends TestCase
 {
     /**
-     * @param array<string|int, int> $lifetimeArrayMap
-     */
-    abstract public function createFactory(
-        FactoryMetadataMap $classFactoryMetadataMap,
-        array $lifetimeArrayMap
-    ): ObjectFactory;
-
-    /**
      * @test
      */
     public function instantiateAlwaysNewObjectWithoutArguments(): void
     {
-        $factory = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $factory = $this->createFactory(static function (DefinitionMapBuilder $containerBuilder): void {
             // @formatter:off
             $containerBuilder
                 ->classDefinition(stdClass::class)->end()
@@ -53,7 +43,7 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function instantiateObjectWithProvidedArguments(): void
     {
-        $factory = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $factory = $this->createFactory(static function (DefinitionMapBuilder $containerBuilder): void {
             // @formatter:off
             $containerBuilder
                 ->classDefinition(testAsset\instantiateObjectWithProvidedArguments\ClassA::class)
@@ -93,7 +83,7 @@ abstract class AbstractFactoryTest extends TestCase
     public function requiredDefinitionNotRegisteredInDi(): void
     {
         $this->expectException(NotFoundException::class);
-        $factory = $this->createContainer();
+        $factory = $this->createFactory();
         $factory->create(stdClass::class);
     }
 
@@ -102,7 +92,7 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function instantiateObjectWithNullableArgument(): void
     {
-        $factory = $this->createContainer(static function (DefinitionMapBuilder $definitionMapBuilder): void {
+        $factory = $this->createFactory(static function (DefinitionMapBuilder $definitionMapBuilder): void {
             $definitionMapBuilder
                 ->classDefinition(ClassA::class)
                     ->lifetime(PrototypeLifetime::get())
@@ -114,21 +104,10 @@ abstract class AbstractFactoryTest extends TestCase
     }
 
     /**
-     * Returns di container
+     * Returns di factory
      *
      * @param callable $builderFunction (containerBuilder)
      * @throws \vinyl\di\definition\DefinitionTransformerException
      */
-    protected function createContainer(?callable $builderFunction = null): ObjectFactory
-    {
-        $metadataBuilder = new DefinitionMapTransformer();
-        $definitionMapBuilder = new DefinitionMapBuilder();
-        if ($builderFunction !== null) {
-            $builderFunction($definitionMapBuilder);
-        }
-
-        $definitionMap = $definitionMapBuilder->build();
-
-        return $this->createFactory($metadataBuilder->transform($definitionMap), []);
-    }
+    abstract protected function createFactory(?callable $builderFunction = null): ObjectFactory;
 }

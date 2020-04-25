@@ -7,7 +7,6 @@ namespace vinyl\diTest\integration\objectFactory;
 use vinyl\di\Container;
 use vinyl\di\DefinitionMapBuilder;
 use vinyl\di\DeveloperFactory;
-use vinyl\di\factory\FactoryMetadataMap;
 use vinyl\di\ModifiableLifetimeCodeMap;
 use vinyl\di\ObjectFactory;
 
@@ -19,12 +18,7 @@ class DeveloperFactoryTest extends AbstractFactoryTest
     /**
      * {@inheritDoc}
      */
-    public function createFactory(FactoryMetadataMap $classFactoryMetadataMap, array $lifetimeArrayMap): ObjectFactory
-    {
-        throw new \RuntimeException('Not implemented.');
-    }
-
-    protected function createContainer(?callable $builderFunction = null): ObjectFactory
+    protected function createFactory(?callable $builderFunction = null): ObjectFactory
     {
         $definitionMapBuilder = new DefinitionMapBuilder();
         if ($builderFunction !== null) {
