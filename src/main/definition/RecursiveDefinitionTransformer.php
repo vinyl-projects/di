@@ -89,7 +89,8 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
 
         $visitedClasses[$className] = $id;
         $objectInstantiator = $this->instantiatorResolver->resolve($definition, $definitionMap);
-        $factoryMetadata = new FactoryMetadata($id, $className, $objectInstantiator->value());
+        $lifetime = $this->lifetimeResolver->resolve($definition, $definitionMap);
+        $factoryMetadata = new FactoryMetadata($id, $className, $objectInstantiator->value(), $lifetime->code());
         $factoryMetadataMap->put($factoryMetadata);
 
         try {
@@ -144,7 +145,6 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
                     $classes = [];
                 }
 
-                $definitionMap->insert($newDefinition);
                 try {
                     $this->internalTransform($newDefinition, $definitionMap, $factoryMetadataMap, $classes);
                 } catch (DefinitionTransformerException $e) {
@@ -157,7 +157,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         $factoryMetadata->isComplete = $isComplete;
 
         #todo call definition post processor here ???
-        $lifetime = $this->lifetimeResolver->resolve($definition, $definitionMap);
+
         if (!$isComplete && $lifetime === SingletonLifetime::get()) {
             throw DefinitionTransformerException::createIncompleteException($factoryMetadata);
         }

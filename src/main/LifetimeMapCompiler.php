@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace vinyl\di;
 
 use LogicException;
-use vinyl\di\definition\DefinitionMap;
-use vinyl\di\definition\LifetimeResolver;
+use vinyl\di\factory\FactoryMetadataMap;
 use vinyl\std\ClassObject;
 use function class_exists;
 use function implode;
@@ -17,31 +16,28 @@ use function implode;
 final class LifetimeMapCompiler
 {
     private ClassMaterializer $classMaterializer;
-    private LifetimeResolver $lifetimeResolver;
 
     /**
      * LifetimeMapCompiler constructor.
      */
-    public function __construct(LifetimeResolver $lifetimeResolver, ClassMaterializer $classMaterializer)
+    public function __construct(ClassMaterializer $classMaterializer)
     {
         $this->classMaterializer = $classMaterializer;
-        $this->lifetimeResolver = $lifetimeResolver;
     }
 
     /**
      * Compiles implementation of {@see \vinyl\di\LifetimeCodeMap}
      */
-    public function compile(string $className, DefinitionMap $definitionMap): ClassObject
+    public function compile(string $className, FactoryMetadataMap $factoryMetadataMap): ClassObject
     {
         if (class_exists($className)) {
             throw new LogicException("Class {$className} already exists.");
         }
 
         $map = [];
-        /** @var \vinyl\di\Definition $definition */
-        foreach ($definitionMap as $definition) {
-            $lifetime = $this->lifetimeResolver->resolve($definition, $definitionMap);
-            $map[] = "'{$definition->id()}' => '{$lifetime->code()}'";
+        /** @var \vinyl\di\factory\FactoryMetadata $factoryMetadata */
+        foreach ($factoryMetadataMap as $factoryMetadata) {
+            $map[] = "'{$factoryMetadata->id}' => '{$factoryMetadata->lifetimeCode}'";
         }
 
         $template = self::generateMapTemplate($className, implode(',', $map));

@@ -24,13 +24,17 @@ final class FactoryMetadata
     /** This value will be <code>False</code> in case this factory contain {@see FactoryValue} that are missed */
     public bool $isComplete = true;
 
+    /** @var string lifetime code associated with this definition factory */
+    public string $lifetimeCode;
+
     /**
      * FactoryMetadata constructor.
      */
-    public function __construct(string $id, string $class, ?string $constructor)
+    public function __construct(string $id, string $class, ?string $constructor, string $lifetimeCode)
     {
         $this->id = $id;
         $this->class = $class;
         $this->constructor = $constructor;
+        $this->lifetimeCode = $lifetimeCode;
     }
 }

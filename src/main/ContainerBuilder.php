@@ -138,7 +138,7 @@ final class ContainerBuilder
 
         if ($this->factory === self::DEVELOPER_FACTORY) {
             $lifetime = new ModifiableLifetimeCodeMap([]);
-            $factory = new DeveloperFactory($this->definitionMap, $lifetime, $definitionTransformer, $lifetimeResolver);
+            $factory = new DeveloperFactory($this->definitionMap, $lifetime, $definitionTransformer);
             $this->definitionMap = null;
             $this->isUsed = true;
 
@@ -152,8 +152,8 @@ final class ContainerBuilder
         $objectFactory = $factoryClass->toReflectionClass()->newInstanceWithoutConstructor();
         assert($objectFactory instanceof ObjectFactory);
 
-        $lifetimeMapCompiler = new LifetimeMapCompiler($lifetimeResolver, $materializer);
-        $lifetimeMapClassObject = $lifetimeMapCompiler->compile($this->lifetimeMapName, $this->definitionMap);
+        $lifetimeMapCompiler = new LifetimeMapCompiler($materializer);
+        $lifetimeMapClassObject = $lifetimeMapCompiler->compile($this->lifetimeMapName, $factoryMetadataMap);
         $lifetimeCodeMap = $lifetimeMapClassObject->toReflectionClass()->newInstanceWithoutConstructor();
         assert($lifetimeCodeMap instanceof LifetimeCodeMap);
 
