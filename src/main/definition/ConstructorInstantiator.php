@@ -7,7 +7,7 @@ namespace vinyl\di\definition;
 use Error;
 use InvalidArgumentException;
 use ReflectionException;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 
 /**
  * Class ConstructorInstantiator

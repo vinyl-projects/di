@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace vinyl\di\definition;
 
 use vinyl\di\Definition;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 use function spl_object_id;
 
 /**

@@ -8,7 +8,7 @@ use LogicException;
 use OutOfBoundsException;
 use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definitionMapBuilder\DefinitionBuilder;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 
 /**
  * Class DefinitionMapBuilder

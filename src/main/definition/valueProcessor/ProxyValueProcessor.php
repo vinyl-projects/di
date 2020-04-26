@@ -29,7 +29,7 @@ use vinyl\di\proxy\LazyLoadingValueHolderProxyGenerator;
 use vinyl\di\proxy\ProxyGenerator;
 use vinyl\di\proxy\ProxyGeneratorException;
 use vinyl\di\ShadowClassDefinition;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 use function assert;
 use function class_exists;
 use function crc32;

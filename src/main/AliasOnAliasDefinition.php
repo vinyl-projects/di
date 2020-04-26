@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace vinyl\di;
 
 use RuntimeException;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 
 /**
  * Class AliasOnAliasDefinition

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace vinyl\di;
 
 use Psr\Container\ContainerInterface;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 use function assert;
 
 /**

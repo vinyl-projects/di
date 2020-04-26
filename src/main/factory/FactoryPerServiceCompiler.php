@@ -9,7 +9,7 @@ use vinyl\di\ClassMaterializer;
 use vinyl\di\EvalClassMaterializer;
 use vinyl\di\factory\compiler\ValueRenderer;
 use vinyl\di\factory\compiler\ValueRendererCompositor;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 use function class_exists;
 use function count;
 use function implode;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\di\factory;
 
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 
 /**
  * Interface Compiler

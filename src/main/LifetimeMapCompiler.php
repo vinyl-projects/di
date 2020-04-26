@@ -6,7 +6,7 @@ namespace vinyl\di;
 
 use LogicException;
 use vinyl\di\factory\FactoryMetadataMap;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 use function class_exists;
 use function implode;
 

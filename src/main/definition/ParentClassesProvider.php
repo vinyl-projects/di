@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\di\definition;
 
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 
 /**
  * Class ParentClassesProvider

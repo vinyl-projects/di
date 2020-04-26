@@ -8,7 +8,7 @@ use LogicException;
 use SplStack;
 use vinyl\di\AliasOnAliasDefinition;
 use vinyl\di\Definition;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 use function array_key_exists;
 use function assert;
 

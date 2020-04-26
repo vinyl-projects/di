@@ -15,7 +15,7 @@ use vinyl\di\definition\ClassResolver;
 use vinyl\di\definition\DefinitionCircularReferenceFoundException;
 use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\RecursionFreeClassResolver;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 use function get_class;
 
 /**

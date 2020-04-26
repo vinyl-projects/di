@@ -6,7 +6,7 @@ namespace vinyl\di;
 
 use InvalidArgumentException;
 use RuntimeException;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 use function array_filter;
 use function array_flip;
 use function get_defined_constants;

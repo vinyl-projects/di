@@ -20,7 +20,7 @@ use vinyl\di\definition\value\StringValue;
 use vinyl\di\definitionMapBuilder\DefinitionBuilder;
 use vinyl\di\definitionMapBuilder\definitionBuilder\arguments\ListConfigurator;
 use vinyl\di\definitionMapBuilder\definitionBuilder\arguments\MapConfigurator;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 
 /**
  * Class Arguments

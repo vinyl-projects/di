@@ -14,7 +14,7 @@ use vinyl\di\definition\arrayValue\OrderableStringValue;
 use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\value\ArrayListValue;
 use vinyl\di\definitionMapBuilder\definitionBuilder\Arguments;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 
 /**
  * Class ListConfigurator

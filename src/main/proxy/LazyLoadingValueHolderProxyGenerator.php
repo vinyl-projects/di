@@ -8,7 +8,7 @@ use Laminas\Code\Generator\AbstractMemberGenerator;
 use ProxyManager\Generator\ClassGenerator;
 use ProxyManager\ProxyGenerator\LazyLoadingValueHolderGenerator;
 use Psr\Container\ContainerInterface;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 
 /**
  * Class LazyLoadingValueHolderProxyGenerator

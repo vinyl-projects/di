@@ -6,7 +6,7 @@ namespace vinyl\di;
 
 use InvalidArgumentException;
 use RuntimeException;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 use function interface_exists;
 use function is_a;
 

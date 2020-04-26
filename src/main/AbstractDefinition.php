@@ -8,7 +8,7 @@ use LogicException;
 use vinyl\di\definition\Instantiator;
 use vinyl\di\definition\Lifetime;
 use vinyl\di\definition\ValueMap;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 
 /**
  * Class AbstractDefinition

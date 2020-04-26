@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionParameter;
 use vinyl\di\definition\ConstructorInstantiator;
 use vinyl\diTest\unit\definition\constructorInstantiatorTestAsset\ClassWithPrivateConstructor;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 use function array_walk;
 use function get_class;
 

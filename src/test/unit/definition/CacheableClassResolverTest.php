@@ -9,7 +9,7 @@ use vinyl\di\Definition;
 use vinyl\di\definition\CacheableClassResolver;
 use vinyl\di\definition\ClassResolver;
 use vinyl\di\definition\DefinitionMap;
-use vinyl\std\ClassObject;
+use vinyl\std\lang\ClassObject;
 use function get_class;
 
 /**
