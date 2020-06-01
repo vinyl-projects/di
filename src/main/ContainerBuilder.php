@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace vinyl\di;
 
 use LogicException;
-use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use vinyl\di\definition\CacheableClassResolver;
@@ -113,7 +112,7 @@ final class ContainerBuilder
      * @throws \vinyl\di\definition\DefinitionTransformerException
      * @throws \vinyl\di\factory\CompilerException
      */
-    public function build(): ContainerInterface
+    public function build(): Container
     {
         $this->throwIfBuilderAlreadyUsed();
         assert($this->definitionMap !== null);
