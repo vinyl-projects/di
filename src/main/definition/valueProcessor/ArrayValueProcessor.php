@@ -36,7 +36,6 @@ final class ArrayValueProcessor implements ValueProcessor
 
     /**
      * {@inheritDoc}
-     * @param MapValue $value
      */
     public function process(
         DefinitionValue $value,
