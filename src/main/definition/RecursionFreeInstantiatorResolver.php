@@ -60,11 +60,11 @@ final class RecursionFreeInstantiatorResolver implements InstantiatorResolver
                 continue;
             }
 
-            if (!$definitionMap->contains($currentDefinition->classObject()->className())) {
+            if (!$definitionMap->contains($currentDefinition->classObject()->name())) {
                 return new ConstructorInstantiator($class);
             }
 
-            $parentDefinition = $definitionMap->get($currentDefinition->classObject()->className());
+            $parentDefinition = $definitionMap->get($currentDefinition->classObject()->name());
 
             if ($currentDefinition === $parentDefinition) {
                 return new ConstructorInstantiator($class);

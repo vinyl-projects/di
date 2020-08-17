@@ -15,7 +15,7 @@ final class ShadowClassDefinition extends AbstractDefinition
 {
     public function __construct(ClassObject $class)
     {
-        parent::__construct(self::makeShadowId($class->className()), $class);
+        parent::__construct(self::makeShadowId($class->name()), $class);
     }
 
     public static function resolveShadowDefinition(string $className, UnmodifiableDefinitionMap $definitionMap): self

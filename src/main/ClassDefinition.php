@@ -16,6 +16,6 @@ final class ClassDefinition extends AbstractDefinition
      */
     public function __construct(ClassObject $class)
     {
-        parent::__construct($class->className(), $class);
+        parent::__construct($class->name(), $class);
     }
 }

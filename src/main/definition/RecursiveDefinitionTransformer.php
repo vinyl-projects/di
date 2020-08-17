@@ -78,7 +78,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
             );
         }
 
-        $className = $class->className();
+        $className = $class->name();
         if (array_key_exists($className, $visitedClasses)) {
             throw ClassCircularReferenceFoundException::create($className, $visitedClasses);
         }

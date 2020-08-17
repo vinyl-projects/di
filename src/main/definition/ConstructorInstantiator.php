@@ -41,7 +41,7 @@ final class ConstructorInstantiator implements Instantiator
         }
 
         if (!$constructor->isPublic()) {
-            throw new InvalidArgumentException("Constructor method [{$class->className()}::__construct] must not be private or protected.");
+            throw new InvalidArgumentException("Constructor method [{$class->name()}::__construct] must not be private or protected.");
         }
 
         $this->parameterList = $constructor->getParameters();

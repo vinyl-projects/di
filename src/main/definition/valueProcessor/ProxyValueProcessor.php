@@ -88,7 +88,7 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         }
 
         $type = $constructorValue->type();
-        $className = $classObject->className();
+        $className = $classObject->name();
         if (!is_a($className, $type, true) && $type !== 'object' && $type !== 'mixed') {
             throw IncompatibleTypeException::create($type, "{$className} -> {$definitionId}");
         }

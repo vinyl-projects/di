@@ -46,7 +46,7 @@ class ClassResolverTest extends TestCase
 
         $resolve = $this->classResolver->resolve($definition, $config);
 
-        self::assertEquals(get_class($testClass), $resolve->className());
+        self::assertEquals(get_class($testClass), $resolve->name());
     }
 
     /**
@@ -61,7 +61,7 @@ class ClassResolverTest extends TestCase
         $config = new DefinitionMap([]);
         $resolve = $this->classResolver->resolve($definition, $config);
 
-        self::assertEquals(get_class($testClass), $resolve->className());
+        self::assertEquals(get_class($testClass), $resolve->name());
     }
 
     /**
@@ -82,7 +82,7 @@ class ClassResolverTest extends TestCase
 
         $resolvedClass = $this->classResolver->resolve($type, $config);
 
-        self::assertEquals(get_class($testClass), $resolvedClass->className());
+        self::assertEquals(get_class($testClass), $resolvedClass->name());
     }
 
     /**

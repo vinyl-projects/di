@@ -25,8 +25,8 @@ final class InterfaceImplementationDefinition extends AbstractDefinition
 
         parent::__construct($interface, $class);
 
-        if (!is_a($class->className(), $interface, true)) {
-            throw new InvalidArgumentException("Class [{$class->className()}] must be an instance of [{$interface}].");
+        if (!is_a($class->name(), $interface, true)) {
+            throw new InvalidArgumentException("Class [{$class->name()}] must be an instance of [{$interface}].");
         }
     }
 
