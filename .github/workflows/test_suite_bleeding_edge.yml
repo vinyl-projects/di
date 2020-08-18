@@ -17,13 +17,14 @@ jobs:
       uses: actions/checkout@v1
       
     - name: Setup PHP
-      uses: shivammathur/setup-php@v1
+      uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
         ini-values: zend.assertions=1, assert.exception=1
+        tools: composer:v2
     
     - name: Install Dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest --ignore-platform-reqs
+      run: composer install --prefer-dist --no-progress --no-suggest
 
     - name: Setup Problem Matchers for PHPUnit
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
