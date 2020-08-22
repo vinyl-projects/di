@@ -31,8 +31,6 @@ final class ObjectValueProcessor implements ValueProcessor, ClassResolverAware
 
     /**
      * {@inheritDoc}
-     *
-     * @param ObjectValue $value
      */
     public function process(
         DefinitionValue $value,
@@ -69,13 +67,14 @@ final class ObjectValueProcessor implements ValueProcessor, ClassResolverAware
 
     private static function resolveDefinition(UnmodifiableDefinitionMap $definitionMap, ObjectValue $typeValue): Definition
     {
-        assert(is_string($typeValue->value()));
+        $value = $typeValue->value();
+        assert(is_string($value));
 
-        if ($definitionMap->contains($typeValue->value())) {
-            return $definitionMap->get($typeValue->value());
+        if ($definitionMap->contains($value)) {
+            return $definitionMap->get($value);
         }
 
-        return ShadowClassDefinition::resolveShadowDefinition($typeValue->value(), $definitionMap);
+        return ShadowClassDefinition::resolveShadowDefinition($value, $definitionMap);
     }
 
     /**

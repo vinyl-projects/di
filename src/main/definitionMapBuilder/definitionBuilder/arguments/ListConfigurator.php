@@ -22,7 +22,7 @@ use vinyl\std\lang\ClassObject;
 final class ListConfigurator
 {
     private Arguments $parent;
-    private ArrayListValue $value;
+    private ?ArrayListValue $value = null;
     private DefinitionMap $definitionMap;
 
     public function __construct(Arguments $parent, DefinitionMap $definitionMap)
@@ -33,6 +33,7 @@ final class ListConfigurator
 
     public function intItem(?int $value, ?int $sortOrder = null): self
     {
+        assert($this->value !== null);
         $this->value->add(new OrderableIntValue($value, $sortOrder));
 
         return $this;
@@ -40,6 +41,7 @@ final class ListConfigurator
 
     public function stringItem(?string $value, ?int $sortOrder = null): self
     {
+        assert($this->value !== null);
         $this->value->add(new OrderableStringValue($value, $sortOrder));
 
         return $this;
@@ -47,6 +49,7 @@ final class ListConfigurator
 
     public function boolItem(?bool $value, ?int $sortOrder = null): self
     {
+        assert($this->value !== null);
         $this->value->add(new OrderableBoolValue($value, $sortOrder));
 
         return $this;
@@ -54,6 +57,7 @@ final class ListConfigurator
 
     public function floatItem(?float $value, ?int $sortOrder = null): self
     {
+        assert($this->value !== null);
         $this->value->add(new OrderableFloatValue($value, $sortOrder));
 
         return $this;
@@ -61,6 +65,7 @@ final class ListConfigurator
 
     public function classItem(string $className, ?int $sortOrder = null): self
     {
+        assert($this->value !== null);
         if (!$this->definitionMap->contains($className)) {
             $this->definitionMap->insert(new ClassDefinition(ClassObject::create($className)));
         }
@@ -71,6 +76,7 @@ final class ListConfigurator
 
     public function objectItem(string $definitionId, ?int $sortOrder = null): self
     {
+        assert($this->value !== null);
         $this->value->add(new OrderableObjectValue($definitionId, $sortOrder));
 
         return $this;
@@ -78,6 +84,7 @@ final class ListConfigurator
 
     public function proxyItem(string $definitionId, ?int $sortOrder = null): self
     {
+        assert($this->value !== null);
         $this->value->add(new OrderableProxyValue($definitionId, $sortOrder));
 
         return $this;

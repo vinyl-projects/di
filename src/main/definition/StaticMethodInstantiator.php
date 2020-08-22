@@ -20,6 +20,8 @@ final class StaticMethodInstantiator implements Instantiator
 
     /**
      * StaticMethodObjectInstantiator constructor.
+     *
+     * @psalm-param class-string $class
      */
     public function __construct(string $class, string $staticMethod)
     {
@@ -49,6 +51,8 @@ final class StaticMethodInstantiator implements Instantiator
 
     /**
      * Static constructor of {@see StaticMethodInstantiator}
+     *
+     * @psalm-param class-string $class
      */
     public static function create(string $class, string $staticMethod): self
     {

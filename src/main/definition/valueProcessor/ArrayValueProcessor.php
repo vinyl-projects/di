@@ -71,7 +71,7 @@ final class ArrayValueProcessor implements ValueProcessor
             } catch (ValueProcessorException $e) {
                 throw new ValueProcessorException(
                     "An error occurred during processing an array item with key [{$key}]. Details: {$e->getMessage()}",
-                    $e->getCode(),
+                    0,
                     $e
                 );
             }

@@ -23,7 +23,7 @@ class DefinitionTransformerException extends Exception
      */
     public static function createFromException(string $message, Throwable $previousException): self
     {
-        return new self($message, $previousException->getCode(), $previousException);
+        return new self($message, 0, $previousException);
     }
 
     public static function createIncompleteException(FactoryMetadata $factoryMetadata): self

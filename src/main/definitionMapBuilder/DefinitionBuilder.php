@@ -18,7 +18,7 @@ use vinyl\std\lang\ClassObject;
 class DefinitionBuilder
 {
     private DefinitionMapBuilder $definitionMapBuilder;
-    private Definition $definition;
+    private ?Definition $definition = null;
     private DefinitionMap $definitionMap;
 
     /**
@@ -35,6 +35,7 @@ class DefinitionBuilder
      */
     public function arguments(): Arguments
     {
+        assert($this->definition !== null);
         #todo make arguments reusable
         return new Arguments($this, $this->definition, $this->definitionMap);
     }
@@ -52,6 +53,7 @@ class DefinitionBuilder
      */
     public function lifetime(Lifetime $lifetime): self
     {
+        assert($this->definition !== null);
         $this->definition->changeLifetime($lifetime);
 
         return $this;
@@ -59,6 +61,7 @@ class DefinitionBuilder
 
     public function changeInstantiator(Instantiator $instantiator): self
     {
+        assert($this->definition !== null);
         $this->definition->changeInstantiator($instantiator);
 
         return $this;
@@ -66,6 +69,7 @@ class DefinitionBuilder
 
     public function replaceClass(string $newClass): self
     {
+        assert($this->definition !== null);
         $this->definition->replaceClass(ClassObject::create($newClass));
 
         return $this;
@@ -73,6 +77,7 @@ class DefinitionBuilder
 
     public function inheritArguments(bool $status): self
     {
+        assert($this->definition !== null);
         $this->definition->toggleArgumentInheritance($status);
 
         return $this;

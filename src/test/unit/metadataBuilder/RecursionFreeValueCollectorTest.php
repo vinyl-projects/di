@@ -17,6 +17,7 @@ use vinyl\di\definition\value\StringValue;
 use vinyl\di\definition\ParentClassesProvider;
 use vinyl\std\lang\ClassObject;
 use function get_class;
+use function vinyl\std\lang\collections\vectorOf;
 
 /**
  * Class RecursionFreeValueCollectorTest
@@ -69,7 +70,7 @@ class RecursionFreeValueCollectorTest extends TestCase
         $secondClassObject = ClassObject::create(get_class($second));
         $firstClassObject = ClassObject::create(get_class($first));
         $classesProviderMock = $this->createParentClassesProviderMock([
-            [$firstClassObject, [$secondClassObject]],
+            [$firstClassObject, vectorOf($secondClassObject)],
         ]);
 
         $mainDefinition = new ClassDefinition($firstClassObject);

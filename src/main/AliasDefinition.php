@@ -41,8 +41,10 @@ final class AliasDefinition extends AbstractDefinition
             throw new InvalidArgumentException("Invalid alias id provided [{$id}].");
         }
 
+        $input = get_defined_constants(true)['pcre'];
+        assert(is_array($input));
         $definedErrorConstants = array_filter(
-            get_defined_constants(true)['pcre'],
+            $input,
             static fn(string $constName): bool => strrpos($constName, '_ERROR', -1) !== false,
             ARRAY_FILTER_USE_KEY
         );

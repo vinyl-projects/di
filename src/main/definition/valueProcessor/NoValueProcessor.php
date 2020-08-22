@@ -16,7 +16,9 @@ use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\BuiltinFactoryValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
 use vinyl\di\ShadowClassDefinition;
+use vinyl\std\lang\collections\MutableHashMap;
 use function assert;
+use function vinyl\std\lang\collections\mutableMapOf;
 
 /**
  * Class NoValueProcessor

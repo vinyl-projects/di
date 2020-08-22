@@ -10,7 +10,6 @@ use vinyl\di\factory\argument\DefinitionFactoryValue;
 use vinyl\di\factory\FactoryValue;
 use function array_key_exists;
 use function array_replace;
-use function assert;
 use function get_class;
 
 /**
@@ -37,8 +36,6 @@ final class ValueRendererCompositor implements ValueRenderer
         if ($valueRendererMap !== null) {
             $defaultValueRendererMap = array_replace($defaultValueRendererMap, $valueRendererMap);
         }
-
-        assert($defaultValueRendererMap !== null);
 
         $this->valueRendererMap = $defaultValueRendererMap;
     }

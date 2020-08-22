@@ -52,6 +52,9 @@ final class LazyLoadingValueHolderProxyGenerator implements ProxyGenerator
             });"
         );
 
-        return new ProxyGeneratorResult($proxyName, $classGenerator->generate());
+        $classContent = $classGenerator->generate();
+        assert(is_string($classContent));
+
+        return new ProxyGeneratorResult($proxyName, $classContent);
     }
 }

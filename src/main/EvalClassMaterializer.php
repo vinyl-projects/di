@@ -48,7 +48,7 @@ final class EvalClassMaterializer implements ClassMaterializer
         } catch (ParseError $e) {
             throw new ClassMaterializerException(
                 "Could not materialize class [{$className}]. {$e->getMessage()}",
-                $e->getCode(),
+                0,
                 $e
             );
         }

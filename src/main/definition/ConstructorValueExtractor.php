@@ -75,7 +75,7 @@ final class ConstructorValueExtractor
      *
      * @param ReflectionParameter $parameter
      *
-     * @return mixed
+     * @return string|float|bool|int|null|array<int|string, mixed>
      */
     private static function extractDefaultValue(ReflectionParameter $parameter)
     {
@@ -85,9 +85,16 @@ final class ConstructorValueExtractor
         }
 
         try {
-            return $parameter->getDefaultValue();
+            $defaultValue = $parameter->getDefaultValue();
+            assert(
+                is_scalar($defaultValue)
+                || is_null($defaultValue)
+                || is_array($defaultValue)
+            );
+
+            return $defaultValue;
         } catch (ReflectionException $e) {
-            throw new Error('Impossible reflection exception. Details ' . $e->getMessage(), $e->getCode(), $e);
+            throw new Error("Impossible reflection exception. Details {$e->getMessage()}", 0, $e);
         }
     }
 }

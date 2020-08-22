@@ -23,7 +23,6 @@ use vinyl\di\definition\ValueProcessor;
 use vinyl\di\definition\ValueProcessorResult;
 use function array_key_exists;
 use function array_replace;
-use function assert;
 use function get_class;
 use function is_a;
 
@@ -33,7 +32,7 @@ use function is_a;
 final class ValueProcessorCompositor implements ValueProcessor
 {
     /** @var array<string, ValueProcessor> */
-    private array $valueTypeProcessorMap;
+    private array $valueTypeProcessorMap = [];
 
     /** @var array<string, string> */
     private array $processorMap = [];
@@ -61,7 +60,6 @@ final class ValueProcessorCompositor implements ValueProcessor
         ];
 
         $arrayReplace = array_replace($defaultProcessorMap, $processorMap);
-        assert($arrayReplace !== null);
 
         foreach ($arrayReplace as $interface => $valueProcessor) {
             $this->addValueProcessor($interface, $valueProcessor);

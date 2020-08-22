@@ -87,7 +87,7 @@ final class FactoryPerServiceCompiler implements Compiler
 
             $this->classMaterializer->materialize($mainFactoryClassName, $mainFactoryContent);
         } catch (Exception $e) {
-            throw new CompilerException($e->getMessage(), $e->getCode(), $e);
+            throw new CompilerException($e->getMessage(), 0, $e);
         }
 
         return ClassObject::create($factoryClassName);

@@ -11,6 +11,7 @@ use vinyl\di\definition\RecursiveDefinitionTransformer;
 use vinyl\di\factory\argument\ArrayValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
 use vinyl\di\factory\FactoryMetadataMap;
+use vinyl\di\factory\FactoryValue;
 use function array_key_exists;
 use function assert;
 use function is_callable;
@@ -24,7 +25,7 @@ use function sprintf;
 final class DeveloperFactory implements ObjectFactory, ContainerAware
 {
     private DefinitionMap $definitionMap;
-    private ContainerInterface $container;
+    private ?ContainerInterface $container = null;
     private DefinitionTransformer $definitionTransformer;
     private FactoryMetadataMap $factoryMetadataMap;
     private ModifiableLifetimeCodeMap $lifetimeMap;
@@ -50,9 +51,14 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
      *
      * @throws \vinyl\di\NotEnoughArgumentsPassedException
      * @throws \vinyl\di\NotFoundException
+     * @psalm-suppress InvalidStringClass
+     * @psalm-suppress MixedReturnStatement
+     * @psalm-suppress MixedAssignment
+     * @psalm-suppress MixedInferredReturnType
      */
     public function create(string $definitionId, ?array $arguments = null): object
     {
+        assert($this->container !== null);
         if (!$this->definitionMap->contains(($definitionId)) && !$this->factoryMetadataMap->contains($definitionId)) {
             throw new NotFoundException("[{$definitionId}] not found.");
         }
@@ -94,11 +100,13 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
             }
 
             if ($valueObject instanceof DefinitionFactoryValue) {
+                /** @var string $value */
                 $resolvedArguments[] = $this->container->get($value);
                 continue;
             }
 
             if ($valueObject instanceOf ArrayValue) {
+                /** @var array<string|int, FactoryValue> $value */
                 $resolvedArguments[] = $this->resolveArrayArgument($value);
                 continue;
             }
@@ -140,6 +148,8 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
      *
      * @return array<int|string, mixed>
      * @throws \vinyl\di\NotFoundException
+     * @psalm-suppress MixedAssignment
+     * @psalm-suppress PossiblyNullReference
      */
     private function resolveArrayArgument(array $valueMetadataList): array
     {
@@ -154,6 +164,8 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
             }
 
             if ($item instanceof DefinitionFactoryValue) {
+
+                assert(is_string($itemValue));
 
                 $result[$key] = $this->container->get($itemValue);
                 continue;

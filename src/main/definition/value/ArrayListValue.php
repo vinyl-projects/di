@@ -67,7 +67,8 @@ final class ArrayListValue implements ListValue
         }
 
         $items = [];
-        if ($mergeableValue->value() === null) {
+        $value = $mergeableValue->value();
+        if ($value === null) {
             return clone $this;
         }
 
@@ -76,7 +77,7 @@ final class ArrayListValue implements ListValue
         }
 
         /** @var OrderableValue $item */
-        foreach ($mergeableValue->value() as $item) {
+        foreach ($value as $item) {
             $items[] = clone $item;
         }
 

@@ -21,7 +21,7 @@ final class FunctionInstantiator implements Instantiator
     /**
      * FunctionObjectInstantiator constructor.
      *
-     * @param string $function function name
+     * @psalm-param callable-string $function
      */
     public function __construct(string $function)
     {
@@ -41,6 +41,9 @@ final class FunctionInstantiator implements Instantiator
         $this->function = $function;
     }
 
+    /**
+     * @psalm-param callable-string $function
+     */
     public static function create(string $function): self
     {
         return new self($function);

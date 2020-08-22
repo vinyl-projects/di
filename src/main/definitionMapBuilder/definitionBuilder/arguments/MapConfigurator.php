@@ -23,7 +23,7 @@ use function assert;
 final class MapConfigurator
 {
     private Arguments $parent;
-    private ?ArrayMapValue $mapValue;
+    private ?ArrayMapValue $mapValue = null;
     private DefinitionMap $definitionMap;
 
     /**

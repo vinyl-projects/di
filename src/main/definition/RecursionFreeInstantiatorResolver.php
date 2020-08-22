@@ -36,7 +36,7 @@ final class RecursionFreeInstantiatorResolver implements InstantiatorResolver
         try {
             $class = $this->classResolver->resolve($definition, $definitionMap);
         } catch (ClassResolverException $e) {
-            throw new LogicException($e->getMessage(), $e->getCode(), $e);
+            throw new LogicException($e->getMessage(), 0, $e);
         }
 
         $stack = new SplStack();

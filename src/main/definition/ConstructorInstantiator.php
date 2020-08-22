@@ -37,7 +37,7 @@ final class ConstructorInstantiator implements Instantiator
 
             $constructor = $classReflection->getMethod('__construct');
         } catch (ReflectionException $e) {
-            throw new Error("Impossible reflection exception. Details: {$e->getMessage()}", $e->getCode(), $e);
+            throw new Error("Impossible reflection exception. Details: {$e->getMessage()}", 0, $e);
         }
 
         if (!$constructor->isPublic()) {
