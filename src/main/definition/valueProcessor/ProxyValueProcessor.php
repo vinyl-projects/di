@@ -12,7 +12,7 @@ use vinyl\di\definition\ClassResolver;
 use vinyl\di\definition\ClassResolverAware;
 use vinyl\di\definition\ClassResolverException;
 use vinyl\di\definition\constructorMetadata\ConstructorValue;
-use vinyl\di\definition\DefinitionToDependencyMap;
+use vinyl\di\definition\DefinitionDependency;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\IncompatibleTypeException;
 use vinyl\di\definition\Lifetime;
@@ -36,6 +36,7 @@ use function crc32;
 use function interface_exists;
 use function sprintf;
 use function str_replace;
+use function vinyl\std\lang\collections\vectorOf;
 
 /**
  * Class ProxyValueProcessor
@@ -112,13 +113,12 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         $proxyDefinition = self::createProxyDefinition($proxy->className, $definition, $lifetime);
         $proxiedDefinition = self::resolveDefinition($className, $definitionMap);
 
-        $definitionBoolMap = new DefinitionToDependencyMap();
-        $definitionBoolMap->insert($proxyDefinition, true);
-        $definitionBoolMap->insert($proxiedDefinition, false);
-
         return new ValueProcessorResult(
             new DefinitionFactoryValue($proxyDefinition->id(), false),
-            $definitionBoolMap
+            vectorOf(
+                DefinitionDependency::create($proxyDefinition),
+                DefinitionDependency::createDetachedDependency($proxiedDefinition)
+            )
         );
     }
 
@@ -134,8 +134,10 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
     /**
      * @throws \vinyl\di\definition\ValueProcessorException
      */
-    private static function resolveProxyDefinition(UnmodifiableDefinitionMap $definitionMap, string $definitionId): Definition
-    {
+    private static function resolveProxyDefinition(
+        UnmodifiableDefinitionMap $definitionMap,
+        string $definitionId
+    ): Definition {
         if ($definitionMap->contains($definitionId)) {
             return $definitionMap->get($definitionId);
         }
@@ -151,8 +153,11 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         return ShadowClassDefinition::resolveShadowDefinition($definitionId, $definitionMap);
     }
 
-    private static function createProxyDefinition(string $proxyClassName, Definition $definition, Lifetime $lifetime): AliasDefinition
-    {
+    private static function createProxyDefinition(
+        string $proxyClassName,
+        Definition $definition,
+        Lifetime $lifetime
+    ): AliasDefinition {
         #todo handle class names like 'Interface___'
         $proxyId = sprintf(
             '%s.auto.generated.proxy%s',

@@ -7,8 +7,8 @@ namespace vinyl\di\definition\valueProcessor;
 use Psr\Container\ContainerInterface;
 use vinyl\di\definition\constructorMetadata\ConstructorValue;
 use vinyl\di\definition\constructorMetadata\NamedObjectConstructorValue;
-use vinyl\di\definition\DefinitionToDependencyMap;
 use vinyl\di\definition\DefinitionValue;
+use vinyl\di\definition\DefinitionDependency;
 use vinyl\di\definition\UnmodifiableDefinitionMap;
 use vinyl\di\definition\value\NoValue;
 use vinyl\di\definition\ValueProcessor;
@@ -16,9 +16,8 @@ use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\BuiltinFactoryValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
 use vinyl\di\ShadowClassDefinition;
-use vinyl\std\lang\collections\MutableHashMap;
 use function assert;
-use function vinyl\std\lang\collections\mutableMapOf;
+use function vinyl\std\lang\collections\vectorOf;
 
 /**
  * Class NoValueProcessor
@@ -46,17 +45,16 @@ final class NoValueProcessor implements ValueProcessor
 
         $type = $constructorValue->type();
         if ($constructorValue->isInterface()) {
-            $definitionBoolMap = null;
+            $dependencies = null;
             if ($definitionMap->contains($type)) {
-                $definitionBoolMap = new DefinitionToDependencyMap();
-                $definitionBoolMap->insert($definitionMap->get($type), true);
+                $dependencies = vectorOf(DefinitionDependency::create($definitionMap->get($type)));
             }
 
             $isMissed = !$definitionMap->contains($type) && $type !== ContainerInterface::class;
 
             return new ValueProcessorResult(
                 new DefinitionFactoryValue($type, $isMissed),
-                $definitionBoolMap
+                $dependencies
             );
         }
 
@@ -64,12 +62,9 @@ final class NoValueProcessor implements ValueProcessor
             ? $definitionMap->get($type)
             : ShadowClassDefinition::resolveShadowDefinition($type, $definitionMap);
 
-        $definitionBoolMap = new DefinitionToDependencyMap();
-        $definitionBoolMap->insert($classDefinition, true);
-
         return new ValueProcessorResult(
             new DefinitionFactoryValue($classDefinition->id(), $constructorValue->isAbstractClass()),
-            $definitionBoolMap
+            vectorOf(DefinitionDependency::create($classDefinition))
         );
     }
 }

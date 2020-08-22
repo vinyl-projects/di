@@ -8,7 +8,7 @@ use vinyl\di\Definition;
 use vinyl\di\definition\ClassResolver;
 use vinyl\di\definition\ClassResolverAware;
 use vinyl\di\definition\constructorMetadata\ConstructorValue;
-use vinyl\di\definition\DefinitionToDependencyMap;
+use vinyl\di\definition\DefinitionDependency;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\IncompatibleTypeException;
 use vinyl\di\definition\NullValueException;
@@ -21,6 +21,7 @@ use vinyl\di\ShadowClassDefinition;
 use function assert;
 use function is_a;
 use function is_string;
+use function vinyl\std\lang\collections\vectorOf;
 
 /**
  * Class ObjectValueProcessor
@@ -47,7 +48,6 @@ final class ObjectValueProcessor implements ValueProcessor, ClassResolverAware
             throw NullValueException::create();
         }
 
-        $definitionBoolMap = new DefinitionToDependencyMap();
         if ($definitionId === null) {
             return new ValueProcessorResult(new DefinitionFactoryValue(null, false), null);
         }
@@ -60,9 +60,7 @@ final class ObjectValueProcessor implements ValueProcessor, ClassResolverAware
             throw IncompatibleTypeException::create($type, "{$resolvedClass->name()} -> {$definitionId}");
         }
 
-        $definitionBoolMap->insert($definition, true);
-
-        return new ValueProcessorResult($objectTypeValue, $definitionBoolMap);
+        return new ValueProcessorResult($objectTypeValue, vectorOf(DefinitionDependency::create($definition)));
     }
 
     private static function resolveDefinition(UnmodifiableDefinitionMap $definitionMap, ObjectValue $typeValue): Definition

@@ -135,18 +135,18 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
 
             $factoryMetadata->values[$argumentName] = $factoryValue;
 
-            if ($result->definitionToDependencyMap === null) {
+            if ($result->dependencies === null) {
                 continue;
             }
 
-            foreach ($result->definitionToDependencyMap as $newDefinition => $isDependency) {
+            foreach ($result->dependencies as $dependency) {
                 $classes = $visitedClasses;
-                if (!$isDependency) {
+                if (!$dependency->isPartOfDependencyGraph) {
                     $classes = [];
                 }
 
                 try {
-                    $this->internalTransform($newDefinition, $definitionMap, $factoryMetadataMap, $classes);
+                    $this->internalTransform($dependency->definition, $definitionMap, $factoryMetadataMap, $classes);
                 } catch (DefinitionTransformerException $e) {
                     $e->add($id, $className, $argumentName);
                     throw $e;

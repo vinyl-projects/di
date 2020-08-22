@@ -6,7 +6,6 @@ namespace vinyl\di\definition\valueProcessor;
 
 use vinyl\di\definition\constructorMetadata\BuiltinConstructorValue;
 use vinyl\di\definition\constructorMetadata\ConstructorValue;
-use vinyl\di\definition\DefinitionToDependencyMap;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\IncompatibleTypeException;
 use vinyl\di\definition\ListValue;
@@ -18,6 +17,7 @@ use vinyl\di\definition\ValueProcessorException;
 use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\ArrayValue;
 use function assert;
+use function vinyl\std\lang\collections\mutableVectorOf;
 
 /**
  * Class ArrayValueProcessor
@@ -62,7 +62,9 @@ final class ArrayValueProcessor implements ValueProcessor
         }
 
         $argumentValue = [];
-        $definitionToDependencyMap = new DefinitionToDependencyMap();
+
+        /** @var \vinyl\std\lang\collections\MutableVector<\vinyl\di\definition\DefinitionDependency> $dependencies */
+        $dependencies = mutableVectorOf();
 
         $mixedValue = new BuiltinConstructorValue(null, 'mixed', true, false, false);
         foreach ($values as $key => $item) {
@@ -76,8 +78,8 @@ final class ArrayValueProcessor implements ValueProcessor
                 );
             }
 
-            if ($result->definitionToDependencyMap !== null) {
-                $definitionToDependencyMap->add($result->definitionToDependencyMap);
+            if ($result->dependencies !== null) {
+                $dependencies->addAll($result->dependencies);
             }
 
             $argumentValue[$key] = $result->valueMetadata;
@@ -85,7 +87,7 @@ final class ArrayValueProcessor implements ValueProcessor
 
         return new ValueProcessorResult(
             new ArrayValue($argumentValue, false),
-            $definitionToDependencyMap
+            $dependencies
         );
     }
 }
