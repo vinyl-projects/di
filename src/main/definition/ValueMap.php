@@ -9,7 +9,6 @@ use Countable;
 use InvalidArgumentException;
 use Iterator;
 use IteratorAggregate;
-use vinyl\di\definition\value\Mergeable;
 use function array_key_exists;
 use function count;
 
@@ -58,46 +57,6 @@ final class ValueMap implements IteratorAggregate, Countable
         if (array_key_exists($argumentName, $this->values)) {
             unset($this->values[$argumentName]);
         }
-    }
-
-    /**
-     * Merge current {@see ValueMap } with one or more {@see ValueMap }
-     *
-     * If several value maps are passed, they will be processed in order, the later map overwriting the previous.
-     *
-     * If {@see FactoryValue } implements {@see Mergeable} interface it will be merged with value from other map
-     */
-    public function merge(ValueMap ...$valueMapList): ValueMap
-    {
-        /** @var array<string, \vinyl\di\definition\DefinitionValue> $result */
-        $result = [];
-
-        /** @var string $argumentName */
-        foreach ($this->values as $argumentName => $value) {
-            /** @var \vinyl\di\definition\DefinitionValue $value */
-            $result[$argumentName] = clone $value;
-        }
-
-        foreach ($valueMapList as $values) {
-            /** @var string $argumentName */
-            foreach ($values as $argumentName => $value) {
-                if (!array_key_exists($argumentName, $result)) {
-                    $result[$argumentName] = clone $value;
-                    continue;
-                }
-
-                /** @var \vinyl\di\definition\DefinitionValue $currentValue */
-                $currentValue = $result[$argumentName];
-                if ($value instanceof Mergeable && $currentValue instanceof Mergeable) {
-                    $result[$argumentName] = $currentValue->merge($value);
-                    continue;
-                }
-
-                $result[$argumentName] = clone $value;
-            }
-        }
-
-        return new ValueMap($result);
     }
 
     /**

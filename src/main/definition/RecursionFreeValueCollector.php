@@ -7,10 +7,9 @@ namespace vinyl\di\definition;
 use SplStack;
 use vinyl\di\AliasOnAliasDefinition;
 use vinyl\di\Definition;
+use vinyl\di\definition\value\Mergeable;
 use vinyl\std\lang\collections\Map;
-use function array_pop;
 use function array_reverse;
-use function assert;
 use function count;
 
 /**
@@ -91,14 +90,40 @@ final class RecursionFreeValueCollector implements ValueCollector
             return new ValueMap();
         }
 
-        $lastValueMap = array_pop($valueMapList);
+        return self::merge(...array_reverse($valueMapList));
+    }
 
-        assert($lastValueMap instanceof ValueMap);
+    /**
+     * Merge given {@see ValueMap } with one or more {@see ValueMap }
+     *
+     * If several value maps are passed, they will be processed in order, the later map overwriting the previous.
+     *
+     * If {@see FactoryValue } implements {@see Mergeable} interface it will be merged with value from other map
+     */
+    private static function merge(ValueMap ...$valueMapList): ValueMap
+    {
+        /** @var array<string, \vinyl\di\definition\DefinitionValue> $result */
+        $result = [];
 
-        if (count($valueMapList) === 0) {
-            return clone $lastValueMap;
+        foreach ($valueMapList as $values) {
+            /** @var string $argumentName */
+            foreach ($values as $argumentName => $value) {
+                if (!array_key_exists($argumentName, $result)) {
+                    $result[$argumentName] = clone $value;
+                    continue;
+                }
+
+                /** @var \vinyl\di\definition\DefinitionValue $currentValue */
+                $currentValue = $result[$argumentName];
+                if ($value instanceof Mergeable && $currentValue instanceof Mergeable) {
+                    $result[$argumentName] = $currentValue->merge($value);
+                    continue;
+                }
+
+                $result[$argumentName] = clone $value;
+            }
         }
 
-        return $lastValueMap->merge(...array_reverse($valueMapList));
+        return new ValueMap($result);
     }
 }
