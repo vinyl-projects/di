@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace vinyl\di\factory;
 
-use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\DefinitionTransformer;
 use vinyl\di\definition\RecursiveDefinitionTransformer;
 use vinyl\std\lang\collections\Map;
@@ -26,12 +25,14 @@ final class DefinitionMapTransformer
     }
 
     /**
+     * @param Map<string, \vinyl\di\Definition> $definitionMap
+     *
      * @throws \vinyl\di\definition\ClassCircularReferenceFoundException
      * @throws \vinyl\di\definition\DefinitionTransformerException
      *
      * @return Map<string, \vinyl\di\factory\FactoryMetadata>
      */
-    public function transform(DefinitionMap $definitionMap): Map
+    public function transform(Map $definitionMap): Map
     {
         /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\factory\FactoryMetadata> $factoryMetadataMap */
         $factoryMetadataMap = mutableMapOf();

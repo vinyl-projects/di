@@ -18,7 +18,6 @@ use vinyl\di\definition\IncompatibleTypeException;
 use vinyl\di\definition\Lifetime;
 use vinyl\di\definition\LifetimeResolver;
 use vinyl\di\definition\ProxyValue;
-use vinyl\di\definition\UnmodifiableDefinitionMap;
 use vinyl\di\definition\value\StringValue;
 use vinyl\di\definition\ValueProcessor;
 use vinyl\di\definition\ValueProcessorException;
@@ -30,6 +29,7 @@ use vinyl\di\proxy\ProxyGenerator;
 use vinyl\di\proxy\ProxyGeneratorException;
 use vinyl\di\ShadowClassDefinition;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\Map;
 use function assert;
 use function class_exists;
 use function crc32;
@@ -67,7 +67,7 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
     public function process(
         DefinitionValue $value,
         ConstructorValue $constructorValue,
-        UnmodifiableDefinitionMap $definitionMap
+        Map $definitionMap
     ): ValueProcessorResult {
         assert($value instanceof ProxyValue);
         assert($this->classResolver !== null);
@@ -122,9 +122,12 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         );
     }
 
-    private static function resolveDefinition(string $typeValue, UnmodifiableDefinitionMap $definitionMap): Definition
+    /**
+     * @param Map<string, \vinyl\di\Definition> $definitionMap
+     */
+    private static function resolveDefinition(string $typeValue, Map $definitionMap): Definition
     {
-        if ($definitionMap->contains($typeValue)) {
+        if ($definitionMap->containsKey($typeValue)) {
             return $definitionMap->get($typeValue);
         }
 
@@ -132,13 +135,15 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
     }
 
     /**
+     * @param Map<string, \vinyl\di\Definition> $definitionMap
+     *
      * @throws \vinyl\di\definition\ValueProcessorException
      */
     private static function resolveProxyDefinition(
-        UnmodifiableDefinitionMap $definitionMap,
+        Map $definitionMap,
         string $definitionId
     ): Definition {
-        if ($definitionMap->contains($definitionId)) {
+        if ($definitionMap->containsKey($definitionId)) {
             return $definitionMap->get($definitionId);
         }
 

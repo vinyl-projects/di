@@ -9,10 +9,10 @@ use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\FloatValue;
 use vinyl\di\definition\IncompatibleTypeException;
 use vinyl\di\definition\NullValueException;
-use vinyl\di\definition\UnmodifiableDefinitionMap;
 use vinyl\di\definition\ValueProcessor;
 use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\BuiltinFactoryValue;
+use vinyl\std\lang\collections\Map;
 use function assert;
 
 /**
@@ -26,7 +26,7 @@ final class FloatValueProcessor implements ValueProcessor
     public function process(
         DefinitionValue $value,
         ConstructorValue $constructorValue,
-        UnmodifiableDefinitionMap $definitionMap
+        Map $definitionMap
     ): ValueProcessorResult {
         assert($value instanceof FloatValue);
 

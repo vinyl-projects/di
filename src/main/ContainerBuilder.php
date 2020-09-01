@@ -8,7 +8,6 @@ use LogicException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use vinyl\di\definition\CacheableClassResolver;
-use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\ProxyValue;
 use vinyl\di\definition\RecursionFreeClassResolver;
 use vinyl\di\definition\RecursionFreeLifetimeResolver;
@@ -17,6 +16,7 @@ use vinyl\di\definition\valueProcessor\ProxyValueProcessor;
 use vinyl\di\definition\valueProcessor\ValueProcessorCompositor;
 use vinyl\di\factory\DefinitionMapTransformer;
 use vinyl\di\factory\FactoryPerServiceCompiler;
+use vinyl\std\lang\collections\Map;
 use function assert;
 
 /**
@@ -30,7 +30,10 @@ final class ContainerBuilder
     private const COMPILED_FACTORY        = 'compiled';
 
     private LoggerInterface $logger;
-    private ?DefinitionMap $definitionMap;
+
+    /** @var \vinyl\std\lang\collections\Map<string, \vinyl\di\Definition>|null  */
+    private ?Map $definitionMap;
+
     private ?string $materializer = null;
     private ?string $factory = null;
     private bool $composerPluginRegister = false;
@@ -38,13 +41,21 @@ final class ContainerBuilder
     private ?string $lifetimeMapName = null;
     private bool $isUsed = false;
 
-    private function __construct(DefinitionMap $definitionMap, ?LoggerInterface $logger)
+    /**
+     * ContainerBuilder constructor.
+     *
+     * @param Map<string, \vinyl\di\Definition> $definitionMap
+     */
+    private function __construct(Map $definitionMap, ?LoggerInterface $logger)
     {
         $this->logger = $logger ?? new NullLogger();
         $this->definitionMap = $definitionMap;
     }
 
-    public static function create(DefinitionMap $definitionMap, ?LoggerInterface $logger = null): self
+    /**
+     * @param Map<string, \vinyl\di\Definition> $definitionMap
+     */
+    public static function create(Map $definitionMap, ?LoggerInterface $logger = null): self
     {
         return new self($definitionMap, $logger);
     }

@@ -7,15 +7,15 @@ namespace vinyl\di\definition\valueProcessor;
 use Psr\Container\ContainerInterface;
 use vinyl\di\definition\constructorMetadata\ConstructorValue;
 use vinyl\di\definition\constructorMetadata\NamedObjectConstructorValue;
-use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\DefinitionDependency;
-use vinyl\di\definition\UnmodifiableDefinitionMap;
+use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\value\NoValue;
 use vinyl\di\definition\ValueProcessor;
 use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\BuiltinFactoryValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
 use vinyl\di\ShadowClassDefinition;
+use vinyl\std\lang\collections\Map;
 use function assert;
 use function vinyl\std\lang\collections\vectorOf;
 
@@ -30,7 +30,7 @@ final class NoValueProcessor implements ValueProcessor
     public function process(
         DefinitionValue $value,
         ConstructorValue $constructorValue,
-        UnmodifiableDefinitionMap $definitionMap
+        Map $definitionMap
     ): ValueProcessorResult {
         assert($value instanceof NoValue);
 
@@ -46,11 +46,11 @@ final class NoValueProcessor implements ValueProcessor
         $type = $constructorValue->type();
         if ($constructorValue->isInterface()) {
             $dependencies = null;
-            if ($definitionMap->contains($type)) {
+            if ($definitionMap->containsKey($type)) {
                 $dependencies = vectorOf(DefinitionDependency::create($definitionMap->get($type)));
             }
 
-            $isMissed = !$definitionMap->contains($type) && $type !== ContainerInterface::class;
+            $isMissed = !$definitionMap->containsKey($type) && $type !== ContainerInterface::class;
 
             return new ValueProcessorResult(
                 new DefinitionFactoryValue($type, $isMissed),
@@ -58,7 +58,7 @@ final class NoValueProcessor implements ValueProcessor
             );
         }
 
-        $classDefinition = $definitionMap->contains($type)
+        $classDefinition = $definitionMap->containsKey($type)
             ? $definitionMap->get($type)
             : ShadowClassDefinition::resolveShadowDefinition($type, $definitionMap);
 

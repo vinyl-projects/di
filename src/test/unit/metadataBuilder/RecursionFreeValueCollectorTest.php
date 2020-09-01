@@ -10,13 +10,15 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use vinyl\di\ClassDefinition;
 use vinyl\di\Definition;
-use vinyl\di\definition\DefinitionMap;
+use vinyl\di\definition\ParentClassesProvider;
 use vinyl\di\definition\RecursionFreeValueCollector;
 use vinyl\di\definition\value\IntValue;
 use vinyl\di\definition\value\StringValue;
-use vinyl\di\definition\ParentClassesProvider;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\MutableMap;
 use function get_class;
+use function vinyl\std\lang\collections\mutableMapOf;
+use function vinyl\std\lang\collections\pair;
 use function vinyl\std\lang\collections\vectorOf;
 
 /**
@@ -38,7 +40,7 @@ class RecursionFreeValueCollectorTest extends TestCase
         $secondValueHolder = new StringValue('hello world');
         $definition->argumentValues()->put('first', $firstValueHolder);
         $definition->argumentValues()->put('second', $secondValueHolder);
-        $definitions = new DefinitionMap([$definition->id() => $definition]);
+        $definitions = mutableMapOf(pair($definition->id(), $definition));
 
         /** @var ParentClassesProvider&MockObject $parentsClassesProvider */
         $parentsClassesProvider = $this->getMockBuilder(ParentClassesProvider::class)
@@ -104,14 +106,14 @@ class RecursionFreeValueCollectorTest extends TestCase
         return $mock;
     }
 
-    private function createDefinitionMap(Definition ... $definitions): DefinitionMap
+    private function createDefinitionMap(Definition ... $definitions): MutableMap
     {
-        $definitionMap = [];
+        $pairs = [];
 
         foreach ($definitions as $definition) {
-            $definitionMap[$definition->id()] = $definition;
+            $pairs[] = pair($definition->id(), $definition);
         }
 
-        return new DefinitionMap($definitionMap);
+        return mutableMapOf(...$pairs);
     }
 }

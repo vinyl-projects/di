@@ -11,10 +11,10 @@ use vinyl\di\definition\arrayValue\OrderableIntValue;
 use vinyl\di\definition\arrayValue\OrderableObjectValue;
 use vinyl\di\definition\arrayValue\OrderableProxyValue;
 use vinyl\di\definition\arrayValue\OrderableStringValue;
-use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\value\ArrayListValue;
 use vinyl\di\definitionMapBuilder\definitionBuilder\Arguments;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\MutableMap;
 
 /**
  * Class ListConfigurator
@@ -23,9 +23,15 @@ final class ListConfigurator
 {
     private Arguments $parent;
     private ?ArrayListValue $value = null;
-    private DefinitionMap $definitionMap;
+    /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\Definition> */
+    private MutableMap $definitionMap;
 
-    public function __construct(Arguments $parent, DefinitionMap $definitionMap)
+    /**
+     * ListConfigurator constructor.
+     *
+     * @param \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\Definition> $definitionMap
+     */
+    public function __construct(Arguments $parent, MutableMap $definitionMap)
     {
         $this->parent = $parent;
         $this->definitionMap = $definitionMap;
@@ -66,11 +72,13 @@ final class ListConfigurator
     public function classItem(string $className, ?int $sortOrder = null): self
     {
         assert($this->value !== null);
-        if (!$this->definitionMap->contains($className)) {
-            $this->definitionMap->insert(new ClassDefinition(ClassObject::create($className)));
+        if (!$this->definitionMap->containsKey($className)) {
+            $classDefinition = new ClassDefinition(ClassObject::create($className));
+            $this->definitionMap->put($classDefinition->id(), $classDefinition);
         }
 
         $this->value->add(new OrderableStringValue($className, $sortOrder));
+
         return $this;
     }
 

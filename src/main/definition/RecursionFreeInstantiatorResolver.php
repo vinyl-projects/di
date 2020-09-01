@@ -8,6 +8,7 @@ use LogicException;
 use SplStack;
 use vinyl\di\AliasOnAliasDefinition;
 use vinyl\di\Definition;
+use vinyl\std\lang\collections\Map;
 
 /**
  * Class RecursionFreeInstantiatorResolver
@@ -27,7 +28,7 @@ final class RecursionFreeInstantiatorResolver implements InstantiatorResolver
     /**
      * {@inheritDoc}
      */
-    public function resolve(Definition $definition, UnmodifiableDefinitionMap $definitionMap): Instantiator
+    public function resolve(Definition $definition, Map $definitionMap): Instantiator
     {
         if ($definition->instantiator() !== null) {
             return $definition->instantiator();
@@ -60,7 +61,7 @@ final class RecursionFreeInstantiatorResolver implements InstantiatorResolver
                 continue;
             }
 
-            if (!$definitionMap->contains($currentDefinition->classObject()->name())) {
+            if (!$definitionMap->containsKey($currentDefinition->classObject()->name())) {
                 return new ConstructorInstantiator($class);
             }
 

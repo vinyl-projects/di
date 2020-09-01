@@ -7,6 +7,7 @@ namespace vinyl\di\definition;
 use SplStack;
 use vinyl\di\AliasOnAliasDefinition;
 use vinyl\di\Definition;
+use vinyl\std\lang\collections\Map;
 
 /**
  * Class RecursionFreeLifetimeResolver
@@ -16,7 +17,7 @@ final class RecursionFreeLifetimeResolver implements LifetimeResolver
     /**
      * {@inheritDoc}
      */
-    public function resolve(Definition $definition, UnmodifiableDefinitionMap $definitionMap): Lifetime
+    public function resolve(Definition $definition, Map $definitionMap): Lifetime
     {
         if ($definition->lifetime() !== null) {
             return $definition->lifetime();
@@ -44,7 +45,7 @@ final class RecursionFreeLifetimeResolver implements LifetimeResolver
                 continue;
             }
 
-            if (!$definitionMap->contains($currentDefinition->classObject()->name())) {
+            if (!$definitionMap->containsKey($currentDefinition->classObject()->name())) {
                 break;
             }
 

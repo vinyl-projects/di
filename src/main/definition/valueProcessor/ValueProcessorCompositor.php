@@ -17,10 +17,10 @@ use vinyl\di\definition\ListValue;
 use vinyl\di\definition\MapValue;
 use vinyl\di\definition\ObjectValue;
 use vinyl\di\definition\StringValue;
-use vinyl\di\definition\UnmodifiableDefinitionMap;
 use vinyl\di\definition\value\NoValue;
 use vinyl\di\definition\ValueProcessor;
 use vinyl\di\definition\ValueProcessorResult;
+use vinyl\std\lang\collections\Map;
 use function array_key_exists;
 use function array_replace;
 use function get_class;
@@ -72,7 +72,7 @@ final class ValueProcessorCompositor implements ValueProcessor
     public function process(
         DefinitionValue $value,
         ConstructorValue $constructorValue,
-        UnmodifiableDefinitionMap $definitionMap
+        Map $definitionMap
     ): ValueProcessorResult {
         $valueClass = get_class($value);
 

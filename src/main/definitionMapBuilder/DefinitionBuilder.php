@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace vinyl\di\definitionMapBuilder;
 
 use vinyl\di\Definition;
-use vinyl\di\definition\DefinitionMap;
-use vinyl\di\definition\Lifetime;
 use vinyl\di\definition\Instantiator;
+use vinyl\di\definition\Lifetime;
 use vinyl\di\DefinitionMapBuilder;
 use vinyl\di\definitionMapBuilder\definitionBuilder\Arguments;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\MutableMap;
 
 /**
  * Class DefinitionBuilder
@@ -19,12 +19,15 @@ class DefinitionBuilder
 {
     private DefinitionMapBuilder $definitionMapBuilder;
     private ?Definition $definition = null;
-    private DefinitionMap $definitionMap;
+    /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\Definition> */
+    private MutableMap $definitionMap;
 
     /**
      * DefinitionBuilder constructor.
+     *
+     * @param \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\Definition> $definitionMap
      */
-    public function __construct(DefinitionMapBuilder $containerBuilder, DefinitionMap $definitionMap)
+    public function __construct(DefinitionMapBuilder $containerBuilder, MutableMap $definitionMap)
     {
         $this->definitionMapBuilder = $containerBuilder;
         $this->definitionMap = $definitionMap;

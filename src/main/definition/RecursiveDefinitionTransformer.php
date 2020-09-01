@@ -48,7 +48,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
     /**
      * {@inheritDoc}
      */
-    public function transform(Definition $definition, DefinitionMap $definitionMap): Map
+    public function transform(Definition $definition, Map $definitionMap): Map
     {
         $factoryMetadataMap = mutableMapOf();
         $this->internalTransform($definition, $definitionMap, $factoryMetadataMap);
@@ -58,12 +58,13 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
 
     /**
      * @param array<string, string> $visitedClasses
+     * @param Map<string, \vinyl\di\Definition> $definitionMap
      *
      * @throws \vinyl\di\definition\DefinitionTransformerException
      */
     private function internalTransform(
         Definition $definition,
-        DefinitionMap $definitionMap,
+        Map $definitionMap,
         MutableMap $factoryMetadataMap,
         array $visitedClasses = []
     ): void {

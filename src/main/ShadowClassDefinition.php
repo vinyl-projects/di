@@ -6,6 +6,7 @@ namespace vinyl\di;
 
 use vinyl\di\definition\UnmodifiableDefinitionMap;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\Map;
 use function assert;
 
 /**
@@ -18,11 +19,14 @@ final class ShadowClassDefinition extends AbstractDefinition
         parent::__construct(self::makeShadowId($class->name()), $class);
     }
 
-    public static function resolveShadowDefinition(string $className, UnmodifiableDefinitionMap $definitionMap): self
+    /**
+     * @param Map<string, \vinyl\di\Definition> $definitionMap
+     */
+    public static function resolveShadowDefinition(string $className, Map $definitionMap): self
     {
         $id = self::makeShadowId($className);
 
-        if ($definitionMap->contains($id)) {
+        if ($definitionMap->containsKey($id)) {
             $definition = $definitionMap->get($id);
             assert($definition instanceof self);
 

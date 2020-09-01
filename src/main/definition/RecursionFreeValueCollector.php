@@ -7,6 +7,7 @@ namespace vinyl\di\definition;
 use SplStack;
 use vinyl\di\AliasOnAliasDefinition;
 use vinyl\di\Definition;
+use vinyl\std\lang\collections\Map;
 use function array_pop;
 use function array_reverse;
 use function assert;
@@ -30,7 +31,7 @@ final class RecursionFreeValueCollector implements ValueCollector
     /**
      * {@inheritDoc}
      */
-    public function collect(Definition $definition, UnmodifiableDefinitionMap $definitionMap): ValueMap
+    public function collect(Definition $definition, Map $definitionMap): ValueMap
     {
         /** @var ValueMap[] $valueMapList */
         $valueMapList = [];
@@ -48,7 +49,7 @@ final class RecursionFreeValueCollector implements ValueCollector
             }
 
             if ($currentDefinition instanceof AliasOnAliasDefinition) {
-                if (!$definitionMap->contains($currentDefinition->parentId())) {
+                if (!$definitionMap->containsKey($currentDefinition->parentId())) {
                     break;
                 }
 
@@ -60,7 +61,7 @@ final class RecursionFreeValueCollector implements ValueCollector
 
             foreach ($parentClasses as $parentClass) {
                 $parentClassName = $parentClass->name();
-                if (!$definitionMap->contains($parentClassName)) {
+                if (!$definitionMap->containsKey($parentClassName)) {
                     break;
                 }
 
@@ -80,7 +81,7 @@ final class RecursionFreeValueCollector implements ValueCollector
 
             $currentDefinitionClassName = $currentDefinition->classObject()->name();
             if ($currentDefinition->id() !== $currentDefinitionClassName
-                && $definitionMap->contains($currentDefinitionClassName)) {
+                && $definitionMap->containsKey($currentDefinitionClassName)) {
                 $stack->push($definitionMap->get($currentDefinitionClassName));
                 continue;
             }

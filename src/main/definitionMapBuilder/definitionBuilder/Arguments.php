@@ -7,7 +7,6 @@ namespace vinyl\di\definitionMapBuilder\definitionBuilder;
 use RuntimeException;
 use vinyl\di\ClassDefinition;
 use vinyl\di\Definition;
-use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\value\ArrayListValue;
 use vinyl\di\definition\value\ArrayMapValue;
@@ -21,6 +20,7 @@ use vinyl\di\definitionMapBuilder\DefinitionBuilder;
 use vinyl\di\definitionMapBuilder\definitionBuilder\arguments\ListConfigurator;
 use vinyl\di\definitionMapBuilder\definitionBuilder\arguments\MapConfigurator;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\MutableMap;
 
 /**
  * Class Arguments
@@ -31,15 +31,19 @@ class Arguments
     private Definition $definition;
     private MapConfigurator $mapConfigurator;
     private ListConfigurator $listConfigurator;
-    private DefinitionMap $definitionMap;
+
+    /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\Definition> */
+    private MutableMap $definitionMap;
 
     /**
      * Arguments constructor.
+     *
+     * @param MutableMap<string, \vinyl\di\Definition> $definitionMap
      */
     public function __construct(
         DefinitionBuilder $parent,
         Definition $definition,
-        DefinitionMap $definitionMap
+        MutableMap $definitionMap
     ) {
         $this->parent = $parent;
         $this->definition = $definition;
@@ -130,8 +134,9 @@ class Arguments
 
     public function classArgument(string $name, string $className): self
     {
-        if (!$this->definitionMap->contains($className)) {
-            $this->definitionMap->insert(new ClassDefinition(ClassObject::create($className)));
+        if (!$this->definitionMap->containsKey($className)) {
+            $classDefinition = new ClassDefinition(ClassObject::create($className));
+            $this->definitionMap->put($classDefinition->id(), $classDefinition);
         }
 
         $this->definition->argumentValues()->put($name, new StringValue($className));

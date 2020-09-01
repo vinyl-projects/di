@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace vinyl\di;
 
 use Psr\Container\ContainerInterface;
-use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\DefinitionTransformer;
 use vinyl\di\definition\RecursiveDefinitionTransformer;
 use vinyl\di\factory\argument\ArrayValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
 use vinyl\di\factory\FactoryValue;
+use vinyl\std\lang\collections\Map;
 use vinyl\std\lang\collections\MutableMap;
 use function array_key_exists;
 use function assert;
@@ -25,7 +25,8 @@ use function vinyl\std\lang\collections\mutableMapOf;
  */
 final class DeveloperFactory implements ObjectFactory, ContainerAware
 {
-    private DefinitionMap $definitionMap;
+    /** @var \vinyl\std\lang\collections\Map<string, \vinyl\di\Definition> */
+    private Map $definitionMap;
     private ?ContainerInterface $container = null;
     private DefinitionTransformer $definitionTransformer;
     /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\factory\FactoryMetadata> */
@@ -34,13 +35,15 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
 
     /**
      * RuntimeFactory constructor.
+     *
+     * @param Map<string, \vinyl\di\Definition> $definitionMap
      */
     public function __construct(
-        DefinitionMap $metadataCollection,
+        Map $definitionMap,
         ModifiableLifetimeCodeMap $lifetimeMap,
         ?DefinitionTransformer $definitionTransformer = null
     ) {
-        $this->definitionMap = $metadataCollection;
+        $this->definitionMap = $definitionMap;
         $this->definitionTransformer = $definitionTransformer ?? new RecursiveDefinitionTransformer();
         $this->factoryMetadataMap = mutableMapOf();
         $this->lifetimeMap = $lifetimeMap;
@@ -61,7 +64,7 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
     public function create(string $definitionId, ?array $arguments = null): object
     {
         assert($this->container !== null);
-        if (!$this->definitionMap->contains(($definitionId)) && !$this->factoryMetadataMap->containsKey($definitionId)) {
+        if (!$this->definitionMap->containsKey(($definitionId)) && !$this->factoryMetadataMap->containsKey($definitionId)) {
             throw new NotFoundException("[{$definitionId}] not found.");
         }
 
@@ -140,7 +143,7 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
      */
     public function has(string $id): bool
     {
-        return $this->definitionMap->contains($id);
+        return $this->definitionMap->containsKey($id);
     }
 
     /**

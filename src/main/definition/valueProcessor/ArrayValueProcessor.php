@@ -11,11 +11,11 @@ use vinyl\di\definition\IncompatibleTypeException;
 use vinyl\di\definition\ListValue;
 use vinyl\di\definition\MapValue;
 use vinyl\di\definition\NullValueException;
-use vinyl\di\definition\UnmodifiableDefinitionMap;
 use vinyl\di\definition\ValueProcessor;
 use vinyl\di\definition\ValueProcessorException;
 use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\ArrayValue;
+use vinyl\std\lang\collections\Map;
 use function assert;
 use function vinyl\std\lang\collections\mutableVectorOf;
 
@@ -40,7 +40,7 @@ final class ArrayValueProcessor implements ValueProcessor
     public function process(
         DefinitionValue $value,
         ConstructorValue $constructorValue,
-        UnmodifiableDefinitionMap $definitionMap
+        Map $definitionMap
     ): ValueProcessorResult {
         assert($value instanceof MapValue || $value instanceof ListValue);
 

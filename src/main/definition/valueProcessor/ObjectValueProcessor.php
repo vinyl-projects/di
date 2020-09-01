@@ -13,11 +13,11 @@ use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\IncompatibleTypeException;
 use vinyl\di\definition\NullValueException;
 use vinyl\di\definition\ObjectValue;
-use vinyl\di\definition\UnmodifiableDefinitionMap;
 use vinyl\di\definition\ValueProcessor;
 use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
 use vinyl\di\ShadowClassDefinition;
+use vinyl\std\lang\collections\Map;
 use function assert;
 use function is_a;
 use function is_string;
@@ -36,7 +36,7 @@ final class ObjectValueProcessor implements ValueProcessor, ClassResolverAware
     public function process(
         DefinitionValue $value,
         ConstructorValue $constructorValue,
-        UnmodifiableDefinitionMap $definitionMap
+        Map $definitionMap
     ): ValueProcessorResult {
         assert($value instanceof ObjectValue);
         assert($this->classResolver !== null);
@@ -63,12 +63,15 @@ final class ObjectValueProcessor implements ValueProcessor, ClassResolverAware
         return new ValueProcessorResult($objectTypeValue, vectorOf(DefinitionDependency::create($definition)));
     }
 
-    private static function resolveDefinition(UnmodifiableDefinitionMap $definitionMap, ObjectValue $typeValue): Definition
+    /**
+     * @param Map<string, \vinyl\di\Definition> $definitionMap
+     */
+    private static function resolveDefinition(Map $definitionMap, ObjectValue $typeValue): Definition
     {
         $value = $typeValue->value();
         assert(is_string($value));
 
-        if ($definitionMap->contains($value)) {
+        if ($definitionMap->containsKey($value)) {
             return $definitionMap->get($value);
         }
 

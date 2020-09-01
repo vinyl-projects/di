@@ -11,10 +11,10 @@ use vinyl\di\definition\arrayValue\OrderableIntValue;
 use vinyl\di\definition\arrayValue\OrderableObjectValue;
 use vinyl\di\definition\arrayValue\OrderableProxyValue;
 use vinyl\di\definition\arrayValue\OrderableStringValue;
-use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\value\ArrayMapValue;
 use vinyl\di\definitionMapBuilder\definitionBuilder\Arguments;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\MutableMap;
 use function assert;
 
 /**
@@ -24,12 +24,16 @@ final class MapConfigurator
 {
     private Arguments $parent;
     private ?ArrayMapValue $mapValue = null;
-    private DefinitionMap $definitionMap;
+
+    /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\Definition> */
+    private MutableMap $definitionMap;
 
     /**
      * MapConfigurator constructor.
+     *
+     * @param MutableMap<string, \vinyl\di\Definition> $definitionMap
      */
-    public function __construct(Arguments $parent, DefinitionMap $definitionMap)
+    public function __construct(Arguments $parent, MutableMap $definitionMap)
     {
         $this->parent = $parent;
         $this->definitionMap = $definitionMap;
@@ -42,8 +46,9 @@ final class MapConfigurator
     {
         assert($this->mapValue !== null);
 
-        if (!$this->definitionMap->contains($className)) {
-            $this->definitionMap->insert(new ClassDefinition(ClassObject::create($className)));
+        if (!$this->definitionMap->containsKey($className)) {
+            $classDefinition = new ClassDefinition(ClassObject::create($className));
+            $this->definitionMap->put($classDefinition->id(), $classDefinition);
         }
 
         $this->mapValue->put($key, new OrderableStringValue($className, $order));

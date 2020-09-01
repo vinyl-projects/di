@@ -6,6 +6,7 @@ namespace vinyl\di\definition;
 
 use vinyl\di\Definition;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\Map;
 use function spl_object_id;
 
 /**
@@ -29,7 +30,7 @@ final class CacheableClassResolver implements ClassResolver
     /**
      * {@inheritDoc}
      */
-    public function resolve(Definition $definition, UnmodifiableDefinitionMap $definitionMap): ClassObject
+    public function resolve(Definition $definition, Map $definitionMap): ClassObject
     {
         $mapId = spl_object_id($definitionMap);
 

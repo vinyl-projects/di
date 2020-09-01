@@ -6,16 +6,19 @@ namespace vinyl\di;
 
 use LogicException;
 use OutOfBoundsException;
-use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definitionMapBuilder\DefinitionBuilder;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\Map;
+use vinyl\std\lang\collections\MutableMap;
+use function vinyl\std\lang\collections\mutableMapOf;
 
 /**
  * Class DefinitionMapBuilder
  */
 class DefinitionMapBuilder
 {
-    private DefinitionMap $definitionMap;
+    /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\Definition> */
+    private MutableMap $definitionMap;
     private DefinitionBuilder $definitionBuilder;
 
     /**
@@ -23,7 +26,7 @@ class DefinitionMapBuilder
      */
     public function __construct()
     {
-        $this->definitionMap = new DefinitionMap([]);
+        $this->definitionMap = mutableMapOf();
         $this->definitionBuilder = new DefinitionBuilder($this, $this->definitionMap);
     }
 
@@ -32,7 +35,8 @@ class DefinitionMapBuilder
      */
     public function interfaceImplementation(string $interface, string $className): self
     {
-        $this->definitionMap->insert(new InterfaceImplementationDefinition($interface, ClassObject::create($className)));
+        $interfaceImplementationDefinition = new InterfaceImplementationDefinition($interface, ClassObject::create($className));
+        $this->definitionMap->put($interfaceImplementationDefinition->id(), $interfaceImplementationDefinition);
 
         return $this;
     }
@@ -46,7 +50,7 @@ class DefinitionMapBuilder
         }
 
         $typeDefinition = new ClassDefinition(ClassObject::create($class));
-        $this->definitionMap->insert($typeDefinition);
+        $this->definitionMap->put($typeDefinition->id(), $typeDefinition);
 
         $this->definitionBuilder->_updateDefinition($typeDefinition);
 
@@ -62,7 +66,7 @@ class DefinitionMapBuilder
         }
 
         $typeDefinition = new AliasDefinition($definitionId, ClassObject::create($class));
-        $this->definitionMap->insert($typeDefinition);
+        $this->definitionMap->put($typeDefinition->id(), $typeDefinition);
 
         $this->definitionBuilder->_updateDefinition($typeDefinition);
 
@@ -77,7 +81,7 @@ class DefinitionMapBuilder
         }
 
         $definition = new AliasOnAliasDefinition($definitionId, $parentId);
-        $this->definitionMap->insert($definition);
+        $this->definitionMap->put($definition->id(), $definition);
 
         $this->definitionBuilder->_updateDefinition($definition);
 
@@ -98,10 +102,13 @@ class DefinitionMapBuilder
         return $this->definitionBuilder;
     }
 
-    public function build(): DefinitionMap
+    /**
+     * @return \vinyl\std\lang\collections\Map<string, \vinyl\di\Definition>
+     */
+    public function build(): Map
     {
         $definitionMap = clone $this->definitionMap;
-        $this->definitionMap = new DefinitionMap([]);
+        $this->definitionMap = mutableMapOf();
 
         return $definitionMap;
     }

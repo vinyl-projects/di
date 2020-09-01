@@ -9,6 +9,7 @@ use SplStack;
 use vinyl\di\AliasOnAliasDefinition;
 use vinyl\di\Definition;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\Map;
 use function array_key_exists;
 use function assert;
 
@@ -20,7 +21,7 @@ final class RecursionFreeClassResolver implements ClassResolver
     /**
      * {@inheritDoc}
      */
-    public function resolve(Definition $definition, UnmodifiableDefinitionMap $definitionMap): ClassObject
+    public function resolve(Definition $definition, Map $definitionMap): ClassObject
     {
         assert(self::assertGivenDefinitionAreSame($definition, $definitionMap));
 
@@ -38,7 +39,7 @@ final class RecursionFreeClassResolver implements ClassResolver
             $visitedDefinitions[$currentDefinition->id()] = true;
 
             if ($currentDefinition instanceof AliasOnAliasDefinition) {
-                if (!$definitionMap->contains($currentDefinition->parentId())) {
+                if (!$definitionMap->containsKey($currentDefinition->parentId())) {
                     throw new ClassResolverException("Unable to resolve class for {$definition->id()} definition id. Definition or one of parent refers to undeclared parent id [{$currentDefinition->parentId()}].");
                 }
 
@@ -47,7 +48,7 @@ final class RecursionFreeClassResolver implements ClassResolver
                 continue;
             }
 
-            if (!$definitionMap->contains($currentDefinition->classObject()->name())) {
+            if (!$definitionMap->containsKey($currentDefinition->classObject()->name())) {
                 return $currentDefinition->classObject();
             }
 
@@ -63,9 +64,14 @@ final class RecursionFreeClassResolver implements ClassResolver
         throw new LogicException("Unable to resolve class for {$definition->id()} definition id.");
     }
 
-    private static function assertGivenDefinitionAreSame(Definition $definition, UnmodifiableDefinitionMap $definitionMap): bool
+    /**
+     * @param Map<string, \vinyl\di\Definition> $definitionMap
+     *
+     * @return bool
+     */
+    private static function assertGivenDefinitionAreSame(Definition $definition, Map $definitionMap): bool
     {
-        if (!$definitionMap->contains($definition->id())) {
+        if (!$definitionMap->containsKey($definition->id())) {
             return true;
         }
 

@@ -8,9 +8,9 @@ use PHPUnit\Framework\TestCase;
 use vinyl\di\Definition;
 use vinyl\di\definition\CacheableClassResolver;
 use vinyl\di\definition\ClassResolver;
-use vinyl\di\definition\DefinitionMap;
 use vinyl\std\lang\ClassObject;
 use function get_class;
+use function vinyl\std\lang\collections\mutableMapOf;
 
 /**
  * Class CacheableClassResolverTest
@@ -24,7 +24,7 @@ final class CacheableClassResolverTest extends TestCase
     {
         $classMock = new class {};
         $classObject = ClassObject::create(get_class($classMock));
-        $definitionMap = new DefinitionMap([]);
+        $definitionMap = mutableMapOf();
         $definition = $this->createMock(Definition::class);
         $classResolverMock = $this->createMock(ClassResolver::class);
         $classResolverMock->expects(self::once())
@@ -44,7 +44,7 @@ final class CacheableClassResolverTest extends TestCase
     {
         $classMock = new class {};
         $classObject = ClassObject::create(get_class($classMock));
-        $definitionMap = new DefinitionMap([]);
+        $definitionMap = mutableMapOf();
         $definition = $this->createMock(Definition::class);
         $classResolverMock = $this->createMock(ClassResolver::class);
 
@@ -76,8 +76,8 @@ final class CacheableClassResolverTest extends TestCase
             ->willReturn($classObject);
         $cacheableClassResolver = new CacheableClassResolver($classResolverMock);
 
-        $cacheableClassResolver->resolve($definition, new DefinitionMap([]));
-        $resolvedClassObject= $cacheableClassResolver->resolve($definition, new DefinitionMap([]));
+        $cacheableClassResolver->resolve($definition, mutableMapOf());
+        $resolvedClassObject = $cacheableClassResolver->resolve($definition, mutableMapOf());
 
         self::assertSame($classObject, $resolvedClassObject);
     }
@@ -97,7 +97,7 @@ final class CacheableClassResolverTest extends TestCase
             ->willReturn($classObject);
         $cacheableClassResolver = new CacheableClassResolver($classResolverMock);
 
-        $definitionMap = new DefinitionMap([]);
+        $definitionMap = mutableMapOf();
         $cacheableClassResolver->resolve($definition, $definitionMap);
         $cacheableClassResolver->cleanCache();
         $resolvedClassObject= $cacheableClassResolver->resolve($definition, $definitionMap);

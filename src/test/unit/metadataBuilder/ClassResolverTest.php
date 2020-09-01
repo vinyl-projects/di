@@ -13,10 +13,11 @@ use vinyl\di\AliasOnAliasDefinition;
 use vinyl\di\ClassDefinition;
 use vinyl\di\definition\ClassResolver;
 use vinyl\di\definition\DefinitionCircularReferenceFoundException;
-use vinyl\di\definition\DefinitionMap;
 use vinyl\di\definition\RecursionFreeClassResolver;
 use vinyl\std\lang\ClassObject;
 use function get_class;
+use function vinyl\std\lang\collections\mutableMapOf;
+use function vinyl\std\lang\collections\pair;
 
 /**
  * Class ClassResolverTest
@@ -42,7 +43,7 @@ class ClassResolverTest extends TestCase
         {
         };
         $definition = new ClassDefinition(ClassObject::create(get_class($testClass)));
-        $config = new DefinitionMap([$definition->id() => $definition]);
+        $config = mutableMapOf(pair($definition->id(), $definition));
 
         $resolve = $this->classResolver->resolve($definition, $config);
 
@@ -58,8 +59,7 @@ class ClassResolverTest extends TestCase
         {
         };
         $definition = new ClassDefinition(ClassObject::create(get_class($testClass)));
-        $config = new DefinitionMap([]);
-        $resolve = $this->classResolver->resolve($definition, $config);
+        $resolve = $this->classResolver->resolve($definition, mutableMapOf());
 
         self::assertEquals(get_class($testClass), $resolve->name());
     }
@@ -75,10 +75,7 @@ class ClassResolverTest extends TestCase
 
         $type = new AliasOnAliasDefinition('some.id', 'parent.id');
         $type2 = new AliasDefinition('parent.id', ClassObject::create(get_class($testClass)));
-        $config = new DefinitionMap([
-            $type->id()  => $type,
-            $type2->id() => $type2,
-        ]);
+        $config = mutableMapOf(pair($type->id(),$type), pair($type2->id(), $type2));
 
         $resolvedClass = $this->classResolver->resolve($type, $config);
 
@@ -94,11 +91,11 @@ class ClassResolverTest extends TestCase
         $type = new AliasOnAliasDefinition('qwerty1', 'qwerty2');
         $type2 = new AliasOnAliasDefinition('qwerty2', 'qwerty3');
         $type3 = new AliasOnAliasDefinition('qwerty3', 'qwerty1');
-        $config = new DefinitionMap([
-            $type->id()  => $type,
-            $type2->id() => $type2,
-            $type3->id() => $type3,
-        ]);
+        $config = mutableMapOf(
+            pair($type->id(), $type),
+            pair($type2->id(), $type2),
+            pair($type3->id(), $type3),
+        );
 
         $this->classResolver->resolve($type, $config);
     }
@@ -112,11 +109,11 @@ class ClassResolverTest extends TestCase
         $type = new AliasOnAliasDefinition('qwerty1', 'qwerty2');
         $type2 = new AliasOnAliasDefinition('qwerty2', 'qwerty3');
         $type3 = new AliasOnAliasDefinition('qwerty3', 'qwerty4');
-        $config = new DefinitionMap([
-            $type->id()  => $type,
-            $type2->id() => $type2,
-            $type3->id() => $type3,
-        ]);
+        $config = mutableMapOf(
+            pair($type->id(), $type),
+            pair($type2->id(), $type2),
+            pair($type3->id(), $type3),
+        );
 
         $this->classResolver->resolve($type, $config);
     }
