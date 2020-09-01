@@ -10,12 +10,13 @@ use vinyl\di\definition\DefinitionTransformer;
 use vinyl\di\definition\RecursiveDefinitionTransformer;
 use vinyl\di\factory\argument\ArrayValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
-use vinyl\di\factory\FactoryMetadataMap;
 use vinyl\di\factory\FactoryValue;
+use vinyl\std\lang\collections\MutableMap;
 use function array_key_exists;
 use function assert;
 use function is_callable;
 use function sprintf;
+use function vinyl\std\lang\collections\mutableMapOf;
 
 /**
  * Class DeveloperFactory
@@ -27,7 +28,8 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
     private DefinitionMap $definitionMap;
     private ?ContainerInterface $container = null;
     private DefinitionTransformer $definitionTransformer;
-    private FactoryMetadataMap $factoryMetadataMap;
+    /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\factory\FactoryMetadata> */
+    private MutableMap $factoryMetadataMap;
     private ModifiableLifetimeCodeMap $lifetimeMap;
 
     /**
@@ -40,7 +42,7 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
     ) {
         $this->definitionMap = $metadataCollection;
         $this->definitionTransformer = $definitionTransformer ?? new RecursiveDefinitionTransformer();
-        $this->factoryMetadataMap = new FactoryMetadataMap();
+        $this->factoryMetadataMap = mutableMapOf();
         $this->lifetimeMap = $lifetimeMap;
     }
 
@@ -59,17 +61,17 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
     public function create(string $definitionId, ?array $arguments = null): object
     {
         assert($this->container !== null);
-        if (!$this->definitionMap->contains(($definitionId)) && !$this->factoryMetadataMap->contains($definitionId)) {
+        if (!$this->definitionMap->contains(($definitionId)) && !$this->factoryMetadataMap->containsKey($definitionId)) {
             throw new NotFoundException("[{$definitionId}] not found.");
         }
 
-        if (!$this->factoryMetadataMap->contains($definitionId)) {
+        if (!$this->factoryMetadataMap->containsKey($definitionId)) {
             $factoryMetadataMap = $this->definitionTransformer->transform(
                 $this->definitionMap->get($definitionId),
                 $this->definitionMap
             );
 
-            $this->factoryMetadataMap->add($factoryMetadataMap);
+            $this->factoryMetadataMap->putAll($factoryMetadataMap);
             /** @var \vinyl\di\factory\FactoryMetadata $factoryMetadata */
             foreach ($factoryMetadataMap as $factoryMetadata) {
                 $this->lifetimeMap->insert($factoryMetadata->id, $factoryMetadata->lifetimeCode);

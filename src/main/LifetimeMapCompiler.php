@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace vinyl\di;
 
 use LogicException;
-use vinyl\di\factory\FactoryMetadataMap;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\Map;
 use function class_exists;
 use function implode;
 
@@ -27,8 +27,9 @@ final class LifetimeMapCompiler
 
     /**
      * Compiles implementation of {@see \vinyl\di\LifetimeCodeMap}
+     * @psalm-param Map<string, \vinyl\di\factory\FactoryMetadata> $factoryMetadataMap
      */
-    public function compile(string $className, FactoryMetadataMap $factoryMetadataMap): ClassObject
+    public function compile(string $className, Map $factoryMetadataMap): ClassObject
     {
         if (class_exists($className)) {
             throw new LogicException("Class {$className} already exists.");

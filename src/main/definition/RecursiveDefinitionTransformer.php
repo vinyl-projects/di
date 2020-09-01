@@ -9,8 +9,10 @@ use vinyl\di\Definition;
 use vinyl\di\definition\value\NoValue;
 use vinyl\di\definition\valueProcessor\ValueProcessorCompositor;
 use vinyl\di\factory\FactoryMetadata;
-use vinyl\di\factory\FactoryMetadataMap;
+use vinyl\std\lang\collections\Map;
+use vinyl\std\lang\collections\MutableMap;
 use function array_key_exists;
+use function vinyl\std\lang\collections\mutableMapOf;
 
 /**
  * Class RecursiveDefinitionTransformer
@@ -46,9 +48,9 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
     /**
      * {@inheritDoc}
      */
-    public function transform(Definition $definition, DefinitionMap $definitionMap): FactoryMetadataMap
+    public function transform(Definition $definition, DefinitionMap $definitionMap): Map
     {
-        $factoryMetadataMap = new FactoryMetadataMap();
+        $factoryMetadataMap = mutableMapOf();
         $this->internalTransform($definition, $definitionMap, $factoryMetadataMap);
 
         return $factoryMetadataMap;
@@ -62,7 +64,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
     private function internalTransform(
         Definition $definition,
         DefinitionMap $definitionMap,
-        FactoryMetadataMap $factoryMetadataMap,
+        MutableMap $factoryMetadataMap,
         array $visitedClasses = []
     ): void {
         $id = $definition->id();
@@ -83,7 +85,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
             throw ClassCircularReferenceFoundException::create($className, $visitedClasses);
         }
 
-        if ($factoryMetadataMap->contains($id)) {
+        if ($factoryMetadataMap->containsKey($id)) {
             return;
         }
 
@@ -91,7 +93,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         $objectInstantiator = $this->instantiatorResolver->resolve($definition, $definitionMap);
         $lifetime = $this->lifetimeResolver->resolve($definition, $definitionMap);
         $factoryMetadata = new FactoryMetadata($id, $className, $objectInstantiator->value(), $lifetime->code());
-        $factoryMetadataMap->put($factoryMetadata);
+        $factoryMetadataMap->put($factoryMetadata->id, $factoryMetadata);
 
         try {
             $constructorValueMap = $this->constructorValueExtractor->extract($objectInstantiator);

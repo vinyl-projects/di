@@ -10,6 +10,7 @@ use vinyl\di\EvalClassMaterializer;
 use vinyl\di\factory\compiler\ValueRenderer;
 use vinyl\di\factory\compiler\ValueRendererCompositor;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\Map;
 use function class_exists;
 use function count;
 use function implode;
@@ -42,7 +43,7 @@ final class FactoryPerServiceCompiler implements Compiler
     /**
      * {@inheritDoc}
      */
-    public function compile(string $factoryClassName, FactoryMetadataMap $factoryMetadataMap): ClassObject
+    public function compile(string $factoryClassName, Map $factoryMetadataMap): ClassObject
     {
         if (class_exists($factoryClassName)) {
             throw new CompilerException("Factory [{$factoryClassName}] already exists.");
