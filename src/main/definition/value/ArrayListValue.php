@@ -7,24 +7,22 @@ namespace vinyl\di\definition\value;
 use InvalidArgumentException;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\ListValue;
-use vinyl\di\definition\OrderableValue;
 use function count;
 use function get_class;
 use function sprintf;
-use function usort;
 
 /**
  * Class ArrayListValue
  */
 final class ArrayListValue implements ListValue
 {
-    /** @var OrderableValue[] */
+    /** @var DefinitionValue[] */
     private ?array $items;
 
     /**
      * ListValue constructor.
      *
-     * @param OrderableValue[] $items
+     * @param DefinitionValue[] $items
      */
     public function __construct(?array $items = null)
     {
@@ -34,7 +32,7 @@ final class ArrayListValue implements ListValue
     /**
      * {@inheritDoc}
      */
-    public function add(OrderableValue $value): void
+    public function add(DefinitionValue $value): void
     {
         $this->items[] = $value;
     }
@@ -42,7 +40,7 @@ final class ArrayListValue implements ListValue
     /**
      * {@inheritDoc}
      *
-     * @return OrderableValue[]
+     * @return DefinitionValue[]
      */
     public function value():? array
     {
@@ -76,7 +74,7 @@ final class ArrayListValue implements ListValue
             $items[] = clone $item;
         }
 
-        /** @var OrderableValue $item */
+        /** @var DefinitionValue $item */
         foreach ($value as $item) {
             $items[] = clone $item;
         }
@@ -97,17 +95,5 @@ final class ArrayListValue implements ListValue
         }
 
         $this->items = $itemList;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function sort(): void
-    {
-        if ($this->items === null) {
-            return;
-        }
-
-        usort($this->items, static fn(OrderableValue $a, OrderableValue $b): int => $a->order() <=> $b->order());
     }
 }

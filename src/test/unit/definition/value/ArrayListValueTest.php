@@ -17,7 +17,7 @@ class ArrayListValueTest extends AbstractListValueTest
      */
     public function createFromConstructor(): void
     {
-        $value = $this->createOrderableMock(10);
+        $value = $this->createValueMock(10);
 
         $listValue = $this->createValue([$value]);
 

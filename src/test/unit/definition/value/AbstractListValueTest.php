@@ -8,7 +8,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\ListValue;
-use vinyl\di\definition\OrderableValue;
 use vinyl\di\definition\value\Mergeable;
 
 /**
@@ -21,8 +20,8 @@ abstract class AbstractListValueTest extends TestCase
      */
     public function addedItemsAreAvailableInValue(): void
     {
-        $value1 = $this->createOrderableMock(1);
-        $value2 = $this->createOrderableMock(2);
+        $value1 = $this->createValueMock(1);
+        $value2 = $this->createValueMock(2);
         $listValue = $this->createValue();
 
         $listValue->add($value1);
@@ -37,8 +36,8 @@ abstract class AbstractListValueTest extends TestCase
      */
     public function allListItemsAreClonedAfterCloningList(): void
     {
-        $value1 = $this->createOrderableMock(1);
-        $value2 = $this->createOrderableMock(2);
+        $value1 = $this->createValueMock(1);
+        $value2 = $this->createValueMock(2);
         $listValue = $this->createValue();
 
         $listValue->add($value1);
@@ -68,10 +67,10 @@ abstract class AbstractListValueTest extends TestCase
      */
     public function valuesFromBothListsAvailableAfterMerge(): void
     {
-        $value1 = $this->createOrderableMock(1);
-        $value2 = $this->createOrderableMock(2);
-        $value3 = $this->createOrderableMock(3);
-        $value4 = $this->createOrderableMock(4);
+        $value1 = $this->createValueMock(1);
+        $value2 = $this->createValueMock(2);
+        $value3 = $this->createValueMock(3);
+        $value4 = $this->createValueMock(4);
 
         $firstList = $this->createValue([$value1, $value2]);
         $secondList = $this->createValue([$value3, $value4]);
@@ -90,10 +89,10 @@ abstract class AbstractListValueTest extends TestCase
      */
     public function allValuesOfListAreClonedAfterMerging(): void
     {
-        $value1 = $this->createOrderableMock(1);
-        $value2 = $this->createOrderableMock(2);
-        $value3 = $this->createOrderableMock(3);
-        $value4 = $this->createOrderableMock(4);
+        $value1 = $this->createValueMock(1);
+        $value2 = $this->createValueMock(2);
+        $value3 = $this->createValueMock(3);
+        $value4 = $this->createValueMock(4);
 
         $firstList = $this->createValue([$value1, $value2]);
         $secondList = $this->createValue([$value3, $value4]);
@@ -123,41 +122,17 @@ abstract class AbstractListValueTest extends TestCase
     }
 
     /**
-     * @test
-     */
-    public function sort(): void
-    {
-        $value1 = $this->createOrderableMock(1, 100);
-        $value2 = $this->createOrderableMock(2, 50);
-        $value3 = $this->createOrderableMock(3);
-        $value4 = $this->createOrderableMock(4, -50);
-
-        $items = [$value1, $value2, $value3, $value4];
-        $listValue = $this->createValue($items);
-
-        $listValue->sort();
-
-        $expectedValueOrders = [-50, 0, 50, 100];
-
-        /** @var \vinyl\di\definition\OrderableValue $item */
-        foreach ($listValue->value() as $index => $item) {
-            self::assertEquals($expectedValueOrders[$index], $item->order());
-        }
-    }
-
-    /**
      * @param mixed $value
      *
-     * @return MockObject&OrderableValue
+     * @return MockObject&DefinitionValue
      */
-    protected function createOrderableMock($value, int $order = 0): MockObject
+    protected function createValueMock($value): MockObject
     {
-        $mock = $this->getMockBuilder(OrderableValue::class)
-            ->onlyMethods(['value', 'order'])
+        $mock = $this->getMockBuilder(DefinitionValue::class)
+            ->onlyMethods(['value'])
             ->getMock();
 
         $mock->method('value')->willReturn($value);
-        $mock->method('order')->willReturn($order);
 
         return $mock;
     }
@@ -177,7 +152,7 @@ abstract class AbstractListValueTest extends TestCase
     /**
      * Returns new list value
      *
-     * @param \vinyl\di\definition\OrderableValue[] $items
+     * @param \vinyl\di\definition\DefinitionValue[] $items
      */
     abstract protected function createValue(array $items = []): ListValue;
 }

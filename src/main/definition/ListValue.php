@@ -10,15 +10,15 @@ use vinyl\di\definition\value\Sortable;
 /**
  * Interface ListValue
  */
-interface ListValue extends DefinitionValue, Mergeable, Sortable
+interface ListValue extends DefinitionValue, Mergeable
 {
     /**
      * Appends the specified value to the end of this list
      */
-    public function add(OrderableValue $value): void;
+    public function add(DefinitionValue $value): void;
 
     /**
-     * @return array<OrderableValue>
+     * @return array<DefinitionValue>
      */
     public function value():? array;
 }

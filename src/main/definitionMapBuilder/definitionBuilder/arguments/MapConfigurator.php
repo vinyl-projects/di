@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace vinyl\di\definitionMapBuilder\definitionBuilder\arguments;
 
 use vinyl\di\ClassDefinition;
-use vinyl\di\definition\arrayValue\OrderableBoolValue;
-use vinyl\di\definition\arrayValue\OrderableFloatValue;
-use vinyl\di\definition\arrayValue\OrderableIntValue;
-use vinyl\di\definition\arrayValue\OrderableObjectValue;
-use vinyl\di\definition\arrayValue\OrderableProxyValue;
-use vinyl\di\definition\arrayValue\OrderableStringValue;
 use vinyl\di\definition\value\ArrayMapValue;
+use vinyl\di\definition\value\BoolValue;
+use vinyl\di\definition\value\FloatValue;
+use vinyl\di\definition\value\IntValue;
+use vinyl\di\definition\value\ObjectValue;
+use vinyl\di\definition\value\ProxyValue;
+use vinyl\di\definition\value\StringValue;
 use vinyl\di\definitionMapBuilder\definitionBuilder\Arguments;
 use vinyl\std\lang\ClassObject;
 use vinyl\std\lang\collections\MutableMap;
@@ -42,7 +42,7 @@ final class MapConfigurator
     /**
      * @param string|int $key
      */
-    public function classItem($key, string $className, ?int $order = null): self
+    public function classItem($key, string $className): self
     {
         assert($this->mapValue !== null);
 
@@ -51,7 +51,7 @@ final class MapConfigurator
             $this->definitionMap->put($classDefinition->id(), $classDefinition);
         }
 
-        $this->mapValue->put($key, new OrderableStringValue($className, $order));
+        $this->mapValue->put($key, new StringValue($className));
 
         return $this;
     }
@@ -59,10 +59,10 @@ final class MapConfigurator
     /**
      * @param string|int $key
      */
-    public function objectItem($key, string $definitionId, ?int $order = null): self
+    public function objectItem($key, string $definitionId): self
     {
         assert($this->mapValue !== null);
-        $itemValue = new OrderableObjectValue($definitionId, $order);
+        $itemValue = new ObjectValue($definitionId);
         $this->mapValue->put($key, $itemValue);
 
         return $this;
@@ -71,11 +71,11 @@ final class MapConfigurator
     /**
      * @param int|string $key
      */
-    public function proxyItem($key, ?string $value, ?int $order = null): self
+    public function proxyItem($key, ?string $value): self
     {
         assert($this->mapValue !== null);
 
-        $itemValue = new OrderableProxyValue($value, $order);
+        $itemValue = new ProxyValue($value);
         $this->mapValue->put($key, $itemValue);
 
         return $this;
@@ -84,10 +84,10 @@ final class MapConfigurator
     /**
      * @param string|int $key
      */
-    public function intItem($key, ?int $value, ?int $order = null): self
+    public function intItem($key, ?int $value): self
     {
         assert($this->mapValue !== null);
-        $this->mapValue->put($key, new OrderableIntValue($value, $order));
+        $this->mapValue->put($key, new IntValue($value));
 
         return $this;
     }
@@ -95,10 +95,10 @@ final class MapConfigurator
     /**
      * @param string|int $key
      */
-    public function floatItem($key, ?float $value, ?int $order = null): self
+    public function floatItem($key, ?float $value): self
     {
         assert($this->mapValue !== null);
-        $this->mapValue->put($key, new OrderableFloatValue($value, $order));
+        $this->mapValue->put($key, new FloatValue($value));
 
         return $this;
     }
@@ -106,10 +106,10 @@ final class MapConfigurator
     /**
      * @param string|int $key
      */
-    public function boolItem($key, ?bool $value, ?int $order = null): self
+    public function boolItem($key, ?bool $value): self
     {
         assert($this->mapValue !== null);
-        $this->mapValue->put($key, new OrderableBoolValue($value, $order));
+        $this->mapValue->put($key, new BoolValue($value));
 
         return $this;
     }
@@ -117,10 +117,10 @@ final class MapConfigurator
     /**
      * @param string|int $key
      */
-    public function stringItem($key, ?string $value, ?int $order = null): self
+    public function stringItem($key, ?string $value): self
     {
         assert($this->mapValue !== null);
-        $this->mapValue->put($key, new OrderableStringValue($value, $order));
+        $this->mapValue->put($key, new StringValue($value));
 
         return $this;
     }

@@ -8,7 +8,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\MapValue;
-use vinyl\di\definition\OrderableValue;
 use vinyl\di\definition\value\ArrayMapValue;
 use vinyl\di\definition\value\Mergeable;
 
@@ -181,11 +180,9 @@ class ArrayMapValueTest extends TestCase
     public function mergeCallMergeOnValuesIfTheyAreMergeableAndHaveSameKey(): void
     {
         $value2 = $this->getMockBuilder(\vinyl\di\definition\MapValue::class)
-//            ->onlyMethods(['value'])
             ->getMock();
 
         $value1 = $this->getMockBuilder(\vinyl\di\definition\MapValue::class)
-//            ->onlyMethods(['value'])
             ->getMock();
         $value1->expects(self::once())->method('merge')->with($value2);
 
@@ -198,12 +195,11 @@ class ArrayMapValueTest extends TestCase
     /**
      * @param mixed $value
      *
-     * @return MockObject&OrderableValue
+     * @return MockObject&DefinitionValue
      */
     private function createValueMock($value): MockObject
     {
-        $mock = $this->getMockBuilder(OrderableValue::class)
-//            ->onlyMethods(['value'])
+        $mock = $this->getMockBuilder(DefinitionValue::class)
             ->getMock();
 
         $mock->method('value')->willReturn($value);

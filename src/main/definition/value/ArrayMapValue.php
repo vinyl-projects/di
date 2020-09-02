@@ -7,25 +7,23 @@ namespace vinyl\di\definition\value;
 use InvalidArgumentException;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\MapValue;
-use vinyl\di\definition\OrderableValue;
 use function array_key_exists;
 use function count;
 use function get_class;
 use function sprintf;
-use function uasort;
 
 /**
  * Class ArrayMapValue
  */
 final class ArrayMapValue implements MapValue
 {
-    /** @var array<string|int, OrderableValue>|null */
+    /** @var array<string|int, DefinitionValue>|null */
     private ?array $items;
 
     /**
      * MapValueHolder constructor.
      *
-     * @param array<string|int, OrderableValue>|null $items
+     * @param array<string|int, DefinitionValue>|null $items
      */
     public function __construct(?array $items = null)
     {
@@ -33,7 +31,7 @@ final class ArrayMapValue implements MapValue
     }
 
     /**
-     * @return array<string|int, OrderableValue>|null
+     * @return array<string|int, DefinitionValue>|null
      */
     public function value(): ?array
     {
@@ -62,7 +60,7 @@ final class ArrayMapValue implements MapValue
             return clone $this;
         }
 
-        /** @var OrderableValue $item */
+        /** @var DefinitionValue $item */
         foreach ($this->items as $key => $item) {
             $newItems[$key] = clone $item;
         }
@@ -73,10 +71,10 @@ final class ArrayMapValue implements MapValue
                 continue;
             }
 
-            /** @var OrderableValue $currentItem */
+            /** @var DefinitionValue $currentItem */
             $currentItem = $newItems[$key];
             if ($currentItem instanceof Mergeable && $item instanceof Mergeable) {
-                /** @var OrderableValue $newItem */
+                /** @var DefinitionValue $newItem */
                 $newItem = $currentItem->merge($item);
                 $newItems[$key] = $newItem;
                 continue;
@@ -86,18 +84,6 @@ final class ArrayMapValue implements MapValue
         }
 
         return new ArrayMapValue($newItems);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function sort(): void
-    {
-        if ($this->items === null) {
-            return;
-        }
-
-        uasort($this->items, static fn(OrderableValue $a, OrderableValue $b): int => $a->order() <=> $b->order());
     }
 
     public function __clone()
@@ -118,7 +104,7 @@ final class ArrayMapValue implements MapValue
     /**
      * {@inheritDoc}
      */
-    public function put($key, OrderableValue $value): void
+    public function put($key, DefinitionValue $value): void
     {
         //todo instead of void maybe it will be good to return previous value if available
         $this->items[$key] = $value;
@@ -127,7 +113,7 @@ final class ArrayMapValue implements MapValue
     /**
      * {@inheritDoc}
      */
-    public function findByKey($key): ?OrderableValue
+    public function findByKey($key): ?DefinitionValue
     {
         return $this->items[$key] ?? null;
     }

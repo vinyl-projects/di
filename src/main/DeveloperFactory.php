@@ -29,6 +29,7 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
     private Map $definitionMap;
     private ?ContainerInterface $container = null;
     private DefinitionTransformer $definitionTransformer;
+
     /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\factory\FactoryMetadata> */
     private MutableMap $factoryMetadataMap;
     private ModifiableLifetimeCodeMap $lifetimeMap;
