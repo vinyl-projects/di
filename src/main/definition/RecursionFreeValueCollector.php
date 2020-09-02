@@ -93,7 +93,7 @@ final class RecursionFreeValueCollector implements ValueCollector
             return mapOf();
         }
 
-        return self::merge(...array_reverse($valueMapList));
+        return self::merge(array_reverse($valueMapList));
     }
 
     /**
@@ -103,11 +103,11 @@ final class RecursionFreeValueCollector implements ValueCollector
      *
      * If {@see FactoryValue } implements {@see Mergeable} interface it will be merged with value from other map
      *
-     * @psalm-param MutableMap<string, \vinyl\di\definition\DefinitionValue> $valueMapList
+     * @psalm-param iterable<MutableMap<string, \vinyl\di\definition\DefinitionValue>> $valueMapList
      *
      * @return Map<string, \vinyl\di\definition\DefinitionValue>
      */
-    private static function merge(MutableMap ...$valueMapList): Map
+    private static function merge(iterable $valueMapList): Map
     {
         /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\definition\DefinitionValue> $valueMap */
         $valueMap = mutableMapOf();
