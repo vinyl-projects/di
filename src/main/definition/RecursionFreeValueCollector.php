@@ -11,8 +11,6 @@ use vinyl\di\definition\value\Mergeable;
 use vinyl\std\lang\collections\Map;
 use vinyl\std\lang\collections\MutableMap;
 use function array_reverse;
-use function count;
-use function vinyl\std\lang\collections\mapOf;
 use function vinyl\std\lang\collections\mutableMapOf;
 
 /**
@@ -35,6 +33,10 @@ final class RecursionFreeValueCollector implements ValueCollector
      */
     public function collect(Definition $definition, Map $definitionMap): Map
     {
+        if (!$definition->isArgumentInheritanceEnabled()) {
+            return self::merge([$definition->argumentValues()]);
+        }
+
         /** @var MutableMap<string, \vinyl\di\definition\DefinitionValue>[] $valueMapList */
         $valueMapList = [];
         $stack = new SplStack();
@@ -87,10 +89,6 @@ final class RecursionFreeValueCollector implements ValueCollector
                 $stack->push($definitionMap->get($currentDefinitionClassName));
                 continue;
             }
-        }
-
-        if (count($valueMapList) === 0) {
-            return mapOf();
         }
 
         return self::merge(array_reverse($valueMapList));
