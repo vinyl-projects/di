@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace vinyl\di\definition;
 
 use vinyl\di\definition\value\Mergeable;
-use vinyl\di\definition\value\Sortable;
 
 /**
  * Interface ListValue
