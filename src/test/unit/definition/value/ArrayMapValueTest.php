@@ -99,7 +99,7 @@ class ArrayMapValueTest extends TestCase
         /** @var DefinitionValue&Mergeable $mergeableValueMock */
         $mergeableValueMock = new class implements DefinitionValue, Mergeable {
             public function value() { return null; }
-            public function merge(Mergeable $mergeableValue): DefinitionValue { return null; }
+            public function merge(Mergeable $mergeableValue): DefinitionValue { throw new \RuntimeException('Not implemented.'); }
         };
         $this->createValue()->merge($mergeableValueMock);
     }
