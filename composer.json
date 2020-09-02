@@ -23,7 +23,7 @@
     "vinyl/std": "dev-develop"
   },
   "require-dev": {
-    "vimeo/psalm": "3.14.0",
+    "vimeo/psalm": "3.15.*",
     "phpunit/phpunit": "9.*"
   },
   "autoload": {
