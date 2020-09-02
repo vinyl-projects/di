@@ -7,8 +7,9 @@ namespace vinyl\di;
 use LogicException;
 use vinyl\di\definition\Instantiator;
 use vinyl\di\definition\Lifetime;
-use vinyl\di\definition\ValueMap;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\MutableMap;
+use function vinyl\std\lang\collections\mutableMapOf;
 
 /**
  * Class AbstractDefinition
@@ -20,7 +21,9 @@ abstract class AbstractDefinition implements Definition
     protected ?ClassObject $classObject;
     private ?Lifetime $lifetime = null;
     private bool $argumentInheritance = false;
-    private ValueMap $argumentValues;
+
+    /** @var MutableMap<string, \vinyl\di\definition\DefinitionValue> */
+    private MutableMap $argumentValues;
     private ?Instantiator $instantiator = null;
 
     /**
@@ -30,7 +33,7 @@ abstract class AbstractDefinition implements Definition
     {
         $this->id = $id;
         $this->classObject = $class;
-        $this->argumentValues = new ValueMap();
+        $this->argumentValues = mutableMapOf();
     }
 
     /**
@@ -125,7 +128,7 @@ abstract class AbstractDefinition implements Definition
     /**
      * {@inheritDoc}
      */
-    public function argumentValues(): ValueMap
+    public function argumentValues(): MutableMap
     {
         return $this->argumentValues;
     }

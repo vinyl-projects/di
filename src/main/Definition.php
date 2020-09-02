@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace vinyl\di;
 
-use vinyl\di\definition\Lifetime;
 use vinyl\di\definition\Instantiator;
-use vinyl\di\definition\ValueMap;
+use vinyl\di\definition\Lifetime;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\collections\MutableMap;
 
 /**
  * Interface Definition
@@ -71,6 +71,8 @@ interface Definition
 
     /**
      * Returns argument values
+     *
+     * @return MutableMap<string, \vinyl\di\definition\DefinitionValue>
      */
-    public function argumentValues(): ValueMap;
+    public function argumentValues(): MutableMap;
 }
