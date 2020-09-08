@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\di\definition\valueProcessor;
 
-use vinyl\di\AliasDefinition;
+use vinyl\di\ClassAliasDefinition;
 use vinyl\di\ClassMaterializer;
 use vinyl\di\ClassMaterializerException;
 use vinyl\di\Definition;
@@ -165,7 +165,7 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         string $proxyClassName,
         Definition $definition,
         Lifetime $lifetime
-    ): AliasDefinition {
+    ): ClassAliasDefinition {
         #todo handle class names like 'Interface___'
         $proxyId = sprintf(
             '%s.auto.generated.proxy%s',
@@ -173,7 +173,7 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
             crc32($definition->id())
         );
 
-        $proxyDefinition = new AliasDefinition($proxyId, ClassObject::create($proxyClassName));
+        $proxyDefinition = new ClassAliasDefinition($proxyId, ClassObject::create($proxyClassName));
         $proxyDefinition->changeLifetime($lifetime);
         #todo create ProxyDefinition and move this logic to it
         $proxyDefinition->argumentValues()->put(

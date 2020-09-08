@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace vinyl\diTest\unit\metadataBuilder;
 
 use PHPUnit\Framework\TestCase;
-use vinyl\di\AliasDefinition;
+use vinyl\di\ClassAliasDefinition;
 use vinyl\di\AliasOnAliasDefinition;
 use vinyl\di\ClassDefinition;
 use vinyl\di\definition\ClassResolver;
@@ -74,7 +74,7 @@ class ClassResolverTest extends TestCase
         };
 
         $type = new AliasOnAliasDefinition('some.id', 'parent.id');
-        $type2 = new AliasDefinition('parent.id', ClassObject::create(get_class($testClass)));
+        $type2 = new ClassAliasDefinition('parent.id', ClassObject::create(get_class($testClass)));
         $config = mutableMapOf(pair($type->id(),$type), pair($type2->id(), $type2));
 
         $resolvedClass = $this->classResolver->resolve($type, $config);

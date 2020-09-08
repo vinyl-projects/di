@@ -65,7 +65,7 @@ class DefinitionMapBuilder
             throw new LogicException("Definition with id [{$definitionId}] already defined.");
         }
 
-        $typeDefinition = new AliasDefinition($definitionId, ClassObject::create($class));
+        $typeDefinition = new ClassAliasDefinition($definitionId, ClassObject::create($class));
         $this->definitionMap->put($typeDefinition->id(), $typeDefinition);
 
         $this->definitionBuilder->_updateDefinition($typeDefinition);

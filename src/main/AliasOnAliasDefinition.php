@@ -15,12 +15,12 @@ final class AliasOnAliasDefinition extends AbstractDefinition
     private string $parentId;
 
     /**
-     * AliasDefinition constructor.
+     * AliasOnAliasDefinition constructor.
      */
     public function __construct(string $id, string $parentId)
     {
-        AliasDefinition::validateAliasId($id);
-        AliasDefinition::validateAliasId($parentId);
+        ClassAliasDefinition::validateAliasId($id);
+        ClassAliasDefinition::validateAliasId($parentId);
         parent::__construct($id, null);
         $this->parentId = $parentId;
         $this->toggleArgumentInheritance(true);

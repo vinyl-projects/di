@@ -16,12 +16,12 @@ use function strrpos;
 use const ARRAY_FILTER_USE_KEY;
 
 /**
- * Class AliasDefinition
+ * Class ClassAliasDefinition
  */
-final class AliasDefinition extends AbstractDefinition
+final class ClassAliasDefinition extends AbstractDefinition
 {
     /**
-     * AliasDefinition constructor.
+     * ClassAliasDefinition constructor.
      */
     public function __construct(string $id, ClassObject $class)
     {
