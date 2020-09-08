@@ -14,10 +14,9 @@ interface ProxyGenerator
     public const PROXY_ARGUMENT_NAME = 'definitionId';
 
     /**
-     * Generates proxy for provided class
+     * Generates proxy content for given class with given proxy class name
      *
-     * @return \vinyl\di\proxy\ProxyGeneratorResult
      * @throws \vinyl\di\proxy\ProxyGeneratorException
      */
-    public function generate(ClassObject $class): ProxyGeneratorResult;
+    public function generate(ClassObject $class, string $proxyClassName): string;
 }
