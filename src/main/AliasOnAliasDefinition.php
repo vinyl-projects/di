@@ -10,7 +10,7 @@ use vinyl\std\lang\ClassObject;
 /**
  * Class AliasOnAliasDefinition
  */
-final class AliasOnAliasDefinition extends AbstractDefinition
+final class AliasOnAliasDefinition extends AliasDefinition
 {
     private string $parentId;
 
@@ -19,8 +19,8 @@ final class AliasOnAliasDefinition extends AbstractDefinition
      */
     public function __construct(string $id, string $parentId)
     {
-        ClassAliasDefinition::validateAliasId($id);
-        ClassAliasDefinition::validateAliasId($parentId);
+        self::validateAliasId($id);
+        self::validateAliasId($parentId);
         parent::__construct($id, null);
         $this->parentId = $parentId;
         $this->toggleArgumentInheritance(true);
