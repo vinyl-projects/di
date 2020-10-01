@@ -107,7 +107,7 @@ class DefinitionMapBuilder
      */
     public function build(): Map
     {
-        $definitionMap = clone $this->definitionMap;
+        $definitionMap = $this->definitionMap;
         $this->definitionMap = mutableMapOf();
 
         return $definitionMap;
