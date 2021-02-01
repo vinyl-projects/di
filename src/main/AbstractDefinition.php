@@ -18,7 +18,7 @@ abstract class AbstractDefinition implements Definition
 {
     private string $id;
     /** todo remove this property from abstract */
-    protected ?ClassObject $classObject;
+    private ?ClassObject $classObject;
     private ?Lifetime $lifetime = null;
     private bool $argumentInheritance = false;
 
