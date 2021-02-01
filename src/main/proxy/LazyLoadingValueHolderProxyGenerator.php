@@ -6,7 +6,7 @@ namespace vinyl\di\proxy;
 
 use InvalidArgumentException;
 use Laminas\Code\Generator\AbstractMemberGenerator;
-use ProxyManager\Generator\ClassGenerator;
+use Laminas\Code\Generator\ClassGenerator;
 use ProxyManager\ProxyGenerator\LazyLoadingValueHolderGenerator;
 use Psr\Container\ContainerInterface;
 use vinyl\std\lang\ClassObject;
@@ -55,9 +55,6 @@ final class LazyLoadingValueHolderProxyGenerator implements ProxyGenerator
             });"
         );
 
-        $classContent = $classGenerator->generate();
-        assert(is_string($classContent));
-
-        return $classContent;
+        return $classGenerator->generate();
     }
 }
