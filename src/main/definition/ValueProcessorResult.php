@@ -20,12 +20,10 @@ final class ValueProcessorResult
     /**
      * ValueProcessorResult constructor.
      *
-     * @psalm-param Vector<\vinyl\di\definition\DefinitionDependency>|null $dependencies
+     * @param Vector<\vinyl\di\definition\DefinitionDependency>|null $dependencies
      */
-    public function __construct(
-        FactoryValue $valueMetadata,
-        ?Vector $dependencies = null
-    ) {
+    public function __construct(FactoryValue $valueMetadata, ?Vector $dependencies = null)
+    {
         $this->valueMetadata = $valueMetadata;
         $this->dependencies = $dependencies;
     }
