@@ -17,20 +17,14 @@ final class Container implements ContainerInterface
     /** @var array<string, bool> */
     private static array $allowedLifetimeMap = [];
 
-    private ObjectFactory $objectFactory;
-    private LifetimeCodeMap $lifetimeCodeMap;
-
     /** @var array<string, object> */
     private array $sharedInstances = [];
 
     /**
      * Container constructor.
      */
-    public function __construct(LifetimeCodeMap $lifetimeCodeMap, ObjectFactory $objectFactory)
+    public function __construct(private LifetimeCodeMap $lifetimeCodeMap, private ObjectFactory $objectFactory)
     {
-        $this->objectFactory = $objectFactory;
-        $this->lifetimeCodeMap = $lifetimeCodeMap;
-
         if ($this->objectFactory instanceof ContainerAware) {
             $this->objectFactory->injectContainer($this);
         }

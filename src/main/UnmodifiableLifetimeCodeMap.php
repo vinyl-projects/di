@@ -30,7 +30,7 @@ final class UnmodifiableLifetimeCodeMap implements LifetimeCodeMap
     /**
      * @return \Iterator<string, string>
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new ArrayIterator($this->map);
     }

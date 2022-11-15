@@ -18,7 +18,7 @@ use function ltrim;
 use function md5;
 use function sprintf;
 use function var_export;
-use function vinyl\di\class_extract_short_name_and_namespace;
+use function vinyl\di\classExtractShortNameAndNamespace;
 use const PHP_EOL;
 
 /**
@@ -52,9 +52,8 @@ final class FactoryPerServiceCompiler implements Compiler
         $mainFactoryClassName = ltrim($factoryClassName, '\\');
         $services = [];
 
-        [$shortClassName, $namespace] = class_extract_short_name_and_namespace($mainFactoryClassName);
+        [$shortClassName, $namespace] = classExtractShortNameAndNamespace($mainFactoryClassName);
         try {
-            /** @var \vinyl\di\factory\FactoryMetadata $metadata */
             foreach ($factoryMetadataMap as $metadata) {
                 //TODO replace it
                 $class = 'class' . md5($metadata->id);//class mustn't start from a numeric symbol
@@ -71,7 +70,7 @@ final class FactoryPerServiceCompiler implements Compiler
                 
                 final class $class
                 {
-                    public static function create(?array \$arguments = null, ContainerInterface \$di)
+                    public static function create(ContainerInterface \$di, ?array \$arguments = null)
                     {
                         $makeFactoryMethodBody
                     }
@@ -191,7 +190,7 @@ final class FactoryPerServiceCompiler implements Compiler
                     throw new \\vinyl\di\NotFoundException(sprintf('[%s] not found.', \$id));
                 }
         
-                return self::SERVICES[\$id](\$arguments, \$this->container);
+                return self::SERVICES[\$id](\$this->container, \$arguments);
             }
         
             public function has(string \$id): bool

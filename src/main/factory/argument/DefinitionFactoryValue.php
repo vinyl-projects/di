@@ -11,23 +11,18 @@ use vinyl\di\factory\FactoryValue;
  */
 final class DefinitionFactoryValue implements FactoryValue
 {
-    private ?string $definitionId;
-    private bool $isMissed;
-
     /**
      * ObjectValue constructor.
      */
-    public function __construct(?string $definitionId, bool $isMissed)
+    public function __construct(private readonly ?string $definitionId, private readonly bool $isMissed)
     {
-        $this->definitionId = $definitionId;
-        $this->isMissed = $isMissed;
     }
 
     /**
      * {@inheritDoc}
      *
      * @return string|null An Id of definition that must be instantiated and passed as argument or null.
-     * If null is returned then null must be passed instead of object
+     * If null is returned then it must be passed instead of object
      */
     public function value(): ?string
     {

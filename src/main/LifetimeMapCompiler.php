@@ -48,7 +48,7 @@ final class LifetimeMapCompiler
 
     private static function generateMapTemplate(string $className, string $mapContent): string
     {
-        [$class, $classNamespace] = class_extract_short_name_and_namespace($className);
+        [$class, $classNamespace] = classExtractShortNameAndNamespace($className);
         $namespace = "namespace {$classNamespace};";
 
         if (!$classNamespace) {
@@ -75,14 +75,10 @@ final class LifetimeMapCompiler
                 {$mapContent}
             ];
         
-            public function __construct()
-            {
-            }
-        
             /**
              * @return \Iterator<string, string>
              */
-            public function getIterator()
+            public function getIterator(): \Traversable
             {
                 return new ArrayIterator(\$this->map);
             }

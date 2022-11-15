@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\di;
 
+use Composer\InstalledVersions;
 use LogicException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -140,9 +141,10 @@ final class ContainerBuilder
 
         $classResolver = new CacheableClassResolver(new RecursionFreeClassResolver());
         $lifetimeResolver = new RecursionFreeLifetimeResolver();
-        $processorMap = [
-            ProxyValue::class => new ProxyValueProcessor($lifetimeResolver, $materializer),
-        ];
+        $processorMap = [];
+        if (InstalledVersions::isInstalled('ocramius/proxy-manager')) {
+            $processorMap[ProxyValue::class] = new ProxyValueProcessor($lifetimeResolver, $materializer);
+        }
         $valueProcessor = new ValueProcessorCompositor($processorMap, $classResolver);
         $definitionTransformer = new RecursiveDefinitionTransformer($valueProcessor, $classResolver, $lifetimeResolver);
 

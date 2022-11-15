@@ -9,6 +9,8 @@ use vinyl\di\Definition;
 use vinyl\di\definition\value\NoValue;
 use vinyl\di\definition\valueProcessor\ValueProcessorCompositor;
 use vinyl\di\factory\FactoryMetadata;
+use vinyl\di\InterfaceImplementationDefinition;
+use vinyl\di\RuntimeClassDefinition;
 use vinyl\std\lang\collections\Map;
 use vinyl\std\lang\collections\MutableMap;
 use function array_key_exists;
@@ -162,7 +164,11 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
 
         #todo call definition post processor here ???
 
-        if (!$isComplete && $lifetime === SingletonLifetime::get()) {
+        if (!$isComplete
+            && $lifetime === SingletonLifetime::get()
+            && !$definition instanceof RuntimeClassDefinition
+            && !($definition instanceof InterfaceImplementationDefinition && $definitionMap->containsKey($className) && $definitionMap->get($className) instanceof RuntimeClassDefinition)
+        ) {
             throw DefinitionTransformerException::createIncompleteException($factoryMetadata);
         }
     }

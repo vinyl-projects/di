@@ -35,7 +35,8 @@ class DefinitionMapBuilder
      */
     public function interfaceImplementation(string $interface, string $className): self
     {
-        $interfaceImplementationDefinition = new InterfaceImplementationDefinition($interface, ClassObject::create($className));
+        $interfaceImplementationDefinition = new InterfaceImplementationDefinition($interface,
+            ClassObject::create($className));
         $this->definitionMap->put($interfaceImplementationDefinition->id(), $interfaceImplementationDefinition);
 
         return $this;
@@ -55,6 +56,22 @@ class DefinitionMapBuilder
         $this->definitionBuilder->_updateDefinition($typeDefinition);
 
         return $this->definitionBuilder;
+    }
+
+    public function runtimeClassDefinition(string $class): void
+    {
+        $definition = $this->definitionMap->find($class);
+
+        if ($definition !== null) {
+            throw new LogicException("Runtime Definition with id [{$class}] already defined.");
+        }
+
+        $definition = new RuntimeClassDefinition(ClassObject::create($class));
+        $this->definitionMap->put($definition->id(), $definition);
+
+        $this->definitionBuilder->_updateDefinition($definition);
+
+        return;
     }
 
     public function alias(string $definitionId, string $class): DefinitionBuilder
