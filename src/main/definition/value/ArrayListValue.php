@@ -74,7 +74,6 @@ final class ArrayListValue implements ListValue
             $items[] = clone $item;
         }
 
-        /** @var DefinitionValue $item */
         foreach ($value as $item) {
             $items[] = clone $item;
         }

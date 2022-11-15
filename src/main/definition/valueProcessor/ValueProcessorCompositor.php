@@ -82,7 +82,6 @@ final class ValueProcessorCompositor implements ValueProcessor
             return $this->valueTypeProcessorMap[$valueType]->process($value, $constructorValue, $definitionMap);
         }
 
-        /** @var string $valueType */
         foreach ($this->valueTypeProcessorMap as $valueType => $_) {
             if (!$value instanceof $valueType) {
                 continue;

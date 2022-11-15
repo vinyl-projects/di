@@ -60,7 +60,6 @@ final class ArrayMapValue implements MapValue
             return clone $this;
         }
 
-        /** @var DefinitionValue $item */
         foreach ($this->items as $key => $item) {
             $newItems[$key] = clone $item;
         }
@@ -71,10 +70,8 @@ final class ArrayMapValue implements MapValue
                 continue;
             }
 
-            /** @var DefinitionValue $currentItem */
             $currentItem = $newItems[$key];
             if ($currentItem instanceof Mergeable && $item instanceof Mergeable) {
-                /** @var DefinitionValue $newItem */
                 $newItem = $currentItem->merge($item);
                 $newItems[$key] = $newItem;
                 continue;

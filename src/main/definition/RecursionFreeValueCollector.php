@@ -111,14 +111,12 @@ final class RecursionFreeValueCollector implements ValueCollector
         $valueMap = mutableMapOf();
 
         foreach ($valueMapList as $values) {
-            /** @var string $argumentName */
             foreach ($values as $argumentName => $value) {
                 if (!$valueMap->containsKey($argumentName)) {
                     $valueMap->put($argumentName, clone $value);
                     continue;
                 }
 
-                /** @var \vinyl\di\definition\DefinitionValue $currentValue */
                 $currentValue = $valueMap->get($argumentName);
                 if ($value instanceof Mergeable && $currentValue instanceof Mergeable) {
                     $valueMap->put($argumentName, $currentValue->merge($value));

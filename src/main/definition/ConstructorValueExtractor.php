@@ -30,7 +30,6 @@ final class ConstructorValueExtractor
         $result = [];
 
         foreach ($objectInstantiator->parameters() as $parameter) {
-            /** @var string $parameterName */
             $parameterName = $parameter->name;
             /** @var \ReflectionNamedType|null $parameterType */
             $parameterType = $parameter->getType();
@@ -51,7 +50,7 @@ final class ConstructorValueExtractor
                 continue;
             }
 
-            assert(class_exists($type) || interface_exists($type));
+            assert(class_exists($type) || interface_exists($type));//TODO if class not exists it fails
             try {
                 $parameterClassReflection = new ReflectionClass($type);
                 $result[$parameterName] = new NamedObjectConstructorValue(

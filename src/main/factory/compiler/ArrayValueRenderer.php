@@ -37,7 +37,6 @@ final class ArrayValueRenderer implements ValueRenderer
         }
 
         $renderedArrayItemList = [];
-        /** @var \vinyl\di\factory\FactoryValue $arrayValue */
         foreach ($value->value() as $key => $arrayValue) {
             $renderedArrayItemList[] = var_export($key, true) . ' => ' . $this->valueRenderer->render($arrayValue);
         }

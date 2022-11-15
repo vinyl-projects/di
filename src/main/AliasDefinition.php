@@ -32,7 +32,6 @@ abstract class AliasDefinition extends AbstractDefinition
         }
 
         $input = get_defined_constants(true)['pcre'];
-        assert(is_array($input));
         $definedErrorConstants = array_filter(
             $input,
             static fn(string $constName): bool => strrpos($constName, '_ERROR', -1) !== false,

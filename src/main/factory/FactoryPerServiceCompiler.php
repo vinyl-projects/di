@@ -95,7 +95,7 @@ final class FactoryPerServiceCompiler implements Compiler
     }
 
     /**
-     * @param array<mixed> $arguments
+     * @param array<scalar> $arguments
      */
     private static function renderNewPattern(FactoryMetadata $metadata, array $arguments = []): string
     {
@@ -125,7 +125,6 @@ final class FactoryPerServiceCompiler implements Compiler
     {
         $missedVariables = [];
         $arguments = [];
-        /** @var \vinyl\di\factory\FactoryValue $value */
         foreach ($factoryMetadata->values as $name => $value) {
 
             if ($value->isMissed()) {
@@ -150,7 +149,6 @@ final class FactoryPerServiceCompiler implements Compiler
     private function renderWithArguments(FactoryMetadata $factoryMetadata, string $factoryClass): string
     {
         $arguments = [];
-        /** @var \vinyl\di\factory\FactoryValue $value */
         foreach ($factoryMetadata->values as $name => $value) {
             if ($value->isMissed()) {
                 $arguments[] = sprintf(

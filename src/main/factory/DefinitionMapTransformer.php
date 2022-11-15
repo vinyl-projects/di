@@ -36,7 +36,6 @@ final class DefinitionMapTransformer
     {
         /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\factory\FactoryMetadata> $factoryMetadataMap */
         $factoryMetadataMap = mutableMapOf();
-        /** @var \vinyl\di\Definition $definition */
         foreach ($definitionMap as $definition) {
             if ($factoryMetadataMap->containsKey($definition->id())) {
                 continue;

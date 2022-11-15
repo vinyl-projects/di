@@ -50,6 +50,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
      */
     public function transform(Definition $definition, Map $definitionMap): Map
     {
+        /** @var MutableMap<string, \vinyl\di\factory\FactoryMetadata> $factoryMetadataMap */
         $factoryMetadataMap = mutableMapOf();
         $this->internalTransform($definition, $definitionMap, $factoryMetadataMap);
 
@@ -57,8 +58,9 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
     }
 
     /**
-     * @param array<string, string> $visitedClasses
-     * @param Map<string, \vinyl\di\Definition> $definitionMap
+     * @param array<string, string>                                 $visitedClasses
+     * @param Map<string, \vinyl\di\Definition>                     $definitionMap
+     * @param MutableMap<string, \vinyl\di\factory\FactoryMetadata> $factoryMetadataMap
      *
      * @throws \vinyl\di\definition\DefinitionTransformerException
      */
@@ -117,7 +119,6 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
 
         $valueMap = $this->valueCollector->collect($definition, $definitionMap);
         $isComplete = true;
-        /** @var \vinyl\di\definition\constructorMetadata\ConstructorValue $constructorValue */
         foreach ($constructorValueMap as $argumentName => $constructorValue) {
             $definitionValue = $valueMap->find($argumentName) ?? NoValue::get();
 

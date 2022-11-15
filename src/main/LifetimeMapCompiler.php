@@ -36,7 +36,6 @@ final class LifetimeMapCompiler
         }
 
         $map = [];
-        /** @var \vinyl\di\factory\FactoryMetadata $factoryMetadata */
         foreach ($factoryMetadataMap as $factoryMetadata) {
             $map[] = "'{$factoryMetadata->id}' => '{$factoryMetadata->lifetimeCode}'";
         }

@@ -44,7 +44,6 @@ final class ArrayValueProcessor implements ValueProcessor
     ): ValueProcessorResult {
         assert($value instanceof MapValue || $value instanceof ListValue);
 
-        /** @var \vinyl\di\definition\DefinitionValue[]|null $values */
         $values = $value->value();
 
         if ($values === null && !$constructorValue->isNullable()) {

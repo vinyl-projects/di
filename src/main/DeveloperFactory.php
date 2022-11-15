@@ -76,7 +76,6 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
             );
 
             $this->factoryMetadataMap->putAll($factoryMetadataMap);
-            /** @var \vinyl\di\factory\FactoryMetadata $factoryMetadata */
             foreach ($factoryMetadataMap as $factoryMetadata) {
                 $this->lifetimeMap->insert($factoryMetadata->id, $factoryMetadata->lifetimeCode);
             }
@@ -85,7 +84,6 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
         $factoryMetadata = $this->factoryMetadataMap->get($definitionId);
 
         $resolvedArguments = [];
-        /** @var \vinyl\di\factory\FactoryValue $valueObject */
         foreach ($factoryMetadata->values as $name => $valueObject) {
             if ($arguments !== null && array_key_exists($name, $arguments)) {
                 $resolvedArguments[] = $arguments[$name];
