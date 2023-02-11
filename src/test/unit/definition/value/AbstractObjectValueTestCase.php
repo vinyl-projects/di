@@ -14,7 +14,7 @@ use function get_class;
 /**
  * Class ObjectValueTest
  */
-abstract class AbstractObjectValueTest extends TestCase
+abstract class AbstractObjectValueTestCase extends TestCase
 {
     /**
      * @test

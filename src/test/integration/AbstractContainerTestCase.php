@@ -26,7 +26,7 @@ use function array_values;
 /**
  * Class AbstractContainerTest
  */
-abstract class AbstractContainerTest extends TestCase
+abstract class AbstractContainerTestCase extends TestCase
 {
     private static bool $isProxyManagerInstalled = false;
 

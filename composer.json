@@ -24,8 +24,8 @@
     "vinyl/std": "dev-develop"
   },
   "require-dev": {
-    "vimeo/psalm": "4.*",
-    "phpunit/phpunit": "9.*"
+    "vimeo/psalm": "5.*",
+    "phpunit/phpunit": "10.*"
   },
   "suggest": {
     "ocramius/proxy-manager": "2.*"
@@ -47,7 +47,7 @@
     ]
   },
   "scripts": {
-    "analyse": "vendor/bin/phpstan analyse src/main --level=8",
+    "analyse": "vendor/bin/psalm --output-format=console --stats",
     "test": "vendor/bin/phpunit --configuration phpunit.xml.dist"
   }
 }

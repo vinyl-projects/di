@@ -17,7 +17,7 @@ use vinyl\diTest\integration\objectFactory\testAsset\instantiateObjectWithNullab
 /**
  * Class AbstractFactoryTest
  */
-abstract class AbstractFactoryTest extends TestCase
+abstract class AbstractFactoryTestCase extends TestCase
 {
     /**
      * @test

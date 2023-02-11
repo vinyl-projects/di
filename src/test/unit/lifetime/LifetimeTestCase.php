@@ -15,7 +15,7 @@ use function unserialize;
 /**
  * Class LifetimeTest
  */
-abstract class LifetimeTest extends TestCase
+abstract class LifetimeTestCase extends TestCase
 {
     /**
      * @test

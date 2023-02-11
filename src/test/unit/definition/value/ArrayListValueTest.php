@@ -10,7 +10,7 @@ use vinyl\di\definition\value\ArrayListValue;
 /**
  * Class ListValueTest
  */
-class ArrayListValueTest extends AbstractListValueTest
+class ArrayListValueTest extends AbstractListValueTestCase
 {
     /**
      * @test

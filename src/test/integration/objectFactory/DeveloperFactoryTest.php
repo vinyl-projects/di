@@ -13,7 +13,7 @@ use vinyl\di\ObjectFactory;
 /**
  * Class DeveloperFactoryTest
  */
-class DeveloperFactoryTest extends AbstractFactoryTest
+class DeveloperFactoryTest extends AbstractFactoryTestCase
 {
     /**
      * {@inheritDoc}

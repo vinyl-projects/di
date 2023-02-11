@@ -10,7 +10,7 @@ use vinyl\di\definition\SingletonLifetime;
 /**
  * Class SingletonLifetimeTest
  */
-class SingletonLifetimeTest extends LifetimeTest
+class SingletonLifetimeTest extends LifetimeTestCase
 {
     protected function createLifetime(): Lifetime
     {

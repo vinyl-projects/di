@@ -19,7 +19,7 @@ use function random_bytes;
 /**
  * Class CompiledFactoryPerServiceTest
  */
-class CompiledFactoryPerServiceTest extends AbstractFactoryTest
+class CompiledFactoryPerServiceTest extends AbstractFactoryTestCase
 {
     /**
      * {@inheritDoc}

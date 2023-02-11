@@ -10,7 +10,7 @@ use vinyl\di\definition\value\ObjectValue;
 /**
  * Class ObjectValueTest
  */
-class ObjectValueTest extends AbstractObjectValueTest
+class ObjectValueTest extends AbstractObjectValueTestCase
 {
     /**
      * {@inheritDoc}

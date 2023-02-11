@@ -10,7 +10,7 @@ use vinyl\di\definition\PrototypeLifetime;
 /**
  * Class PrototypeLifetimeTest
  */
-class PrototypeLifetimeTest extends LifetimeTest
+class PrototypeLifetimeTest extends LifetimeTestCase
 {
     protected function createLifetime(): Lifetime
     {

@@ -15,7 +15,7 @@ use function random_bytes;
 /**
  * Class ServicePerFactoryContainerTest
  */
-class ServicePerFactoryContainerTest extends AbstractContainerTest
+class ServicePerFactoryContainerTest extends AbstractContainerTestCase
 {
     protected function createContainer(callable $builderFunction): ContainerInterface
     {

@@ -11,7 +11,7 @@ use vinyl\di\DefinitionMapBuilder;
 /**
  * Class DeveloperContainerTest
  */
-final class DeveloperContainerTest extends AbstractContainerTest
+final class DeveloperContainerTest extends AbstractContainerTestCase
 {
     /**
      * {@inheritDoc}

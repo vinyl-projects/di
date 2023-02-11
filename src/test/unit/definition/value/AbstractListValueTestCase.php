@@ -13,7 +13,7 @@ use vinyl\di\definition\value\Mergeable;
 /**
  * Class ListValueTest
  */
-abstract class AbstractListValueTest extends TestCase
+abstract class AbstractListValueTestCase extends TestCase
 {
     /**
      * @test
