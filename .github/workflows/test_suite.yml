@@ -9,15 +9,15 @@ jobs:
     strategy:
       matrix:
         operating-system: [ubuntu-latest, windows-latest]
-        php-versions: ['7.4']
+        php-versions: ['8.1', '8.2']
     runs-on: ${{ matrix.operating-system }}
     name: PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v3
       
     - name: Setup PHP
-      uses: shivammathur/setup-php@v1
+      uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
         ini-values: zend.assertions=1, assert.exception=1
