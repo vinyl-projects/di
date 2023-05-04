@@ -9,7 +9,9 @@ namespace vinyl\diTest\integration;
 use Composer\InstalledVersions;
 use PHPUnit\Framework\TestCase;
 use ProxyManager\Proxy\VirtualProxyInterface;
+use Psr\Container\ContainerInterface;
 use stdClass;
+use vinyl\di\Container;
 use vinyl\di\definition\ClassCircularReferenceFoundException;
 use vinyl\di\definition\DefinitionTransformerException;
 use vinyl\di\definition\FunctionInstantiator;
@@ -22,7 +24,7 @@ use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\Class
 use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassB;
 use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassC;
 use vinyl\diTest\integration\testAsset\circularDependencyDetectionWithInterface\ClassAInterface;
-use function array_values;
+use vinyl\diTest\integration\testAsset\instantiateObjectWithRequiredEnumArgument\EnumArgument;
 
 /**
  * Class AbstractContainerTest
@@ -40,7 +42,7 @@ abstract class AbstractContainerTestCase extends TestCase
 
     protected function setUp(): void
     {
-        self::$isProxyManagerInstalled = \Composer\InstalledVersions::isInstalled('ocramius/proxy-manager');
+        self::$isProxyManagerInstalled = InstalledVersions::isInstalled('ocramius/proxy-manager');
     }
 
     /**
@@ -481,7 +483,7 @@ abstract class AbstractContainerTestCase extends TestCase
             // @formatter:on
         });
 
-        /** @var \vinyl\diTest\integration\testAsset\instantiateAliasTypeWithArguments\ClassA $obj */
+        /** @var testAsset\instantiateAliasTypeWithArguments\ClassA $obj */
         $obj = $di->get('some.alias.type');
         self::assertSame(42, $obj->intArg);
         self::assertSame(42, $obj->intArgOptional);
@@ -1122,13 +1124,68 @@ abstract class AbstractContainerTestCase extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function instantiateObjectWithOptionalEnumArgument(): void
+    {
+        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+            // @formatter:off
+            $dmb->classDefinition(testAsset\instantiateObjectWithOptionalEnumArgument\ClassA::class)
+                ->end();
+            // @formatter:on
+        });
+
+        $object = $di->get(testAsset\instantiateObjectWithOptionalEnumArgument\ClassA::class);
+        self::assertEquals(testAsset\instantiateObjectWithOptionalEnumArgument\EnumTestProvider::ONE, $object->enumTestProvider);
+    }
+
+    /**
+     * @test
+     */
+    public function instantiateObjectWithRequiredEnumArgument(): void
+    {
+        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+            // @formatter:off
+            $dmb->classDefinition(testAsset\instantiateObjectWithRequiredEnumArgument\ClassA::class)
+                    ->arguments()
+                        ->enumArgument('argument', EnumArgument::ONE)
+                    ->endArguments()
+                ->end();
+            // @formatter:on
+        });
+
+        $object = $di->get(testAsset\instantiateObjectWithRequiredEnumArgument\ClassA::class);
+        self::assertEquals(EnumArgument::ONE, $object->argument);
+    }
+
+    /**
+     * @test
+     */
+    public function instantiateObjectWithNullableEnumArguments(): void
+    {
+        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+            // @formatter:off
+            $dmb->classDefinition(testAsset\instantiateObjectWithNullableEnumArgument\ClassA::class)
+                    ->arguments()
+                        ->enumArgument('argument', null)
+                    ->endArguments()
+                ->end();
+            // @formatter:on
+        });
+
+        $object = $di->get(testAsset\instantiateObjectWithNullableEnumArgument\ClassA::class);
+        self::assertNull($object->argument);
+        self::assertNull($object->argument2);
+    }
+
+    /**
      * Returns di container
      *
      * @param callable $builderFunction (containerBuilder)
      *
-     * @return \vinyl\di\Container
-     * @throws \vinyl\di\definition\ClassCircularReferenceFoundException
-     * @throws \vinyl\di\definition\DefinitionTransformerException
+     * @return Container
+     * @throws ClassCircularReferenceFoundException
+     * @throws DefinitionTransformerException
      */
-    abstract protected function createContainer(callable $builderFunction): \Psr\Container\ContainerInterface;
+    abstract protected function createContainer(callable $builderFunction): ContainerInterface;
 }

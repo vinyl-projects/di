@@ -9,6 +9,7 @@ use vinyl\di\definition\DefinitionTransformer;
 use vinyl\di\definition\RecursiveDefinitionTransformer;
 use vinyl\di\factory\argument\ArrayValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
+use vinyl\di\factory\argument\EnumFactoryValue;
 use vinyl\di\factory\FactoryValue;
 use vinyl\std\lang\collections\Map;
 use vinyl\std\lang\collections\MutableMap;
@@ -113,6 +114,11 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
                 /** @var array<string|int, FactoryValue> $value */
                 $resolvedArguments[] = $this->resolveArrayArgument($value);
                 continue;
+            }
+
+            if ($valueObject instanceof EnumFactoryValue) {
+                assert(!is_null($valueObject->type()));
+                $resolvedArguments[] = constant("{$valueObject->type()}::{$value}");
             }
 
             $resolvedArguments[] = $value;

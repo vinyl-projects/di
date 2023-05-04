@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace vinyl\di\definition;
 
-use Error;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionParameter;
 use vinyl\di\definition\constructorMetadata\BuiltinConstructorValue;
+use vinyl\di\definition\constructorMetadata\EnumConstructorValue;
 use vinyl\di\definition\constructorMetadata\NamedObjectConstructorValue;
-use function assert;
-use function class_exists;
-use function interface_exists;
 
 /**
  * Class ConstructorValueExtractor
@@ -39,6 +36,13 @@ final class ConstructorValueExtractor
 
             $type = $parameterType === null ? 'mixed' : $parameterType->getName();
             if ($parameterType === null || $parameterType->isBuiltin()) {
+                assert(is_scalar($defaultValue)
+                    || is_array($defaultValue)
+                    || is_object($defaultValue)
+                    || is_null($defaultValue),
+                    get_debug_type($defaultValue)
+                );
+                assert(!is_object($defaultValue));
                 $result[$parameterName] = new BuiltinConstructorValue(
                     $defaultValue,
                     $type,
@@ -50,9 +54,15 @@ final class ConstructorValueExtractor
                 continue;
             }
 
-            assert(class_exists($type) || interface_exists($type));//TODO if class not exists it fails
             try {
+                /** @var class-string $type */
                 $parameterClassReflection = new ReflectionClass($type);
+                if ($parameterClassReflection->isEnum()) {
+                    /** @var \UnitEnum $defaultValue */
+                    $result[$parameterName] = new EnumConstructorValue($type, $defaultValue->name, $isNullable, $isOptional, $parameter->isVariadic());
+                    continue;
+                }
+
                 $result[$parameterName] = new NamedObjectConstructorValue(
                     $type,
                     $isNullable,
@@ -74,26 +84,15 @@ final class ConstructorValueExtractor
      *
      * @param ReflectionParameter $parameter
      *
-     * @return string|float|bool|int|null|array<int|string, mixed>
+     * @return mixed
      */
-    private static function extractDefaultValue(ReflectionParameter $parameter)
+    private static function extractDefaultValue(ReflectionParameter $parameter): mixed
     {
         #todo drop isDefaultValueAvailable ???
         if (!$parameter->isOptional() || !$parameter->isDefaultValueAvailable()) {
             return null;
         }
 
-        try {
-            $defaultValue = $parameter->getDefaultValue();
-            assert(
-                is_scalar($defaultValue)
-                || is_null($defaultValue)
-                || is_array($defaultValue)
-            );
-
-            return $defaultValue;
-        } catch (ReflectionException $e) {
-            throw new Error("Impossible reflection exception. Details {$e->getMessage()}", 0, $e);
-        }
+        return $parameter->getDefaultValue();
     }
 }

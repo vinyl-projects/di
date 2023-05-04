@@ -7,6 +7,7 @@ namespace vinyl\di\factory\compiler;
 use vinyl\di\factory\argument\ArrayValue;
 use vinyl\di\factory\argument\BuiltinFactoryValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
+use vinyl\di\factory\argument\EnumFactoryValue;
 use vinyl\di\factory\FactoryValue;
 use function array_key_exists;
 use function array_replace;
@@ -28,6 +29,7 @@ final class ValueRendererCompositor implements ValueRenderer
     public function __construct(?array $valueRendererMap = null)
     {
         $defaultValueRendererMap = [
+            EnumFactoryValue::class       => new EnumValueRenderer(),
             DefinitionFactoryValue::class => new DefinitionValueRenderer(),
             BuiltinFactoryValue::class    => new ScalarValueRenderer(),
             ArrayValue::class             => new ArrayValueRenderer($this),//TODO Create ValueRendererAware interface

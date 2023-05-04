@@ -17,6 +17,7 @@ use vinyl\di\definition\ListValue;
 use vinyl\di\definition\MapValue;
 use vinyl\di\definition\ObjectValue;
 use vinyl\di\definition\StringValue;
+use vinyl\di\definition\value\EnumValue;
 use vinyl\di\definition\value\NoValue;
 use vinyl\di\definition\ValueProcessor;
 use vinyl\di\definition\ValueProcessorResult;
@@ -57,6 +58,7 @@ final class ValueProcessorCompositor implements ValueProcessor
             IntValue::class    => new IntValueProcessor(),
             FloatValue::class  => new FloatValueProcessor(),
             BoolValue::class   => new BoolValueProcessor(),
+            EnumValue::class   => new EnumValueProcessor()
         ];
 
         $arrayReplace = array_replace($defaultProcessorMap, $processorMap);

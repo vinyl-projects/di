@@ -6,6 +6,7 @@ namespace vinyl\di\definition\valueProcessor;
 
 use Psr\Container\ContainerInterface;
 use vinyl\di\definition\constructorMetadata\ConstructorValue;
+use vinyl\di\definition\constructorMetadata\EnumConstructorValue;
 use vinyl\di\definition\constructorMetadata\NamedObjectConstructorValue;
 use vinyl\di\definition\DefinitionDependency;
 use vinyl\di\definition\DefinitionValue;
@@ -14,6 +15,7 @@ use vinyl\di\definition\ValueProcessor;
 use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\BuiltinFactoryValue;
 use vinyl\di\factory\argument\DefinitionFactoryValue;
+use vinyl\di\factory\argument\EnumFactoryValue;
 use vinyl\di\ShadowClassDefinition;
 use vinyl\std\lang\collections\Map;
 use function assert;
@@ -35,6 +37,11 @@ final class NoValueProcessor implements ValueProcessor
         assert($value instanceof NoValue);
 
         $isOptional = $constructorValue->isOptional();
+
+        if ($constructorValue instanceof EnumConstructorValue) {
+            return new ValueProcessorResult(new EnumFactoryValue($constructorValue->type(), $constructorValue->defaultValue(), !$isOptional));
+        }
+
         if (!$constructorValue instanceof NamedObjectConstructorValue) {
             return new ValueProcessorResult(new BuiltinFactoryValue($constructorValue->defaultValue(), !$isOptional));
         }

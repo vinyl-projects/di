@@ -19,7 +19,7 @@ final class BuiltinConstructorValue implements ConstructorValue
     /**
      * ConstructorValueMetadata constructor.
      *
-     * @param string|float|bool|int|null|array<int|string, mixed> $defaultValue
+     * @param string|float|bool|int|null|array<array-key, mixed> $defaultValue
      */
     public function __construct(
         $defaultValue,

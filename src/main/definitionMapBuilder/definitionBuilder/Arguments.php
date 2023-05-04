@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace vinyl\di\definitionMapBuilder\definitionBuilder;
 
 use RuntimeException;
+use UnitEnum;
 use vinyl\di\ClassDefinition;
 use vinyl\di\Definition;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\value\ArrayListValue;
 use vinyl\di\definition\value\ArrayMapValue;
 use vinyl\di\definition\value\BoolValue;
+use vinyl\di\definition\value\EnumValue;
 use vinyl\di\definition\value\FloatValue;
 use vinyl\di\definition\value\IntValue;
 use vinyl\di\definition\value\ObjectValue;
@@ -171,6 +173,14 @@ class Arguments
 //
 //            return $this;
 //        }
+    }
+
+    public function enumArgument(string $name, ?UnitEnum $enumCase): self
+    {
+        $valueHolder = new EnumValue($enumCase);
+        $this->definition->argumentValues()->put($name, $valueHolder);
+
+        return $this;
     }
 
     /**
