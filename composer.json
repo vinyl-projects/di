@@ -25,10 +25,11 @@
   },
   "require-dev": {
     "vimeo/psalm": "5.*",
-    "phpunit/phpunit": "10.*"
+    "phpunit/phpunit": "10.*",
+    "friendsofphp/proxy-manager-lts": "1.*"
   },
   "suggest": {
-    "ocramius/proxy-manager": "2.*"
+    "friendsofphp/proxy-manager-lts": "Allows using proxy to resolve circular references and lazy loadable objects."
   },
   "autoload": {
     "psr-4": {

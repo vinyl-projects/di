@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\integration;
 
+use Composer\InstalledVersions;
 use PHPUnit\Framework\TestCase;
 use ProxyManager\Proxy\VirtualProxyInterface;
 use stdClass;
