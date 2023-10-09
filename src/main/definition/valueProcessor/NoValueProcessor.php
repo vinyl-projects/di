@@ -55,8 +55,7 @@ final class NoValueProcessor implements ValueProcessor
         $typeName = $type->getName();
         $classReflection = new \ReflectionClass($typeName);
         if ($classReflection->isEnum()) {
-            assert($defaultValue instanceof \UnitEnum);
-            return new ValueProcessorResult(new EnumFactoryValue($typeName, $defaultValue->name, $isMissed));
+            return new ValueProcessorResult(new EnumFactoryValue($typeName, $defaultValue?->name, $isMissed));
         }
 
         if ($isOptional) {
