@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\di\definition\valueProcessor;
 
+use ReflectionNamedType;
 use vinyl\di\ClassAliasDefinition;
 use vinyl\di\ClassMaterializer;
 use vinyl\di\ClassMaterializerException;
@@ -36,6 +37,7 @@ use function crc32;
 use function interface_exists;
 use function sprintf;
 use function str_replace;
+use function vinyl\di\isDeclaredTypeCompatibleWith;
 use function vinyl\std\lang\collections\vectorOf;
 
 /**
@@ -74,8 +76,19 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
 
         $definitionId = $value->value();
 
+        $reflectionType = $constructorValue->type();
+        if ($reflectionType !== null && !$reflectionType instanceof ReflectionNamedType) {
+            throw IncompatibleTypeException::create($reflectionType, "DefinitionId: {$definitionId}");
+        }
+
+        if ($definitionId === null && $reflectionType !== null) {
+            $definitionId = $reflectionType->getName();
+        }
+
         if ($definitionId === null) {
-            $definitionId = $constructorValue->type();
+            throw new ValueProcessorException(
+                "DefinitionId could not be null."
+            );
         }
 
         $definition = self::resolveProxyDefinition($definitionMap, $definitionId);
@@ -88,10 +101,9 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
             );
         }
 
-        $type = $constructorValue->type();
         $className = $classObject->name();
-        if (!is_a($className, $type, true) && ($type !== 'object') && $type !== 'mixed') {
-            throw IncompatibleTypeException::create($type, "{$className} -> {$definitionId}");
+        if (!isDeclaredTypeCompatibleWith($reflectionType, $className)) {
+            throw IncompatibleTypeException::create($reflectionType, "{$className} -> {$definitionId}");
         }
 
         $originalClass = $classObject->toReflectionClass();

@@ -7,16 +7,13 @@ namespace vinyl\di\definition\value;
 /**
  * Class FloatValue
  */
-final class FloatValue implements \vinyl\di\definition\FloatValue
+final readonly class FloatValue implements \vinyl\di\definition\FloatValue
 {
-    private ?float $value;
-
     /**
      * FloatValue constructor.
      */
-    public function __construct(?float $value)
+    public function __construct(private ?float $value)
     {
-        $this->value = $value;
     }
 
     /**

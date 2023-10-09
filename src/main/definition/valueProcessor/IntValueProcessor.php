@@ -14,6 +14,7 @@ use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\BuiltinFactoryValue;
 use vinyl\std\lang\collections\Map;
 use function assert;
+use function vinyl\di\isDeclaredTypeCompatibleWith;
 
 /**
  * Class IntValueProcessor
@@ -24,20 +25,21 @@ final class IntValueProcessor implements ValueProcessor
      * {@inheritDoc}
      */
     public function process(
-        DefinitionValue $value,
+        DefinitionValue  $value,
         ConstructorValue $constructorValue,
-        Map $definitionMap
-    ): ValueProcessorResult {
+        Map              $definitionMap
+    ): ValueProcessorResult
+    {
         assert($value instanceof IntValue);
 
         $intValue = $value->value();
-        $type = $constructorValue->type();
 
         if ($intValue === null && !$constructorValue->isNullable()) {
             throw NullValueException::create();
         }
 
-        if ($type !== 'int' && $type !== 'float' && $type !== 'mixed') {
+        $type = $constructorValue->type();
+        if (!isDeclaredTypeCompatibleWith($type, 'int')) {
             throw IncompatibleTypeException::create($type, 'int');
         }
 

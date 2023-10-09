@@ -7,16 +7,13 @@ namespace vinyl\di\definition\value;
 /**
  * Class BoolValue
  */
-final class BoolValue implements \vinyl\di\definition\BoolValue
+final readonly class BoolValue implements \vinyl\di\definition\BoolValue
 {
-    private ?bool $value;
-
     /**
      * BoolValue constructor.
      */
-    public function __construct(?bool $value)
+    public function __construct(private ?bool $value)
     {
-        $this->value = $value;
     }
 
     /**

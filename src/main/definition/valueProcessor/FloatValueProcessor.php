@@ -14,6 +14,7 @@ use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\BuiltinFactoryValue;
 use vinyl\std\lang\collections\Map;
 use function assert;
+use function vinyl\di\isDeclaredTypeCompatibleWith;
 
 /**
  * Class FloatValueProcessor
@@ -37,7 +38,11 @@ final class FloatValueProcessor implements ValueProcessor
             throw NullValueException::create();
         }
 
-        if ($type !== 'float' && $type !== 'mixed') {
+        if ($type === null) {
+            return new ValueProcessorResult(new BuiltinFactoryValue($floatValue, false));
+        }
+
+        if (!isDeclaredTypeCompatibleWith($type, 'float')) {
             throw IncompatibleTypeException::create($type, 'float');
         }
 

@@ -14,6 +14,7 @@ use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\BuiltinFactoryValue;
 use vinyl\std\lang\collections\Map;
 use function assert;
+use function vinyl\di\isDeclaredTypeCompatibleWith;
 
 /**
  * Class StringValueProcessor
@@ -31,14 +32,13 @@ final class StringValueProcessor implements ValueProcessor
         assert($value instanceof StringValue);
 
         $stringValue = $value->value();
-        $type = $constructorValue->type();
 
         if ($stringValue === null && !$constructorValue->isNullable()) {
             throw NullValueException::create();
         }
 
-        if ($type !== 'string' && $type !== 'mixed') {
-            throw IncompatibleTypeException::create($type, 'string');
+        if (!isDeclaredTypeCompatibleWith($constructorValue->type(), 'string')) {
+            throw IncompatibleTypeException::create($constructorValue->type(), 'string');
         }
 
         return new ValueProcessorResult(new BuiltinFactoryValue($value->value(), false));

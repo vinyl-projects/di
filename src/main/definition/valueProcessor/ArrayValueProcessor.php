@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace vinyl\di\definition\valueProcessor;
 
-use vinyl\di\definition\constructorMetadata\BuiltinConstructorValue;
 use vinyl\di\definition\constructorMetadata\ConstructorValue;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\IncompatibleTypeException;
@@ -17,6 +16,7 @@ use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\ArrayValue;
 use vinyl\std\lang\collections\Map;
 use function assert;
+use function vinyl\di\isDeclaredTypeCompatibleWith;
 use function vinyl\std\lang\collections\mutableVectorOf;
 
 /**
@@ -38,10 +38,11 @@ final class ArrayValueProcessor implements ValueProcessor
      * {@inheritDoc}
      */
     public function process(
-        DefinitionValue $value,
+        DefinitionValue  $value,
         ConstructorValue $constructorValue,
-        Map $definitionMap
-    ): ValueProcessorResult {
+        Map              $definitionMap
+    ): ValueProcessorResult
+    {
         assert($value instanceof MapValue || $value instanceof ListValue);
 
         $values = $value->value();
@@ -50,9 +51,9 @@ final class ArrayValueProcessor implements ValueProcessor
             throw NullValueException::create();
         }
 
-        $type = $constructorValue->type();
-        if ($type !== 'array' && $type !== 'iterable' && $type !== 'mixed') {
-            throw IncompatibleTypeException::create($type, 'array');
+        if (!isDeclaredTypeCompatibleWith($constructorValue->type(), 'array')
+            && !isDeclaredTypeCompatibleWith($constructorValue->type(), 'iterable')) {
+            throw IncompatibleTypeException::create($constructorValue->type(), 'array');
         }
 
         if ($values === null) {
@@ -64,7 +65,7 @@ final class ArrayValueProcessor implements ValueProcessor
         /** @var \vinyl\std\lang\collections\MutableVector<\vinyl\di\definition\DefinitionDependency> $dependencies */
         $dependencies = mutableVectorOf();
 
-        $mixedValue = new BuiltinConstructorValue(null, 'mixed', true, false, false);
+        $mixedValue = new ConstructorValue(null, null, true, false, false);
         foreach ($values as $key => $item) {
             try {
                 $result = $this->valueProcessorComposite->process($item, $mixedValue, $definitionMap);

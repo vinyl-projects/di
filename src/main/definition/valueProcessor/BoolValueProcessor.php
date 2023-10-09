@@ -14,6 +14,7 @@ use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\BuiltinFactoryValue;
 use vinyl\std\lang\collections\Map;
 use function assert;
+use function vinyl\di\isDeclaredTypeCompatibleWith;
 
 /**
  * Class BoolValueProcessor
@@ -38,7 +39,11 @@ final class BoolValueProcessor implements ValueProcessor
             throw NullValueException::create();
         }
 
-        if ($type !== 'bool' && $type !== 'mixed') {
+        if ($type === null) {
+            return new ValueProcessorResult(new BuiltinFactoryValue($boolValue, false));
+        }
+
+        if (!isDeclaredTypeCompatibleWith($type, 'bool')) {
             throw IncompatibleTypeException::create($type, 'bool');
         }
 

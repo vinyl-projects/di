@@ -26,6 +26,7 @@ class ClassA
     public ?int $bb;
     public float $cc;
     public ?float $dd;
+    public float $ddd;
     public bool $ee;
     public ?bool $ff;
     public string $gg;
@@ -61,6 +62,7 @@ class ClassA
         ?int $bb = null,
         float $cc = 42.5,
         ?float $dd = null,
+        float $ddd = 42,
         bool $ee = true,
         ?bool $ff = null,
         string $gg = 'hello world',
@@ -91,6 +93,7 @@ class ClassA
         $this->bb = $bb;
         $this->cc = $cc;
         $this->dd = $dd;
+        $this->ddd = $ddd;
         $this->ee = $ee;
         $this->ff = $ff;
         $this->gg = $gg;

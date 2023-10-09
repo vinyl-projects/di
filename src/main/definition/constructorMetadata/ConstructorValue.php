@@ -4,27 +4,48 @@ declare(strict_types=1);
 
 namespace vinyl\di\definition\constructorMetadata;
 
-/**
- * Interface ConstructorValue
- */
-interface ConstructorValue
+use ReflectionType;
+
+final readonly class ConstructorValue
 {
-    /**
-     * Returns type of current {@see ConstructorValue}
-     */
-    public function type(): string;
+    public function __construct(
+        private mixed           $defaultValue,
+        private ?ReflectionType $type,
+        private bool            $isNullable,
+        private bool            $isOptional,
+        private bool            $isVariadic
+    )
+    {
+    }
 
     /**
-     * @return mixed
+     * Returns the {@see ReflectionType} of the constructor value or NULL if type is not declared
      */
-    public function defaultValue();
+    public function type(): ?ReflectionType
+    {
+        return $this->type;
+    }
 
     /**
-     *
+     * Returns default value
      */
-    public function isNullable(): bool;
+    public function defaultValue(): mixed
+    {
+        return $this->defaultValue;
+    }
 
-    public function isOptional(): bool;
+    public function isNullable(): bool
+    {
+        return $this->isNullable;
+    }
 
-    public function isVariadic(): bool;
+    public function isOptional(): bool
+    {
+        return $this->isOptional;
+    }
+
+    public function isVariadic(): bool
+    {
+        return $this->isVariadic;
+    }
 }

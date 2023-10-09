@@ -71,6 +71,7 @@ abstract class AbstractContainerTestCase extends TestCase
                         ->intArgument('b', null)
                         ->floatArgument('c', 42.5)
                         ->floatArgument('d', null)
+                        ->intArgument('ddd', 42)
                         ->boolArgument('e', false)
                         ->boolArgument('f', null)
                         ->stringArgument('g', 'hello world')
@@ -134,6 +135,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertNull($obj->bb);
         self::assertEquals(42.5, $obj->cc);
         self::assertNull($obj->dd);
+        self::assertEquals(42.0, $obj->ddd);
         self::assertTrue($obj->ee);
         self::assertNull($obj->ff);
         self::assertEquals('hello world', $obj->gg);
@@ -1176,6 +1178,39 @@ abstract class AbstractContainerTestCase extends TestCase
         $object = $di->get(testAsset\instantiateObjectWithNullableEnumArgument\ClassA::class);
         self::assertNull($object->argument);
         self::assertNull($object->argument2);
+    }
+
+    /**
+     * @test
+     */
+    public function instantiateObjectWithUnionArguments()
+    {
+        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+            // @formatter:off
+            $dmb->classDefinition(testAsset\instantiateObjectWithUnionArguments\ClassA::class)
+                    ->arguments()
+                        ->intArgument('argument', null)
+                    ->endArguments()
+                ->end();
+            $dmb->alias('union.string.param', testAsset\instantiateObjectWithUnionArguments\ClassA::class)
+                    ->arguments()
+                        ->stringArgument('argument', 'Hello World')
+                    ->endArguments();
+            $dmb->alias('union.int.param', testAsset\instantiateObjectWithUnionArguments\ClassA::class)
+                    ->arguments()
+                        ->intArgument('argument', 42)
+                    ->endArguments();
+            $dmb->alias('union.enum.param', testAsset\instantiateObjectWithUnionArguments\ClassA::class)
+                    ->arguments()
+                        ->enumArgument('argument', testAsset\instantiateObjectWithUnionArguments\EnumArgument::DEBUG)
+                    ->endArguments();
+            // @formatter:on
+        });
+
+        self::assertNull($di->get(testAsset\instantiateObjectWithUnionArguments\ClassA::class)->argument);
+        self::assertEquals('Hello World', $di->get('union.string.param')->argument);
+        self::assertEquals(42, $di->get('union.int.param')->argument);
+        self::assertEquals(testAsset\instantiateObjectWithUnionArguments\EnumArgument::DEBUG, $di->get('union.enum.param')->argument);
     }
 
     /**

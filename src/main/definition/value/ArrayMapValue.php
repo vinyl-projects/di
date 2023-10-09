@@ -17,17 +17,14 @@ use function sprintf;
  */
 final class ArrayMapValue implements MapValue
 {
-    /** @var array<string|int, DefinitionValue>|null */
-    private ?array $items;
 
     /**
      * MapValueHolder constructor.
      *
      * @param array<string|int, DefinitionValue>|null $items
      */
-    public function __construct(?array $items = null)
+    public function __construct(private ?array $items = null)
     {
-        $this->items = $items;
     }
 
     /**

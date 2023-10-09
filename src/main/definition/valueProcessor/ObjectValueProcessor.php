@@ -19,8 +19,8 @@ use vinyl\di\factory\argument\DefinitionFactoryValue;
 use vinyl\di\ShadowClassDefinition;
 use vinyl\std\lang\collections\Map;
 use function assert;
-use function is_a;
 use function is_string;
+use function vinyl\di\isDeclaredTypeCompatibleWith;
 use function vinyl\std\lang\collections\vectorOf;
 
 /**
@@ -42,7 +42,6 @@ final class ObjectValueProcessor implements ValueProcessor, ClassResolverAware
         assert($this->classResolver !== null);
 
         $definitionId = $value->value();
-        $type = $constructorValue->type();
 
         if ($definitionId === null && !$constructorValue->isNullable()) {
             throw NullValueException::create();
@@ -56,8 +55,9 @@ final class ObjectValueProcessor implements ValueProcessor, ClassResolverAware
         $objectTypeValue = new DefinitionFactoryValue($definition->id(), false);
         $resolvedClass = $this->classResolver->resolve($definition, $definitionMap);
 
-        if ((!is_a($resolvedClass->name(), $type, true)) && $type !== 'object' && $type !== 'mixed') {
-            throw IncompatibleTypeException::create($type, "{$resolvedClass->name()} -> {$definitionId}");
+        $object_or_class = $resolvedClass->name();
+        if (!isDeclaredTypeCompatibleWith($constructorValue->type(), $object_or_class)) {
+            throw IncompatibleTypeException::create($constructorValue->type(), "{$object_or_class} -> {$definitionId}");
         }
 
         return new ValueProcessorResult($objectTypeValue, vectorOf(DefinitionDependency::create($definition)));

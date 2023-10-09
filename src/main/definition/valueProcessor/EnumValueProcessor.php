@@ -13,6 +13,7 @@ use vinyl\di\definition\ValueProcessor;
 use vinyl\di\definition\ValueProcessorResult;
 use vinyl\di\factory\argument\EnumFactoryValue;
 use vinyl\std\lang\collections\Map;
+use function vinyl\di\isDeclaredTypeCompatibleWith;
 
 final class EnumValueProcessor implements ValueProcessor
 {
@@ -31,7 +32,7 @@ final class EnumValueProcessor implements ValueProcessor
             throw NullValueException::create();
         }
 
-        if (!is_a($type, \UnitEnum::class, true) && $type !== 'mixed') {
+        if ($enumValue !== null && !isDeclaredTypeCompatibleWith($type, $enumValue::class)) {
             throw IncompatibleTypeException::create($type, get_debug_type($enumValue));
         }
 

@@ -40,3 +40,59 @@ function classExtractShortNameAndNamespace(string $fullyQualifiedClassName): arr
 
     return [$shortClassName, $namespace];
 }
+
+function isDeclaredTypeCompatibleWith(?\ReflectionType $declaredType, string $givenTypeName): bool
+{
+    if ($declaredType === null) {//no type declared (mixed)
+        return true;
+    }
+
+    if ($declaredType instanceof \ReflectionNamedType) {
+        $declaredTypeName = $declaredType->getName();
+
+        if ($declaredTypeName === 'mixed') {
+            return true;
+        }
+
+        if ($declaredType->isBuiltin()) {
+            if ($declaredTypeName === 'float' && $givenTypeName === 'int') {
+                return true;
+            }
+
+            if ($declaredTypeName === 'object') {
+                return class_exists($givenTypeName);
+            }
+
+            return $declaredTypeName === $givenTypeName;
+        }
+
+        if (is_a($givenTypeName, $declaredTypeName, true)) {
+            return true;
+        }
+    }
+
+    if ($declaredType instanceof \ReflectionUnionType) {
+        foreach ($declaredType->getTypes() as $type) {
+            $isCompatible = isDeclaredTypeCompatibleWith($type, $givenTypeName);
+            if ($isCompatible) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    if ($declaredType instanceof \ReflectionIntersectionType) {
+        foreach ($declaredType->getTypes() as $type) {
+            $isCompatible = isDeclaredTypeCompatibleWith($type, $givenTypeName);
+
+            if ($isCompatible === false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}

@@ -6,8 +6,6 @@ namespace vinyl\di\definition\valueProcessor;
 
 use Psr\Container\ContainerInterface;
 use vinyl\di\definition\constructorMetadata\ConstructorValue;
-use vinyl\di\definition\constructorMetadata\EnumConstructorValue;
-use vinyl\di\definition\constructorMetadata\NamedObjectConstructorValue;
 use vinyl\di\definition\DefinitionDependency;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\value\NoValue;
@@ -37,40 +35,54 @@ final class NoValueProcessor implements ValueProcessor
         assert($value instanceof NoValue);
 
         $isOptional = $constructorValue->isOptional();
+        $isMissed = !$isOptional;
 
-        if ($constructorValue instanceof EnumConstructorValue) {
-            return new ValueProcessorResult(new EnumFactoryValue($constructorValue->type(), $constructorValue->defaultValue(), !$isOptional));
+        $type = $constructorValue->type();
+
+        $defaultValue = $constructorValue->defaultValue();
+        if ($type instanceof \ReflectionUnionType || $type instanceof \ReflectionIntersectionType) {
+            return new ValueProcessorResult(new BuiltinFactoryValue($defaultValue, $isMissed));
         }
 
-        if (!$constructorValue instanceof NamedObjectConstructorValue) {
-            return new ValueProcessorResult(new BuiltinFactoryValue($constructorValue->defaultValue(), !$isOptional));
+        if (!$type instanceof \ReflectionNamedType) {
+            throw new \RuntimeException('Unknown reflection type.');
+        }
+
+        if ($type->isBuiltin()) {
+            return new ValueProcessorResult(new BuiltinFactoryValue($defaultValue, $isMissed));
+        }
+
+        $typeName = $type->getName();
+        $classReflection = new \ReflectionClass($typeName);
+        if ($classReflection->isEnum()) {
+            assert($defaultValue instanceof \UnitEnum);
+            return new ValueProcessorResult(new EnumFactoryValue($typeName, $defaultValue->name, $isMissed));
         }
 
         if ($isOptional) {
             return new ValueProcessorResult(new DefinitionFactoryValue(null, false));
         }
 
-        $type = $constructorValue->type();
-        if ($constructorValue->isInterface()) {
+        if ($classReflection->isInterface()) {
             $dependencies = null;
-            if ($definitionMap->containsKey($type)) {
-                $dependencies = vectorOf(DefinitionDependency::create($definitionMap->get($type)));
+            if ($definitionMap->containsKey($typeName)) {
+                $dependencies = vectorOf(DefinitionDependency::create($definitionMap->get($typeName)));
             }
 
-            $isMissed = !$definitionMap->containsKey($type) && $type !== ContainerInterface::class;
+            $isMissed = !$definitionMap->containsKey($typeName) && $typeName !== ContainerInterface::class;
 
             return new ValueProcessorResult(
-                new DefinitionFactoryValue($type, $isMissed),
+                new DefinitionFactoryValue($typeName, $isMissed),
                 $dependencies
             );
         }
 
-        $classDefinition = $definitionMap->containsKey($type)
-            ? $definitionMap->get($type)
-            : ShadowClassDefinition::resolveShadowDefinition($type, $definitionMap);
+        $classDefinition = $definitionMap->containsKey($typeName)
+            ? $definitionMap->get($typeName)
+            : ShadowClassDefinition::resolveShadowDefinition($typeName, $definitionMap);
 
         return new ValueProcessorResult(
-            new DefinitionFactoryValue($classDefinition->id(), $constructorValue->isAbstractClass()),
+            new DefinitionFactoryValue($classDefinition->id(), $classReflection->isAbstract()),
             vectorOf(DefinitionDependency::create($classDefinition))
         );
     }

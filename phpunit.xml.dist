@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/10.0/phpunit.xsd"
-         colors="true"
-         executionOrder="random"
-         bootstrap="./vendor/autoload.php">
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" colors="true"
+         executionOrder="random" bootstrap="./vendor/autoload.php">
     <php>
         <ini name="error_reporting" value="E_ALL"/>
-        <ini name="display_errors" value="On" />
-        <ini name="display_startup_errors" value="On" />
-        <ini name="assert.exception" value="1" />
+        <ini name="display_errors" value="On"/>
+        <ini name="display_startup_errors" value="On"/>
+        <ini name="assert.exception" value="1"/>
     </php>
     <testsuites>
         <testsuite name="Integration Test Suite">
@@ -18,9 +16,10 @@
             <directory>./src/test/unit</directory>
         </testsuite>
     </testsuites>
-    <coverage ignoreDeprecatedCodeUnits="true">
+    <coverage ignoreDeprecatedCodeUnits="true"/>
+    <source>
         <include>
             <directory>src/main</directory>
         </include>
-    </coverage>
+    </source>
 </phpunit>

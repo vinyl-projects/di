@@ -7,16 +7,13 @@ namespace vinyl\di\definition\value;
 /**
  * Class StringValue
  */
-final class StringValue implements \vinyl\di\definition\StringValue
+final readonly class StringValue implements \vinyl\di\definition\StringValue
 {
-    private ?string $value;
-
     /**
      * StringValue constructor.
      */
-    public function __construct(?string $value)
+    public function __construct(private ?string $value)
     {
-        $this->value = $value;
     }
 
     /**
