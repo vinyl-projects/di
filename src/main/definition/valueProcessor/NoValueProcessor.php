@@ -40,7 +40,10 @@ final class NoValueProcessor implements ValueProcessor
         $type = $constructorValue->type();
 
         $defaultValue = $constructorValue->defaultValue();
-        if ($type instanceof \ReflectionUnionType || $type instanceof \ReflectionIntersectionType) {
+        if ($type instanceof \ReflectionUnionType
+            || $type instanceof \ReflectionIntersectionType
+            || $type === null
+        ) {
             return new ValueProcessorResult(new BuiltinFactoryValue($defaultValue, $isMissed));
         }
 

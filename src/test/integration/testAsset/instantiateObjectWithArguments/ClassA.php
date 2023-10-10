@@ -39,6 +39,8 @@ class ClassA
     public ?ClassB $ppp;
     public array $variadic;
 
+    public $noType;
+
     public function __construct(
         int $a,
         ?int $b,
@@ -71,6 +73,7 @@ class ClassA
         array $kk = [1, 2, 3],
         ?array $ll = null,
         ?ClassB $pp = null,
+        $noType = 1,
         ...$variadic
     ) {
         $this->a = $a;
@@ -104,6 +107,7 @@ class ClassA
         $this->pp = $pp;
         $this->q = $q;
         $this->ppp = $ppp;
+        $this->noType = $noType;
         $this->variadic = $variadic;
     }
 }
