@@ -1214,6 +1214,36 @@ abstract class AbstractContainerTestCase extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function instantiateObjectWithIntersectionArguments(): void
+    {
+
+        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+            // @formatter:off
+            $dmb->classDefinition(testAsset\instantiateObjectWithIntersectionArguments\ClassB::class)
+                    ->arguments()
+                        ->objectArgument('param1', testAsset\instantiateObjectWithIntersectionArguments\ClassA::class)
+                        ->objectArgument('param2', null)
+                        ->objectArgument('param3', testAsset\instantiateObjectWithIntersectionArguments\ClassA::class)
+                        ->arrayListArgument('param5')
+                            ->intItem(1)
+                        ->end()
+                    ->endArguments()
+                ->end();
+            // @formatter:on
+        });
+
+        $object = $di->get(testAsset\instantiateObjectWithIntersectionArguments\ClassB::class);
+        self::assertInstanceOf(testAsset\instantiateObjectWithIntersectionArguments\ClassB::class, $object);
+        self::assertInstanceOf(testAsset\instantiateObjectWithIntersectionArguments\ClassA::class, $object->param1);
+        self::assertInstanceOf(testAsset\instantiateObjectWithIntersectionArguments\ClassA::class, $object->param3);
+        self::assertNull($object->param2);
+        self::assertNull($object->param4);
+        self::assertSame([1], $object->param5);
+    }
+
+    /**
      * Returns di container
      *
      * @param callable $builderFunction (containerBuilder)
