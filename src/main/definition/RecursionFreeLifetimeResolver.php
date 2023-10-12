@@ -62,6 +62,6 @@ final class RecursionFreeLifetimeResolver implements LifetimeResolver
             return SingletonLifetime::get();
         }
 
-        return $currentDefinition->lifetime();
+        throw new \LogicException("Unable to resolve lifetime for '{$definition->id()}' definition.");
     }
 }

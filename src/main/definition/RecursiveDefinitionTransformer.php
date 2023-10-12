@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\di\definition;
 
+use Exception;
 use InvalidArgumentException;
 use vinyl\di\Definition;
 use vinyl\di\definition\value\NoValue;
@@ -95,7 +96,15 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         }
 
         $visitedClasses[$className] = $id;
-        $objectInstantiator = $this->instantiatorResolver->resolve($definition, $definitionMap);
+        try {
+            $objectInstantiator = $this->instantiatorResolver->resolve($definition, $definitionMap);
+        } catch (Exception $e) {
+            throw DefinitionTransformerException::createFromException(
+                "Unable to resolve instantiator for [{$id}<{$className}>]. Details: {$e->getMessage()}",
+                $e
+            );
+        }
+
         $lifetime = $this->lifetimeResolver->resolve($definition, $definitionMap);
         $factoryMetadata = new FactoryMetadata($id, $className, $objectInstantiator->value(), $lifetime->code());
         $factoryMetadataMap->put($factoryMetadata->id, $factoryMetadata);
@@ -154,6 +163,10 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
                 try {
                     $this->internalTransform($dependency->definition, $definitionMap, $factoryMetadataMap, $classes);
                 } catch (DefinitionTransformerException $e) {
+                    if ($lifetime === PrototypeLifetime::get()) {
+                        //TODO log it ?
+                        continue;
+                    }
                     $e->add($id, $className, $argumentName);
                     throw $e;
                 }

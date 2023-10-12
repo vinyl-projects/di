@@ -104,6 +104,26 @@ abstract class AbstractFactoryTestCase extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function instantiatePrototypeObjectThatDependsOnClassWithPrivateConstructor()
+    {
+        $factory = $this->createFactory(static function (DefinitionMapBuilder $definitionMapBuilder): void {
+            $definitionMapBuilder
+                ->classDefinition(testAsset\instantiatePrototypeObjectThatDependsOnClassWithPrivateConstructor\ClassA::class)
+                    ->lifetime(PrototypeLifetime::get())
+                ->end();
+        });
+
+        $obj = $factory->create(
+            testAsset\instantiatePrototypeObjectThatDependsOnClassWithPrivateConstructor\ClassA::class,
+            ['classB' => testAsset\instantiatePrototypeObjectThatDependsOnClassWithPrivateConstructor\ClassB::create()]
+        );
+        self::assertNotNull($obj);
+        self::assertInstanceOf(testAsset\instantiatePrototypeObjectThatDependsOnClassWithPrivateConstructor\ClassB::class, $obj->classB);
+    }
+
+    /**
      * Returns di factory
      *
      * @param callable $builderFunction (containerBuilder)
