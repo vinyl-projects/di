@@ -4,7 +4,7 @@ namespace vinyl\diTest\integration\testAsset\instantiateObjectWithRequiredEnumAr
 
 class ClassA
 {
-    public function __construct(public EnumArgument $argument)
+    public function __construct(public EnumArgument $argument, public string $argument2)
     {
     }
 }

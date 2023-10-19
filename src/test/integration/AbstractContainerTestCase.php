@@ -1151,6 +1151,7 @@ abstract class AbstractContainerTestCase extends TestCase
             $dmb->classDefinition(testAsset\instantiateObjectWithRequiredEnumArgument\ClassA::class)
                     ->arguments()
                         ->enumArgument('argument', EnumArgument::ONE)
+                        ->stringArgument('argument2', 'not enum')
                     ->endArguments()
                 ->end();
             // @formatter:on
@@ -1158,6 +1159,7 @@ abstract class AbstractContainerTestCase extends TestCase
 
         $object = $di->get(testAsset\instantiateObjectWithRequiredEnumArgument\ClassA::class);
         self::assertEquals(EnumArgument::ONE, $object->argument);
+        self::assertEquals('not enum', $object->argument2);
     }
 
     /**

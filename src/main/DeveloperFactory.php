@@ -119,6 +119,7 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
             if ($valueObject instanceof EnumFactoryValue) {
                 assert(!is_null($valueObject->type()));
                 $resolvedArguments[] = constant("{$valueObject->type()}::{$value}");
+                continue;
             }
 
             $resolvedArguments[] = $value;
