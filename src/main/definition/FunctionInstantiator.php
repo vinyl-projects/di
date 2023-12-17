@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace vinyl\di\definition;
 
+use Closure;
 use InvalidArgumentException;
 use ReflectionException;
 use ReflectionFunction;
+use ReflectionNamedType;
 
 /**
  * Class FunctionObjectInstantiator
@@ -23,22 +25,29 @@ final class FunctionInstantiator implements Instantiator
      *
      * @psalm-param callable-string $function
      */
-    public function __construct(string $function)
+    public function __construct(ReflectionFunction $functionReflection)
     {
-        try {
-            $functionReflection = new ReflectionFunction($function);
-        } catch (ReflectionException $e) {
-            throw new InvalidArgumentException($e->getMessage());
+        $reflectionType = $functionReflection->getReturnType();
+
+        $nameParts = [];
+        if ($functionReflection->getClosureScopeClass() !== null) {
+            $nameParts[] = $functionReflection->getClosureScopeClass()->getName();
+            $nameParts[] = '::';
         }
 
-        /** @var \ReflectionNamedType|null $reflectionType */
-        $reflectionType = $functionReflection->getReturnType();
+        $nameParts[] = $functionReflection->getName();
+        $name = implode('', $nameParts);
+
+        if (!$reflectionType instanceof ReflectionNamedType && $reflectionType !== null) {
+            throw new InvalidArgumentException("[$name] must not have union or intersection type.");
+        }
+
         if ($reflectionType === null || $reflectionType->getName() === 'void') {
-            throw new InvalidArgumentException("{$functionReflection->getName()} have no return type.");
+            throw new InvalidArgumentException("{$name} have no return type.");
         }
 
         $this->parameters = $functionReflection->getParameters();
-        $this->function = $function;
+        $this->function = $name;
     }
 
     /**
@@ -46,7 +55,24 @@ final class FunctionInstantiator implements Instantiator
      */
     public static function create(string $function): self
     {
-        return new self($function);
+        try {
+            $functionReflection = new ReflectionFunction($function);
+        } catch (ReflectionException $e) {
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        return new self($functionReflection);
+    }
+
+    public static function createFromClosure(Closure $closure): self
+    {
+        try {
+            $functionReflection = new ReflectionFunction($closure);
+        } catch (ReflectionException $e) {
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        return new self($functionReflection);
     }
 
     /**

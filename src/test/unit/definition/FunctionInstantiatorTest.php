@@ -22,7 +22,7 @@ final class FunctionInstantiatorTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new FunctionInstantiator('test');
+        FunctionInstantiator::create('test');
     }
 
     /**
@@ -34,7 +34,17 @@ final class FunctionInstantiatorTest extends TestCase
         $functionName = 'vinyl\diTest\unit\definition\functionInstantiatorTestAsset\function_with_no_return_declared';
         $this->expectExceptionMessage("{$functionName} have no return type.");
 
-        new FunctionInstantiator($functionName);
+        FunctionInstantiator::create($functionName);
+    }
+
+    /**
+     * @test
+     */
+    public function createFromClosure(): void
+    {
+        $functionName = \vinyl\diTest\unit\definition\functionInstantiatorTestAsset\ClassA::test(...);
+        $instantiator = FunctionInstantiator::createFromClosure($functionName);
+        self::assertIsCallable($instantiator->value());
     }
 
     /**
@@ -46,7 +56,7 @@ final class FunctionInstantiatorTest extends TestCase
         $functionName = 'vinyl\diTest\unit\definition\functionInstantiatorTestAsset\function_with_void_return_declared';
         $this->expectExceptionMessage("{$functionName} have no return type.");
 
-        new FunctionInstantiator($functionName);
+        FunctionInstantiator::create($functionName);
     }
 
     /**
@@ -54,7 +64,7 @@ final class FunctionInstantiatorTest extends TestCase
      */
     public function valueReturnsCallableString(): void
     {
-        $value = (new FunctionInstantiator('vinyl\diTest\unit\definition\functionInstantiatorTestAsset\function_with_parameters'))->value();
+        $value = FunctionInstantiator::create('vinyl\diTest\unit\definition\functionInstantiatorTestAsset\function_with_parameters')->value();
         self::assertIsCallable($value);
     }
 
@@ -63,7 +73,7 @@ final class FunctionInstantiatorTest extends TestCase
      */
     public function parametersReturnsAnArrayOfReflectionParameter(): void
     {
-        $parameters = (new FunctionInstantiator('vinyl\diTest\unit\definition\functionInstantiatorTestAsset\function_with_parameters'))->parameters();
+        $parameters = FunctionInstantiator::create('vinyl\diTest\unit\definition\functionInstantiatorTestAsset\function_with_parameters')->parameters();
         self::assertNotEmpty($parameters);
 
         array_walk(

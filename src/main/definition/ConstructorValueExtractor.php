@@ -14,9 +14,7 @@ use vinyl\di\definition\constructorMetadata\ConstructorValue;
 final class ConstructorValueExtractor
 {
     /**
-     * @return array<string, \vinyl\di\definition\constructorMetadata\ConstructorValue>
-     * @throws \vinyl\di\definition\ConstructorMetadataExtractorException top level exception of {@see ConstructorValueExtractor}
-     * @throws \vinyl\di\definition\ArgumentTypeNotFoundException is thrown if given class constructor contains parameter with undefined class
+     * @return array<string, ConstructorValue>
      */
     public function extract(Instantiator $objectInstantiator): array
     {
