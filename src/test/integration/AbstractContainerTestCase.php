@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace vinyl\diTest\integration;
 
 use Composer\InstalledVersions;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ProxyManager\Proxy\VirtualProxyInterface;
 use Psr\Container\ContainerInterface;
@@ -1245,10 +1246,20 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertSame([1], $object->param5);
     }
 
+    #[Test]
+    public function checkIfInstanceLifetimeRegisteredInContainer(): void
+    {
+        $container = $this->createContainer(static function (DefinitionMapBuilder $dmp) {
+            $dmp->classDefinition(\stdClass::class)->end();
+        });
+
+        self::assertTrue($container->lifetimeMap()->contains(\stdClass::class));
+    }
+
     /**
      * Returns di container
      *
-     * @param callable $builderFunction (containerBuilder)
+     * @param callable(DefinitionMapBuilder):void $builderFunction
      *
      * @return Container
      * @throws ClassCircularReferenceFoundException

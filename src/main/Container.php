@@ -80,4 +80,12 @@ final class Container implements ContainerInterface
 
         return $this;
     }
+
+    /**
+     * Returns Map which contains lifetime data for instances
+     */
+    public function lifetimeMap(): LifetimeCodeMap
+    {
+        return $this->lifetimeCodeMap;
+    }
 }
