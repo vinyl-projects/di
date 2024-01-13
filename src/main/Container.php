@@ -30,7 +30,8 @@ final class Container implements ContainerInterface
         }
 
         $this->insertSharedInstance(ObjectFactory::class, $objectFactory)
-            ->insertSharedInstance(ContainerInterface::class, $this);
+            ->insertSharedInstance(ContainerInterface::class, $this)
+            ->insertSharedInstance(Container::class, $this);
 
         if (self::$singletonLifetimeCode === null) {
             self::$singletonLifetimeCode = SingletonLifetime::get()->code();
