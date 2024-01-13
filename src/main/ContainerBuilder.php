@@ -138,7 +138,6 @@ final class ContainerBuilder
         }
 
         $materializer = $this->resolveMaterializer();
-
         $classResolver = new CacheableClassResolver(new RecursionFreeClassResolver());
         $lifetimeResolver = new RecursionFreeLifetimeResolver();
         $processorMap = [];
@@ -149,8 +148,9 @@ final class ContainerBuilder
         $definitionTransformer = new RecursiveDefinitionTransformer($valueProcessor, $classResolver, $lifetimeResolver);
 
         if ($this->factory === self::DEVELOPER_FACTORY) {
-            $lifetime = new ModifiableLifetimeCodeMap([]);
-            $factory = new DeveloperFactory($this->definitionMap, $lifetime, $definitionTransformer);
+            $lazyFactoryMetadataProvider = new LazyFactoryMetadataProvider($this->definitionMap, $definitionTransformer);
+            $lifetime = new LazyLifetimeCodeMap($lazyFactoryMetadataProvider);
+            $factory = new DeveloperFactory($lazyFactoryMetadataProvider);
             $this->definitionMap = null;
             $this->isUsed = true;
 

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace vinyl\di;
 
-use ArrayIterator;
 use OutOfBoundsException;
 use function array_key_exists;
-use function count;
 
 /**
  * Class LifetimeCodeMap
@@ -25,22 +23,6 @@ final class UnmodifiableLifetimeCodeMap implements LifetimeCodeMap
     public function __construct(array $map)
     {
         $this->map = $map;
-    }
-
-    /**
-     * @return \Iterator<string, string>
-     */
-    public function getIterator(): \Traversable
-    {
-        return new ArrayIterator($this->map);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function count(): int
-    {
-        return count($this->map);
     }
 
     /**

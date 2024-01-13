@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace vinyl\diTest\integration\objectFactory;
 
 use vinyl\di\Container;
+use vinyl\di\definition\RecursiveDefinitionTransformer;
 use vinyl\di\DefinitionMapBuilder;
 use vinyl\di\DeveloperFactory;
-use vinyl\di\ModifiableLifetimeCodeMap;
+use vinyl\di\factory\DefinitionMapTransformer;
+use vinyl\di\LazyFactoryMetadataProvider;
+use vinyl\di\LazyLifetimeCodeMap;
 use vinyl\di\ObjectFactory;
 
 /**
@@ -27,8 +30,9 @@ class DeveloperFactoryTest extends AbstractFactoryTestCase
 
         $definitionMap = $definitionMapBuilder->build();
 
-        $lifetimeMap = new ModifiableLifetimeCodeMap([]);
-        $factory = new DeveloperFactory($definitionMap, $lifetimeMap);
+        $lazyFactoryMetadataProvider = new LazyFactoryMetadataProvider($definitionMap, new RecursiveDefinitionTransformer());
+        $lifetimeMap = new LazyLifetimeCodeMap($lazyFactoryMetadataProvider);
+        $factory = new DeveloperFactory($lazyFactoryMetadataProvider);
         new Container($lifetimeMap, $factory);
 
         return $factory;

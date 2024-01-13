@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace vinyl\di;
 
-use Countable;
-use IteratorAggregate;
-
 /**
  * Interface UnmodifiableLifetimeCodeMap
- *
- * @extends \IteratorAggregate<string, string>
  */
-interface LifetimeCodeMap extends IteratorAggregate, Countable
+interface LifetimeCodeMap
 {
     /**
      * Returns lifetime code associated with given definition id

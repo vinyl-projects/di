@@ -26,29 +26,16 @@ use function vinyl\std\lang\collections\mutableMapOf;
  */
 final class DeveloperFactory implements ObjectFactory, ContainerAware
 {
-    /** @var \vinyl\std\lang\collections\Map<string, \vinyl\di\Definition> */
-    private Map $definitionMap;
     private ?ContainerInterface $container = null;
-    private DefinitionTransformer $definitionTransformer;
 
-    /** @var \vinyl\std\lang\collections\MutableMap<string, \vinyl\di\factory\FactoryMetadata> */
-    private MutableMap $factoryMetadataMap;
-    private ModifiableLifetimeCodeMap $lifetimeMap;
+    private LazyFactoryMetadataProvider $lazyFactoryMetadataProvider;
 
     /**
-     * RuntimeFactory constructor.
-     *
-     * @param Map<string, \vinyl\di\Definition> $definitionMap
+     * DeveloperFactory constructor.
      */
-    public function __construct(
-        Map $definitionMap,
-        ModifiableLifetimeCodeMap $lifetimeMap,
-        ?DefinitionTransformer $definitionTransformer = null
-    ) {
-        $this->definitionMap = $definitionMap;
-        $this->definitionTransformer = $definitionTransformer ?? new RecursiveDefinitionTransformer();
-        $this->factoryMetadataMap = mutableMapOf();
-        $this->lifetimeMap = $lifetimeMap;
+    public function __construct(LazyFactoryMetadataProvider $lazyFactoryMetadataProvider,)
+    {
+        $this->lazyFactoryMetadataProvider = $lazyFactoryMetadataProvider;
     }
 
     /**
@@ -66,23 +53,8 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
     public function create(string $definitionId, ?array $arguments = null): object
     {
         assert($this->container !== null);
-        if (!$this->definitionMap->containsKey(($definitionId)) && !$this->factoryMetadataMap->containsKey($definitionId)) {
-            throw new NotFoundException("[{$definitionId}] not found.");
-        }
 
-        if (!$this->factoryMetadataMap->containsKey($definitionId)) {
-            $factoryMetadataMap = $this->definitionTransformer->transform(
-                $this->definitionMap->get($definitionId),
-                $this->definitionMap
-            );
-
-            $this->factoryMetadataMap->putAll($factoryMetadataMap);
-            foreach ($factoryMetadataMap as $factoryMetadata) {
-                $this->lifetimeMap->insert($factoryMetadata->id, $factoryMetadata->lifetimeCode);
-            }
-        }
-
-        $factoryMetadata = $this->factoryMetadataMap->get($definitionId);
+        $factoryMetadata = $this->lazyFactoryMetadataProvider->get($definitionId);
 
         $resolvedArguments = [];
         foreach ($factoryMetadata->values as $name => $valueObject) {
@@ -110,7 +82,7 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
                 continue;
             }
 
-            if ($valueObject instanceOf ArrayValue) {
+            if ($valueObject instanceof ArrayValue) {
                 /** @var array<string|int, FactoryValue> $value */
                 $resolvedArguments[] = $this->resolveArrayArgument($value);
                 continue;
@@ -149,7 +121,7 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
      */
     public function has(string $id): bool
     {
-        return $this->definitionMap->containsKey($id);
+        return $this->lazyFactoryMetadataProvider->has($id);
     }
 
     /**
@@ -182,7 +154,7 @@ final class DeveloperFactory implements ObjectFactory, ContainerAware
                 continue;
             }
 
-            if ($item instanceOf ArrayValue) {
+            if ($item instanceof ArrayValue) {
                 /** @var \vinyl\di\factory\FactoryValue[] $itemValue */
                 $result[$key] = $this->resolveArrayArgument($itemValue);
                 continue;
