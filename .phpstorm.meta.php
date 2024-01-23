@@ -8,7 +8,6 @@ namespace PHPSTORM_META {
     registerArgumentsSet(
         'lifetimes',
         \vinyl\di\definition\PrototypeLifetime::get(),
-        \vinyl\di\definition\ScopedLifetime::get(),
         \vinyl\di\definition\SingletonLifetime::get()
     );
 
@@ -27,7 +26,8 @@ namespace PHPSTORM_META {
     registerArgumentsSet(
         'instantiators',
         \vinyl\di\definition\StaticMethodInstantiator::create(),
-        \vinyl\di\definition\FunctionInstantiator::create()
+        \vinyl\di\definition\FunctionInstantiator::createFromClosure(),
+        \vinyl\di\definition\FunctionInstantiator::create(),
     );
 
     expectedArguments(
