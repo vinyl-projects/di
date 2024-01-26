@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace vinyl\di\definition;
 
 use SplStack;
+use vinyl\di\RootDefinition;
 use vinyl\di\VirtualTypeDefinition;
 use vinyl\di\Definition;
 use vinyl\di\definition\value\Mergeable;
@@ -54,7 +55,7 @@ final class RecursionFreeValueCollector implements ValueCollector
                 break;
             }
 
-            if ($currentDefinition instanceof VirtualTypeDefinition && $currentDefinition->parentId() !== null) {
+            if ($currentDefinition instanceof VirtualTypeDefinition) {
                 if (!$definitionMap->containsKey($currentDefinition->parentId())) {
                     break;
                 }
@@ -63,8 +64,11 @@ final class RecursionFreeValueCollector implements ValueCollector
                 continue;
             }
 
+            if (!$currentDefinition instanceof RootDefinition) {
+                continue;
+            }
+
             $classObject = $currentDefinition->classObject();
-            assert($classObject instanceof ClassObject);
 
             $parentClasses = $this->parentClassesProvider->find($classObject);
 

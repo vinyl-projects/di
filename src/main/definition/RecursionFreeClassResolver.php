@@ -39,7 +39,7 @@ final class RecursionFreeClassResolver implements ClassResolver
 
             $visitedDefinitions[$currentDefinition->id()] = true;
 
-            if ($currentDefinition instanceof VirtualTypeDefinition && $currentDefinition->parentId() !== null) {
+            if ($currentDefinition instanceof VirtualTypeDefinition) {
                 if (!$definitionMap->containsKey($currentDefinition->parentId())) {
                     $class = ClassObject::tryCreate($currentDefinition->parentId());
                     if ($class !== null) {
@@ -69,13 +69,6 @@ final class RecursionFreeClassResolver implements ClassResolver
             }
 
             $stack->push($definitionFromMap);
-        }
-
-        if ($currentDefinition instanceof VirtualTypeDefinition) {
-            $class = ClassObject::tryCreate($currentDefinition->parentId());
-            if ($class !== null) {
-                return $class;
-            }
         }
 
         throw new LogicException("Unable to resolve class for {$definition->id()} definition id.");
