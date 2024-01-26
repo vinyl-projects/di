@@ -26,6 +26,10 @@ use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\Class
 use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassC;
 use vinyl\diTest\integration\testAsset\circularDependencyDetectionWithInterface\ClassAInterface;
 use vinyl\diTest\integration\testAsset\instantiateObjectWithRequiredEnumArgument\EnumArgument;
+use vinyl\diTest\integration\testAsset\instantiateObjectWithRuntimeDefinition\Root;
+use vinyl\diTest\integration\testAsset\instantiateObjectWithRuntimeDefinition\RootChildRuntime;
+use vinyl\diTest\integration\testAsset\instantiateObjectWithRuntimeDefinition\RootRuntimeInterface;
+use vinyl\diTest\integration\testAsset\instantiateObjectWithRuntimeDefinition\RootRuntimeInterfaceImpl;
 
 /**
  * Class AbstractContainerTest
@@ -193,6 +197,7 @@ abstract class AbstractContainerTestCase extends TestCase
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
             // @formatter:off
             $containerBuilder
+                ->classDefinition(testAsset\instantiateInterfaceImplementation\ClassA::class)->end()
                 ->interfaceImplementation(
                     testAsset\instantiateInterfaceImplementation\InterfaceA::class,
                     testAsset\instantiateInterfaceImplementation\ClassA::class
@@ -200,10 +205,12 @@ abstract class AbstractContainerTestCase extends TestCase
             // @formatter:on
         });
 
-        $obj = $di->get(testAsset\instantiateInterfaceImplementation\InterfaceA::class);
+        $interface = $di->get(testAsset\instantiateInterfaceImplementation\InterfaceA::class);
+        $obj = $di->get(testAsset\instantiateInterfaceImplementation\ClassA::class);
 
-        self::assertInstanceOf(testAsset\instantiateInterfaceImplementation\InterfaceA::class, $obj);
-        self::assertInstanceOf(testAsset\instantiateInterfaceImplementation\ClassA::class, $obj);
+        self::assertInstanceOf(testAsset\instantiateInterfaceImplementation\InterfaceA::class, $interface);
+        self::assertInstanceOf(testAsset\instantiateInterfaceImplementation\ClassA::class, $interface);
+        self::assertSame($interface, $obj);
     }
 
     /**
@@ -443,7 +450,7 @@ abstract class AbstractContainerTestCase extends TestCase
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
             // @formatter:off
             $containerBuilder
-                ->alias('1some.virtual.type', testAsset\instantiateAliasAsClassArgument\ClassA::class)
+                ->virtualType('1some.virtual.type', testAsset\instantiateAliasAsClassArgument\ClassA::class)
                     ->arguments()
                         ->stringArgument('someData', 'hello')
                     ->endArguments()
@@ -469,7 +476,7 @@ abstract class AbstractContainerTestCase extends TestCase
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
             // @formatter:off
             $containerBuilder
-                ->alias('some.alias.type', testAsset\instantiateAliasTypeWithArguments\ClassA::class)
+                ->virtualType('some.alias.type', testAsset\instantiateAliasTypeWithArguments\ClassA::class)
                     ->arguments()
                         ->intArgument('intArg', 42)
                         ->floatArgument('floatArg', 42.0)
@@ -526,20 +533,20 @@ abstract class AbstractContainerTestCase extends TestCase
                     ->endArguments()
                 ->end()
 
-                ->alias('virtual.def.1', ClassC::class)
+                ->virtualType('virtual.def.1', ClassC::class)
                     ->inheritArguments(true)
                     ->arguments()
                         ->stringArgument('param1','vparam1')
                     ->endArguments()
                 ->end()
 
-                ->aliasOnAlias('virtual.def.2', 'virtual.def.1')
+                ->virtualType('virtual.def.2', 'virtual.def.1')
                     ->inheritArguments(true)
                     ->arguments()
                         ->stringArgument('param1','virtual.def.2')
                     ->endArguments()
                 ->end()
-                ->aliasOnAlias('virtual.def.3', 'virtual.def.2')
+                ->virtualType('virtual.def.3', 'virtual.def.2')
                     ->inheritArguments(true)
                     ->arguments()
                         ->stringArgument('param4','virtual.def.3')
@@ -565,7 +572,7 @@ abstract class AbstractContainerTestCase extends TestCase
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
             // @formatter:off
             $containerBuilder
-                ->alias('always.same', testAsset\instantiateAlwaysSameAlias\ClassA::class)->end();
+                ->virtualType('always.same', testAsset\instantiateAlwaysSameAlias\ClassA::class)->end();
             // @formatter:on
         });
 
@@ -583,7 +590,7 @@ abstract class AbstractContainerTestCase extends TestCase
             // @formatter:off
             $containerBuilder
                 ->classDefinition(testAsset\instantiateAlwaysNewAlias\ClassA::class)->end()
-                ->alias('always.same', testAsset\instantiateAlwaysNewAlias\ClassA::class)
+                ->virtualType('always.same', testAsset\instantiateAlwaysNewAlias\ClassA::class)
                     ->lifetime(PrototypeLifetime::get())
                 ->end();
             // @formatter:on
@@ -661,7 +668,7 @@ abstract class AbstractContainerTestCase extends TestCase
                         ->proxyArgument('c', 'vinyl.ditest.integration.testasset.noconflictinproxynameandalias.classb')
                     ->endArguments()
                 ->end()
-                ->alias(
+                ->virtualType(
                     'vinyl.ditest.integration.testasset.noconflictinproxynameandalias.classb',
                     testAsset\noConflictInProxyNameAndAlias\ClassB::class
                 )
@@ -697,7 +704,7 @@ abstract class AbstractContainerTestCase extends TestCase
                         ->stringArgument('value', 'test')
                     ->endArguments()
                 ->end()
-                ->alias('class.b',testAsset\proxyGenerationForAlias\ClassB::class)
+                ->virtualType('class.b',testAsset\proxyGenerationForAlias\ClassB::class)
                     ->arguments()
                         ->stringArgument('value', 'hello world')
                     ->endArguments()
@@ -736,7 +743,7 @@ abstract class AbstractContainerTestCase extends TestCase
                     ->lifetime(PrototypeLifetime::get())
                 ->end()
 
-                ->alias('class.b.alias', testAsset\proxyInheritLifetime\ClassB::class)->end();
+                ->virtualType('class.b.alias', testAsset\proxyInheritLifetime\ClassB::class)->end();
             // @formatter:on
         });
 
@@ -760,6 +767,7 @@ abstract class AbstractContainerTestCase extends TestCase
                         ->proxyArgument('interfaceB', null)
                     ->endArguments()
                 ->end()
+                ->classDefinition(testAsset\proxyGenerationForInterface\ClassB::class)->end()
                 ->interfaceImplementation(
                     testAsset\proxyGenerationForInterface\InterfaceB::class,
                     testAsset\proxyGenerationForInterface\ClassB::class
@@ -805,8 +813,8 @@ abstract class AbstractContainerTestCase extends TestCase
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
             // @formatter:off
         $containerBuilder
-            ->aliasOnAlias('first.virtual.type', 'second.virtual.type')->end()
-            ->aliasOnAlias('second.virtual.type', 'first.virtual.type')->end();
+            ->virtualType('first.virtual.type', 'second.virtual.type')->end()
+            ->virtualType('second.virtual.type', 'first.virtual.type')->end();
             // @formatter:on
         });
 
@@ -878,7 +886,7 @@ abstract class AbstractContainerTestCase extends TestCase
                         ->objectArgument('classB', 'test.test')
                     ->endArguments()
                 ->end()
-                ->alias('test.test', testAsset\aliasUsedAsArgument\ClassB::class)
+                ->virtualType('test.test', testAsset\aliasUsedAsArgument\ClassB::class)
                 ->end();
             // @formatter:on
         });
@@ -899,6 +907,7 @@ abstract class AbstractContainerTestCase extends TestCase
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
             // @formatter:off
             $containerBuilder
+                ->classDefinition(testAsset\interfaceImplementationOverriddenViaArgument\ClassA::class)->end()
                 ->interfaceImplementation(testAsset\interfaceImplementationOverriddenViaArgument\InterfaceA::class, testAsset\interfaceImplementationOverriddenViaArgument\ClassA::class)
                 ->classDefinition(testAsset\interfaceImplementationOverriddenViaArgument\ClassC::class)
                     ->arguments()
@@ -984,7 +993,7 @@ abstract class AbstractContainerTestCase extends TestCase
                         ->stringArgument('data', 'hello world')
                     ->endArguments()
                 ->end()
-                ->alias('without.arguments', $testClass)
+                ->virtualType('without.arguments', $testClass)
                     ->changeInstantiator(StaticMethodInstantiator::create($testClass,'createWithoutArguments'))
                 ->end();
         });
@@ -1038,7 +1047,7 @@ abstract class AbstractContainerTestCase extends TestCase
                         ->proxyArgument('classD', null)
                     ->endArguments()
                 ->end()
-                ->alias('alias', testAsset\classesDiscoveredInRuntimeMustThrowInCaseDirectInstantiation\ClassE::class);
+                ->virtualType('alias', testAsset\classesDiscoveredInRuntimeMustThrowInCaseDirectInstantiation\ClassE::class);
         });
 
         $exceptionHappens = false;
@@ -1096,8 +1105,8 @@ abstract class AbstractContainerTestCase extends TestCase
                 ->classDefinition(testAsset\aliasInheritLifetime\ClassA::class)
                     ->lifetime(PrototypeLifetime::get())
                 ->end()
-                ->alias('alias', testAsset\aliasInheritLifetime\ClassA::class)->end()
-                ->aliasOnAlias('alias.on.alias', 'alias')->end();
+                ->virtualType('alias', testAsset\aliasInheritLifetime\ClassA::class)->end()
+                ->virtualType('alias.on.alias', 'alias')->end();
         });
 
         self::assertNotSame($di->get('alias'), $di->get('alias'));
@@ -1117,8 +1126,8 @@ abstract class AbstractContainerTestCase extends TestCase
                 )
                 ->end();
 
-            $dmb->alias('test', testAsset\aliasInheritInstantiator\ClassA::class)->end();
-            $dmb->aliasOnAlias('test.2', 'test')->end();
+            $dmb->virtualType('test', testAsset\aliasInheritInstantiator\ClassA::class)->end();
+            $dmb->virtualType('test.2', 'test')->end();
             // @formatter:on
         });
 
@@ -1195,15 +1204,15 @@ abstract class AbstractContainerTestCase extends TestCase
                         ->intArgument('argument', null)
                     ->endArguments()
                 ->end();
-            $dmb->alias('union.string.param', testAsset\instantiateObjectWithUnionArguments\ClassA::class)
+            $dmb->virtualType('union.string.param', testAsset\instantiateObjectWithUnionArguments\ClassA::class)
                     ->arguments()
                         ->stringArgument('argument', 'Hello World')
                     ->endArguments();
-            $dmb->alias('union.int.param', testAsset\instantiateObjectWithUnionArguments\ClassA::class)
+            $dmb->virtualType('union.int.param', testAsset\instantiateObjectWithUnionArguments\ClassA::class)
                     ->arguments()
                         ->intArgument('argument', 42)
                     ->endArguments();
-            $dmb->alias('union.enum.param', testAsset\instantiateObjectWithUnionArguments\ClassA::class)
+            $dmb->virtualType('union.enum.param', testAsset\instantiateObjectWithUnionArguments\ClassA::class)
                     ->arguments()
                         ->enumArgument('argument', testAsset\instantiateObjectWithUnionArguments\EnumArgument::DEBUG)
                     ->endArguments();
@@ -1254,6 +1263,26 @@ abstract class AbstractContainerTestCase extends TestCase
         });
 
         self::assertTrue($container->lifetimeMap()->contains(\stdClass::class));
+    }
+
+    #[Test]
+    public function instantiateObjectWithRuntimeDefinition(): void
+    {
+        // @formatter:off
+        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+            $dmb->classDefinition(Root::class)->end();
+            $dmb->runtimeClassDefinition(RootChildRuntime::class);
+            $dmb->runtimeInterfaceDefinition(RootRuntimeInterface::class);
+        });
+
+        $object = new RootChildRuntime();
+        $impl = new RootRuntimeInterfaceImpl();
+        $di->insertSharedInstance(RootChildRuntime::class, $object);
+        $di->insertSharedInstance(RootRuntimeInterface::class, $impl);
+
+        $root = $di->get(Root::class);
+        self::assertSame($object, $root->childRuntime);
+        self::assertSame($impl, $root->rootRuntime);
     }
 
     /**

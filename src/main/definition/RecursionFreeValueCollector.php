@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace vinyl\di\definition;
 
 use SplStack;
-use vinyl\di\AliasOnAliasDefinition;
+use vinyl\di\VirtualTypeDefinition;
 use vinyl\di\Definition;
 use vinyl\di\definition\value\Mergeable;
+use vinyl\std\lang\ClassObject;
 use vinyl\std\lang\collections\Map;
 use vinyl\std\lang\collections\MutableMap;
 use function array_reverse;
+use function assert;
 use function vinyl\std\lang\collections\mutableMapOf;
 
 /**
@@ -38,7 +40,7 @@ final class RecursionFreeValueCollector implements ValueCollector
         }
 
         /** @var MutableMap<string, \vinyl\di\definition\DefinitionValue>[] $valueMapList */
-        $valueMapList = [];
+        $valueMapList =     [];
         $stack = new SplStack();
         $stack->push($definition);
 
@@ -52,7 +54,7 @@ final class RecursionFreeValueCollector implements ValueCollector
                 break;
             }
 
-            if ($currentDefinition instanceof AliasOnAliasDefinition) {
+            if ($currentDefinition instanceof VirtualTypeDefinition && $currentDefinition->parentId() !== null) {
                 if (!$definitionMap->containsKey($currentDefinition->parentId())) {
                     break;
                 }
@@ -61,7 +63,10 @@ final class RecursionFreeValueCollector implements ValueCollector
                 continue;
             }
 
-            $parentClasses = $this->parentClassesProvider->find($currentDefinition->classObject());
+            $classObject = $currentDefinition->classObject();
+            assert($classObject instanceof ClassObject);
+
+            $parentClasses = $this->parentClassesProvider->find($classObject);
 
             foreach ($parentClasses as $parentClass) {
                 $parentClassName = $parentClass->name();
@@ -83,7 +88,7 @@ final class RecursionFreeValueCollector implements ValueCollector
                 }
             }
 
-            $currentDefinitionClassName = $currentDefinition->classObject()->name();
+            $currentDefinitionClassName = $classObject->name();
             if ($currentDefinition->id() !== $currentDefinitionClassName
                 && $definitionMap->containsKey($currentDefinitionClassName)) {
                 $stack->push($definitionMap->get($currentDefinitionClassName));

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace vinyl\di\definition;
 
 use SplStack;
-use vinyl\di\AliasOnAliasDefinition;
+use vinyl\di\VirtualTypeDefinition;
 use vinyl\di\Definition;
 use vinyl\std\lang\collections\Map;
 
@@ -35,8 +35,13 @@ final class RecursionFreeLifetimeResolver implements LifetimeResolver
                 return $currentDefinition->lifetime();
             }
 
-            if ($currentDefinition instanceof AliasOnAliasDefinition) {
-                $parentDefinition = $definitionMap->get($currentDefinition->parentId());
+            if ($currentDefinition instanceof VirtualTypeDefinition && $currentDefinition->parentId() !== null) {
+                $parentDefinition = $definitionMap->find($currentDefinition->parentId());
+
+                if ($parentDefinition === null) {
+                    return SingletonLifetime::get();///todo
+                }
+
                 if ($parentDefinition->lifetime() !== null) {
                     return $parentDefinition->lifetime();
                 }

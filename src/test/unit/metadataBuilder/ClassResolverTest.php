@@ -8,8 +8,7 @@ declare(strict_types=1);
 namespace vinyl\diTest\unit\metadataBuilder;
 
 use PHPUnit\Framework\TestCase;
-use vinyl\di\ClassAliasDefinition;
-use vinyl\di\AliasOnAliasDefinition;
+use vinyl\di\VirtualTypeDefinition;
 use vinyl\di\ClassDefinition;
 use vinyl\di\definition\ClassResolver;
 use vinyl\di\definition\DefinitionCircularReferenceFoundException;
@@ -73,8 +72,8 @@ class ClassResolverTest extends TestCase
         {
         };
 
-        $type = new AliasOnAliasDefinition('some.id', 'parent.id');
-        $type2 = new ClassAliasDefinition('parent.id', ClassObject::create(get_class($testClass)));
+        $type = VirtualTypeDefinition::new('some.id', 'parent.id');
+        $type2 = VirtualTypeDefinition::new('parent.id', get_class($testClass));
         $config = mutableMapOf(pair($type->id(),$type), pair($type2->id(), $type2));
 
         $resolvedClass = $this->classResolver->resolve($type, $config);
@@ -88,9 +87,9 @@ class ClassResolverTest extends TestCase
     public function circularDependencyDetection(): void
     {
         $this->expectException(DefinitionCircularReferenceFoundException::class);
-        $type = new AliasOnAliasDefinition('qwerty1', 'qwerty2');
-        $type2 = new AliasOnAliasDefinition('qwerty2', 'qwerty3');
-        $type3 = new AliasOnAliasDefinition('qwerty3', 'qwerty1');
+        $type = VirtualTypeDefinition::new('qwerty1', 'qwerty2');
+        $type2 = VirtualTypeDefinition::new('qwerty2', 'qwerty3');
+        $type3 = VirtualTypeDefinition::new('qwerty3', 'qwerty1');
         $config = mutableMapOf(
             pair($type->id(), $type),
             pair($type2->id(), $type2),
@@ -106,9 +105,9 @@ class ClassResolverTest extends TestCase
     public function exceptionIsThrownWhenClassCantBeResolved(): void
     {
         $this->expectException(\vinyl\di\definition\ClassResolverException::class);
-        $type = new AliasOnAliasDefinition('qwerty1', 'qwerty2');
-        $type2 = new AliasOnAliasDefinition('qwerty2', 'qwerty3');
-        $type3 = new AliasOnAliasDefinition('qwerty3', 'qwerty4');
+        $type = VirtualTypeDefinition::new('qwerty1', 'qwerty2');
+        $type2 = VirtualTypeDefinition::new('qwerty2', 'qwerty3');
+        $type3 = VirtualTypeDefinition::new('qwerty3', 'qwerty4');
         $config = mutableMapOf(
             pair($type->id(), $type),
             pair($type2->id(), $type2),

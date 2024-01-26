@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace vinyl\di;
 
-use LogicException;
 use vinyl\di\definition\Instantiator;
 use vinyl\di\definition\Lifetime;
-use vinyl\std\lang\ClassObject;
 use vinyl\std\lang\collections\MutableMap;
 use function vinyl\std\lang\collections\mutableMapOf;
 
@@ -18,7 +16,7 @@ abstract class AbstractDefinition implements Definition
 {
     private string $id;
     /** todo remove this property from abstract */
-    private ?ClassObject $classObject;
+
     private ?Lifetime $lifetime = null;
     private bool $argumentInheritance = false;
 
@@ -29,10 +27,9 @@ abstract class AbstractDefinition implements Definition
     /**
      * AbstractDefinition constructor.
      */
-    public function __construct(string $id, ?ClassObject $class)
+    public function __construct(string $id)
     {
         $this->id = $id;
-        $this->classObject = $class;
         $this->argumentValues = mutableMapOf();
     }
 
@@ -96,33 +93,6 @@ abstract class AbstractDefinition implements Definition
         $this->argumentInheritance = $status;
 
         return !$status;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function classObject(): ClassObject
-    {
-        if ($this->classObject === null) {
-            throw new LogicException('Class object must be initialized.');
-        }
-
-        return $this->classObject;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function replaceClass(ClassObject $newCLass): ClassObject
-    {
-        if ($this->classObject === null) {
-            throw new LogicException('You have to initialize class first, before trying replacing it.');
-        }
-
-        $oldClass = $this->classObject;
-        $this->classObject = $newCLass;
-
-        return $oldClass;
     }
 
     /**

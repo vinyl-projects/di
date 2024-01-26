@@ -6,8 +6,9 @@ namespace vinyl\di\definition;
 
 use LogicException;
 use SplStack;
-use vinyl\di\AliasOnAliasDefinition;
+use vinyl\di\VirtualTypeDefinition;
 use vinyl\di\Definition;
+use vinyl\di\RootDefinition;
 use vinyl\std\lang\ClassObject;
 use vinyl\std\lang\collections\Map;
 use function array_key_exists;
@@ -38,13 +39,22 @@ final class RecursionFreeClassResolver implements ClassResolver
 
             $visitedDefinitions[$currentDefinition->id()] = true;
 
-            if ($currentDefinition instanceof AliasOnAliasDefinition) {
+            if ($currentDefinition instanceof VirtualTypeDefinition && $currentDefinition->parentId() !== null) {
                 if (!$definitionMap->containsKey($currentDefinition->parentId())) {
+                    $class = ClassObject::tryCreate($currentDefinition->parentId());
+                    if ($class !== null) {
+                        return $class;
+                    }
+
                     throw new ClassResolverException("Unable to resolve class for {$definition->id()} definition id. Definition or one of parent refers to undeclared parent id [{$currentDefinition->parentId()}].");
                 }
 
                 $definitionFromMap = $definitionMap->get($currentDefinition->parentId());
                 $stack->push($definitionFromMap);
+                continue;
+            }
+
+            if (!$currentDefinition instanceof RootDefinition) {
                 continue;
             }
 
@@ -59,6 +69,13 @@ final class RecursionFreeClassResolver implements ClassResolver
             }
 
             $stack->push($definitionFromMap);
+        }
+
+        if ($currentDefinition instanceof VirtualTypeDefinition) {
+            $class = ClassObject::tryCreate($currentDefinition->parentId());
+            if ($class !== null) {
+                return $class;
+            }
         }
 
         throw new LogicException("Unable to resolve class for {$definition->id()} definition id.");

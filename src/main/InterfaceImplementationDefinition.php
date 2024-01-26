@@ -7,27 +7,45 @@ namespace vinyl\di;
 use InvalidArgumentException;
 use RuntimeException;
 use vinyl\std\lang\ClassObject;
+use vinyl\std\lang\InterfaceObject;
 use function interface_exists;
 use function is_a;
 
 /**
  * Class InterfaceImplementationDefinition
- *
- * @todo we must be able to set alias as implementation
  */
-final class InterfaceImplementationDefinition extends AbstractDefinition
+final class InterfaceImplementationDefinition extends AbstractDefinition implements RootDefinition
 {
-    public function __construct(string $interface, ClassObject $class)
+    private ClassObject $classObject;
+
+    public function __construct(InterfaceObject $interface, ClassObject $class)
     {
-        if (!interface_exists($interface)) {
-            throw new InvalidArgumentException("Interface {$interface} not exists.");
-        }
+        $this->classObject = $class;
 
-        parent::__construct($interface, $class);
+        parent::__construct($interface->name());
 
-        if (!is_a($class->name(), $interface, true)) {
+        if (!is_a($class->name(), $interface->name(), true)) {
             throw new InvalidArgumentException("Class [{$class->name()}] must be an instance of [{$interface}].");
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function classObject(): ClassObject
+    {
+        return $this->classObject;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function replaceClass(ClassObject $newCLass): ClassObject
+    {
+        $oldClass = $this->classObject;
+        $this->classObject = $newCLass;
+
+        return $oldClass;
     }
 
     /**

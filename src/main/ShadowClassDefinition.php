@@ -11,11 +11,30 @@ use function assert;
 /**
  * Class ShadowClassDefinition
  */
-final class ShadowClassDefinition extends AbstractDefinition
+final class ShadowClassDefinition extends AbstractDefinition implements RootDefinition
 {
+    private ClassObject $classObject;
+
     public function __construct(ClassObject $class)
     {
-        parent::__construct(self::makeShadowId($class->name()), $class);
+        $this->classObject = $class;
+        parent::__construct(self::makeShadowId($class->name()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function classObject(): ClassObject
+    {
+        return $this->classObject;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function replaceClass(ClassObject $newCLass): ClassObject
+    {
+        throw new \LogicException("Class could not be changed for Shadow definition. [{$this->id()}]");
     }
 
     /**

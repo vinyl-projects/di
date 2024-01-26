@@ -10,6 +10,7 @@ use vinyl\di\definitionMapBuilder\DefinitionBuilder;
 use vinyl\std\lang\ClassObject;
 use vinyl\std\lang\collections\Map;
 use vinyl\std\lang\collections\MutableMap;
+use vinyl\std\lang\InterfaceObject;
 use function vinyl\std\lang\collections\mutableMapOf;
 
 /**
@@ -35,8 +36,11 @@ class DefinitionMapBuilder
      */
     public function interfaceImplementation(string $interface, string $className): self
     {
-        $interfaceImplementationDefinition = new InterfaceImplementationDefinition($interface,
-            ClassObject::create($className));
+        $interfaceImplementationDefinition = new InterfaceImplementationDefinition(
+            InterfaceObject::create($interface),
+            ClassObject::create($className)
+        );
+
         $this->definitionMap->put($interfaceImplementationDefinition->id(), $interfaceImplementationDefinition);
 
         return $this;
@@ -58,15 +62,20 @@ class DefinitionMapBuilder
         return $this->definitionBuilder;
     }
 
-    public function runtimeClassDefinition(string $class): void
+    /**
+     * @param class-string|interface-string $entry
+     *
+     * @return void
+     */
+    public function runtimeClassDefinition(string $entry): void
     {
-        $definition = $this->definitionMap->find($class);
+        $definition = $this->definitionMap->find($entry);
 
         if ($definition !== null) {
-            throw new LogicException("Runtime Definition with id [{$class}] already defined.");
+            //TODO log it ?
         }
 
-        $definition = new RuntimeClassDefinition(ClassObject::create($class));
+        $definition = new RuntimeDefinition(ClassObject::create($entry));
         $this->definitionMap->put($definition->id(), $definition);
 
         $this->definitionBuilder->_updateDefinition($definition);
@@ -74,15 +83,31 @@ class DefinitionMapBuilder
         return;
     }
 
-    public function alias(string $definitionId, string $class): DefinitionBuilder
+    public function runtimeInterfaceDefinition(string $entry): void
     {
-        $typeDefinition = $this->definitionMap->find($definitionId);
+        $definition = $this->definitionMap->find($entry);
 
-        if ($typeDefinition !== null) {
-            throw new LogicException("Definition with id [{$definitionId}] already defined.");
+        if ($definition !== null) {
+            //TODO log it ?
         }
 
-        $typeDefinition = new ClassAliasDefinition($definitionId, ClassObject::create($class));
+        $definition = new RuntimeDefinition(InterfaceObject::create($entry));
+        $this->definitionMap->put($definition->id(), $definition);
+
+        $this->definitionBuilder->_updateDefinition($definition);
+
+        return;
+    }
+
+    public function virtualType(string $virtualTypeId, string $parentId): DefinitionBuilder
+    {
+        $typeDefinition = $this->definitionMap->find($virtualTypeId);
+
+        if ($typeDefinition !== null) {
+            throw new LogicException("Virtual type with id [{$virtualTypeId}] already defined.");
+        }
+
+        $typeDefinition = VirtualTypeDefinition::new($virtualTypeId, $parentId);
         $this->definitionMap->put($typeDefinition->id(), $typeDefinition);
 
         $this->definitionBuilder->_updateDefinition($typeDefinition);
@@ -90,25 +115,8 @@ class DefinitionMapBuilder
         return $this->definitionBuilder;
     }
 
-    public function aliasOnAlias(string $definitionId, string $parentId): DefinitionBuilder
-    {
-        $definition = $this->definitionMap->find($definitionId);
-        if ($definition !== null) {
-            throw new LogicException("Definition with id [{$definitionId}] already defined.");
-        }
-
-        $definition = new AliasOnAliasDefinition($definitionId, $parentId);
-        $this->definitionMap->put($definition->id(), $definition);
-
-        $this->definitionBuilder->_updateDefinition($definition);
-
-        return $this->definitionBuilder;
-    }
-
     public function referenceDefinition(string $definitionId): DefinitionBuilder
     {
-        //TODO how to change parent id for AlisOnAlias definition
-
         $definition = $this->definitionMap->find($definitionId);
         if ($definition === null) {
             throw new OutOfBoundsException("Definition with id [{$definitionId}] is not registered.");

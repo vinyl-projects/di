@@ -15,11 +15,40 @@ use function strrpos;
 use const ARRAY_FILTER_USE_KEY;
 
 /**
- * Class AliasDefinition
+ * Class VirtualTypeDefinition
  */
-abstract class AliasDefinition extends AbstractDefinition
+final class VirtualTypeDefinition extends AbstractDefinition
 {
-    protected static function validateAliasId(string $id): void
+    private string $parentId;
+
+    /**
+     * ClassAliasDefinition constructor.
+     */
+    private function __construct(string $id, string $parentId)
+    {
+        $this->parentId = $parentId;
+        parent::__construct($id);
+    }
+
+    public static function new(string $id, string $parentId): self
+    {
+        self::validateVirtualTypeId($id);
+
+        $aliasDefinition = new self($id, $parentId);
+        $aliasDefinition->toggleArgumentInheritance(true);
+
+        return $aliasDefinition;
+    }
+
+    /**
+     * Returns an id of parent definition
+     */
+    public function parentId(): string
+    {
+        return $this->parentId;
+    }
+
+    protected static function validateVirtualTypeId(string $id): void
     {
         $pregMatchResult = @preg_match('/^[a-z0-9](?:\.?[a-z0-9])*$/', $id, $matches);
 

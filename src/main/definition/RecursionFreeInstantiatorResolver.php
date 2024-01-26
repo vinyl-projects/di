@@ -6,7 +6,7 @@ namespace vinyl\di\definition;
 
 use LogicException;
 use SplStack;
-use vinyl\di\AliasOnAliasDefinition;
+use vinyl\di\VirtualTypeDefinition;
 use vinyl\di\Definition;
 use vinyl\std\lang\collections\Map;
 
@@ -51,8 +51,13 @@ final class RecursionFreeInstantiatorResolver implements InstantiatorResolver
                 return $currentDefinition->instantiator();
             }
 
-            if ($currentDefinition instanceof AliasOnAliasDefinition) {
-                $parentDefinition = $definitionMap->get($currentDefinition->parentId());
+            if ($currentDefinition instanceof VirtualTypeDefinition && $currentDefinition->parentId() !== null) {
+                $parentDefinition = $definitionMap->find($currentDefinition->parentId());
+
+                if ($parentDefinition === null) {
+                    return new ConstructorInstantiator($class);
+                }
+
                 if ($parentDefinition->instantiator() !== null) {
                     return $parentDefinition->instantiator();
                 }

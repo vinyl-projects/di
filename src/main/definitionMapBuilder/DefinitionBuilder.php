@@ -9,8 +9,10 @@ use vinyl\di\definition\Instantiator;
 use vinyl\di\definition\Lifetime;
 use vinyl\di\DefinitionMapBuilder;
 use vinyl\di\definitionMapBuilder\definitionBuilder\Arguments;
+use vinyl\di\RootDefinition;
 use vinyl\std\lang\ClassObject;
 use vinyl\std\lang\collections\MutableMap;
+use function assert;
 
 /**
  * Class DefinitionBuilder
@@ -73,6 +75,7 @@ class DefinitionBuilder
     public function replaceClass(string $newClass): self
     {
         assert($this->definition !== null);
+        assert($this->definition instanceof RootDefinition);
         $this->definition->replaceClass(ClassObject::create($newClass));
 
         return $this;

@@ -6,7 +6,6 @@ namespace vinyl\di;
 
 use vinyl\di\definition\Instantiator;
 use vinyl\di\definition\Lifetime;
-use vinyl\std\lang\ClassObject;
 use vinyl\std\lang\collections\MutableMap;
 
 /**
@@ -57,17 +56,6 @@ interface Definition
      */
     public function toggleArgumentInheritance(bool $status): ?bool;
 
-    /**
-     * Returns class name of definition
-     */
-    public function classObject(): ClassObject;
-
-    /**
-     * Replaces the class for current definition instance
-     *
-     * @return ClassObject Previous class object
-     */
-    public function replaceClass(ClassObject $newCLass): ClassObject;
 
     /**
      * Returns argument values
