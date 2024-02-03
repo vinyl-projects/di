@@ -23,7 +23,7 @@ final class Container implements ContainerInterface
     /**
      * Container constructor.
      */
-    public function __construct(private LifetimeCodeMap $lifetimeCodeMap, private ObjectFactory $objectFactory)
+    public function __construct(private readonly LifetimeCodeMap $lifetimeCodeMap, private readonly ObjectFactory $objectFactory)
     {
         if ($this->objectFactory instanceof ContainerAware) {
             $this->objectFactory->injectContainer($this);
