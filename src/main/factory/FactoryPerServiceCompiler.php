@@ -19,7 +19,6 @@ use function md5;
 use function sprintf;
 use function var_export;
 use function vinyl\di\classExtractShortNameAndNamespace;
-use const PHP_EOL;
 
 /**
  * Class FactoryPerServiceCompiler
@@ -54,11 +53,16 @@ final class FactoryPerServiceCompiler implements Compiler
 
         [$shortClassName, $namespace] = classExtractShortNameAndNamespace($mainFactoryClassName);
         try {
+            /** @var \vinyl\di\factory\FactoryMetadata $metadata */
             foreach ($factoryMetadataMap as $metadata) {
                 //TODO replace it
                 $class = 'class' . md5($metadata->id);//class mustn't start from a numeric symbol
                 $callable = "{$mainFactoryClassName}\\{$class}::create";
-                $services[] = "'$metadata->id' => " . "'$callable'," . PHP_EOL;
+                $services[$metadata->id] = $callable;
+
+                foreach ($metadata->aliases as $alias) {
+                    $services[$alias] = $callable;
+                }
 
                 $makeFactoryMethodBody = $this->makeFactoryMethodBody($metadata, $mainFactoryClassName);
 
@@ -82,7 +86,8 @@ final class FactoryPerServiceCompiler implements Compiler
 
             $mainFactoryContent = self::renderMainFactory(
                 $namespace !== '' ? "namespace {$namespace};" : '',
-                $shortClassName, implode('', $services)
+                $shortClassName,
+                var_export($services, true)
             );
 
             $this->classMaterializer->materialize($mainFactoryClassName, $mainFactoryContent);
@@ -177,9 +182,7 @@ final class FactoryPerServiceCompiler implements Compiler
         
         final class $factoryName implements \\vinyl\di\ObjectFactory, \\vinyl\di\ContainerAware
         {
-            private const SERVICES = [
-                $services
-            ];
+            private const SERVICES = $services;
         
             /** @var \Psr\Container\ContainerInterface */
             private \$container;

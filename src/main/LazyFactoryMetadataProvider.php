@@ -20,13 +20,15 @@ class LazyFactoryMetadataProvider
      */
     public function __construct(
         private readonly Map $definitionMap,
-        private readonly DefinitionTransformer $definitionTransformer
+        private readonly DefinitionTransformer $definitionTransformer,
+        private readonly IdResolver $aliasIdResolver
     ) {
         $this->factoryMetadataMap = mutableMapOf();
     }
 
     public function get(string $definitionId): FactoryMetadata
     {
+        $definitionId = $this->aliasIdResolver->resolve($definitionId);
         $this->transform($definitionId);
 
         if (!$this->factoryMetadataMap->containsKey($definitionId)) {
@@ -38,6 +40,7 @@ class LazyFactoryMetadataProvider
 
     public function has(string $definitionId): bool
     {
+        $definitionId = $this->aliasIdResolver->resolve($definitionId);
         $this->transform($definitionId);
 
         return $this->factoryMetadataMap->containsKey($definitionId);

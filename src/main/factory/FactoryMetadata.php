@@ -12,6 +12,9 @@ final class FactoryMetadata
     /** unique id of factory */
     public string $id;
 
+    /** @var array<string> */
+    public array $aliases = [];
+
     /** Class name */
     public string $class;
 

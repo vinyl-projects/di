@@ -22,9 +22,14 @@ final class Container implements ContainerInterface
 
     /**
      * Container constructor.
+     *
+     * @param array<string, string> $aliasMap
      */
-    public function __construct(private readonly LifetimeCodeMap $lifetimeCodeMap, private readonly ObjectFactory $objectFactory)
-    {
+    public function __construct(
+        private readonly LifetimeCodeMap $lifetimeCodeMap,
+        private readonly ObjectFactory $objectFactory,
+        private \vinyl\di\IdResolver $typeIdResolver
+    ) {
         if ($this->objectFactory instanceof ContainerAware) {
             $this->objectFactory->injectContainer($this);
         }
@@ -51,17 +56,27 @@ final class Container implements ContainerInterface
             return $object;
         }
 
-        $object = $this->objectFactory->create($id);
-        $lifetime = $this->lifetimeCodeMap->get($id);
+        $realId = $this->typeIdResolver->resolve($id);
+        $object = $this->sharedInstances[$realId] ?? null;
+
+        if ($object !== null) {
+            return $object;
+        }
+
+        $object = $this->objectFactory->create($realId);
+        $lifetime = $this->lifetimeCodeMap->get($realId);
 
         if (!isset(self::$allowedLifetimeMap[$lifetime])) {
             throw new ContainerException(
-                "The requested [{$id}] service have [{$lifetime}] lifetime and can't be instantiated within root container."
+                "The requested [{$realId}] service have [{$lifetime}] lifetime and can't be instantiated within root container."
             );
         }
 
         if ($lifetime === self::$singletonLifetimeCode) {
-            $this->sharedInstances[$id] = $object;
+            $this->sharedInstances[$realId] = $object;
+            if ($realId !== $id) {
+                $this->sharedInstances[$id] = $object;
+            }
         }
 
         return $object;
@@ -88,5 +103,13 @@ final class Container implements ContainerInterface
     public function lifetimeMap(): LifetimeCodeMap
     {
         return $this->lifetimeCodeMap;
+    }
+
+    /**
+     * Returns the Id Resolver, which is used by this container.
+     */
+    public function typeIdResolver(): IdResolver
+    {
+        return $this->typeIdResolver;
     }
 }

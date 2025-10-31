@@ -32,14 +32,13 @@ final class ContainerBuilder
 
     private LoggerInterface $logger;
 
-    /** @var \vinyl\std\lang\collections\Map<string, \vinyl\di\Definition>|null  */
+    /** @var \vinyl\std\lang\collections\Map<string, \vinyl\di\Definition>|null */
     private ?Map $definitionMap;
 
     private ?string $materializer = null;
     private ?string $factory = null;
     private bool $composerPluginRegister = false;
     private ?string $factoryClassName = null;
-    private ?string $lifetimeMapName = null;
     private bool $isUsed = false;
 
     /**
@@ -97,7 +96,7 @@ final class ContainerBuilder
         return $this;
     }
 
-    public function useCompiledFactory(string $factoryClassName, string $lifetimeMapName): self
+    public function useCompiledFactory(string $factoryClassName): self
     {
         $this->throwIfBuilderAlreadyUsed();
         if ($this->factory !== null) {
@@ -106,7 +105,6 @@ final class ContainerBuilder
 
         $this->factory = self::COMPILED_FACTORY;
         $this->factoryClassName = $factoryClassName;
-        $this->lifetimeMapName = $lifetimeMapName;
 
         return $this;
     }
@@ -148,13 +146,18 @@ final class ContainerBuilder
         $definitionTransformer = new RecursiveDefinitionTransformer($valueProcessor, $classResolver, $lifetimeResolver);
 
         if ($this->factory === self::DEVELOPER_FACTORY) {
-            $lazyFactoryMetadataProvider = new LazyFactoryMetadataProvider($this->definitionMap, $definitionTransformer);
+            $typeIdResolver = new RuntimeIdResolver($this->definitionMap);
+            $lazyFactoryMetadataProvider = new LazyFactoryMetadataProvider(
+                $this->definitionMap,
+                $definitionTransformer,
+                $typeIdResolver
+            );
             $lifetime = new LazyLifetimeCodeMap($lazyFactoryMetadataProvider);
             $factory = new DeveloperFactory($lazyFactoryMetadataProvider);
             $this->definitionMap = null;
             $this->isUsed = true;
 
-            return new Container($lifetime, $factory);
+            return new Container($lifetime, $factory, $typeIdResolver);
         }
 
         $factoryMetadataMap = (new DefinitionMapTransformer($definitionTransformer))->transform($this->definitionMap);
@@ -165,15 +168,26 @@ final class ContainerBuilder
         assert($objectFactory instanceof ObjectFactory);
 
         $lifetimeMapCompiler = new LifetimeMapCompiler($materializer);
-        assert($this->lifetimeMapName !== null);
-        $lifetimeMapClassObject = $lifetimeMapCompiler->compile($this->lifetimeMapName, $factoryMetadataMap);
+        $aliasIdCompiler = new IdResolverCompiler($materializer);
+
+        $lifetimeMapClassObject = $lifetimeMapCompiler->compile(
+            $this->factoryClassName . '_LifetimeCodeMap',
+            $factoryMetadataMap
+        );
         $lifetimeCodeMap = $lifetimeMapClassObject->toReflectionClass()->newInstanceWithoutConstructor();
         assert($lifetimeCodeMap instanceof LifetimeCodeMap);
+
+        $aliasIdResolverClass = $aliasIdCompiler->compile(
+            $this->factoryClassName . '_AliasIdResolver',
+            $factoryMetadataMap
+        );
+        $aliasIdResolver = $aliasIdResolverClass->toReflectionClass()->newInstanceWithoutConstructor();
+        assert($aliasIdResolver instanceof IdResolver);
 
         $this->isUsed = true;
         $this->definitionMap = null;
 
-        return new Container($lifetimeCodeMap, $objectFactory);
+        return new Container($lifetimeCodeMap, $objectFactory, $aliasIdResolver);
     }
 
     private function resolveMaterializer(): EvalClassMaterializer
