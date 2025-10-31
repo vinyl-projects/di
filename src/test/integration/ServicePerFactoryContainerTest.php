@@ -17,17 +17,16 @@ use function random_bytes;
  */
 class ServicePerFactoryContainerTest extends AbstractContainerTestCase
 {
-    protected function createContainer(callable $builderFunction): ContainerInterface
+    protected static function createContainer(callable $builderFunction): ContainerInterface
     {
         $definitionMapBuilder = new DefinitionMapBuilder();
         $builderFunction($definitionMapBuilder);
         $definitionMap = $definitionMapBuilder->build();
 
         $factoryClassName = self::getNextClassName();
-        $lifetimeMapName = "{$factoryClassName}_LifetimeMap";
         return ContainerBuilder::create($definitionMap)
             ->useEvalMaterializerStrategy()
-            ->useCompiledFactory($factoryClassName, $lifetimeMapName)
+            ->useCompiledFactory($factoryClassName)
             ->build();
     }
 

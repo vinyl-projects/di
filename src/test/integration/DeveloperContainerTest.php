@@ -16,7 +16,7 @@ final class DeveloperContainerTest extends AbstractContainerTestCase
     /**
      * {@inheritDoc}
      */
-    protected function createContainer(callable $builderFunction): ContainerInterface
+    protected static function createContainer(callable $builderFunction): ContainerInterface
     {
         $definitionMapBuilder = new DefinitionMapBuilder();
         $builderFunction($definitionMapBuilder);

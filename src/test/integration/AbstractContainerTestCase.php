@@ -53,8 +53,8 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateObjectWithoutArguments(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
-            $containerBuilder->classDefinition(testAsset\instantiateObjectWithoutArguments\ClassA::class)->end();
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
+            $dmb->classDefinition(testAsset\instantiateObjectWithoutArguments\ClassA::class)->end();
         });
 
         self::assertInstanceOf(testAsset\instantiateObjectWithoutArguments\ClassA::class, $di->get(testAsset\instantiateObjectWithoutArguments\ClassA::class));
@@ -63,10 +63,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateObjectWithArguments(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\instantiateObjectWithArguments\ClassA::class)
+            $dmb->classDefinition(testAsset\instantiateObjectWithArguments\ClassA::class)
                     ->arguments()
                         ->intArgument('a', 42)
                         ->intArgument('b', null)
@@ -150,10 +149,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function alwaysReturnSameObject(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\alwaysReturnSameObject\ClassA::class)->end();
+            $dmb->classDefinition(testAsset\alwaysReturnSameObject\ClassA::class)->end();
             // @formatter:on
         });
 
@@ -166,10 +164,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function alwaysReturnNewObject(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\alwaysReturnNewObject\ClassA::class)
+            $dmb->classDefinition(testAsset\alwaysReturnNewObject\ClassA::class)
                     ->lifetime(PrototypeLifetime::get())
                 ->end();
             // @formatter:on
@@ -184,11 +181,10 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateInterfaceImplementation(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\instantiateInterfaceImplementation\ClassA::class)->end()
-                ->interfaceImplementation(
+            $dmb->classDefinition(testAsset\instantiateInterfaceImplementation\ClassA::class)->end()
+                ->alias(
                     testAsset\instantiateInterfaceImplementation\InterfaceA::class,
                     testAsset\instantiateInterfaceImplementation\ClassA::class
                 );
@@ -206,10 +202,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateOverwrittenInterfaceImplementation(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->interfaceImplementation(
+            $dmb->alias(
                     testAsset\instantiateInterfaceImplementation\InterfaceA::class,
                     testAsset\instantiateInterfaceImplementation\ClassA::class
                 )
@@ -228,10 +223,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function replaceClassNotOverrideArguments(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->interfaceImplementation(abstractContainerTest\preferenceNotOverrideArguments\A::class, abstractContainerTest\preferenceNotOverrideArguments\B::class)
+            $dmb->alias(abstractContainerTest\preferenceNotOverrideArguments\A::class, abstractContainerTest\preferenceNotOverrideArguments\B::class)
                 ->classDefinition(abstractContainerTest\preferenceNotOverrideArguments\B::class)
                     ->replaceClass(abstractContainerTest\preferenceNotOverrideArguments\C::class)
                     ->arguments()
@@ -260,11 +254,11 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function interfaceUsedAsArgument(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->interfaceImplementation(testAsset\interfaceUsedAsArgument\InterfaceA::class, testAsset\interfaceUsedAsArgument\ClassA::class)
-                ->classDefinition(testAsset\interfaceUsedAsArgument\ClassB::class)->end();
+            $dmb->alias(testAsset\interfaceUsedAsArgument\InterfaceA::class, testAsset\interfaceUsedAsArgument\ClassA::class)
+                ->classDefinition(testAsset\interfaceUsedAsArgument\ClassB::class)->end()
+                ->classDefinition(testAsset\interfaceUsedAsArgument\ClassA::class)->end();
             // @formatter:on
         });
 
@@ -276,10 +270,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function optionalInterfaceUsedAsArgument(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\optionalInterfaceUsedAsArgument\ClassA::class)->end();
+            $dmb->classDefinition(testAsset\optionalInterfaceUsedAsArgument\ClassA::class)->end();
             // @formatter:on
         });
 
@@ -293,10 +286,9 @@ abstract class AbstractContainerTestCase extends TestCase
     {
         $this->expectException(ClassCircularReferenceFoundException::class);
 
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(abstractContainerTest\circularDependencyDetection\ClassA::class)->end();
+            $dmb->classDefinition(abstractContainerTest\circularDependencyDetection\ClassA::class)->end();
             // @formatter:on
         });
 
@@ -307,10 +299,9 @@ abstract class AbstractContainerTestCase extends TestCase
     public function circularDependencyDetectionWithInterface(): void
     {
         $this->expectException(ClassCircularReferenceFoundException::class);
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->interfaceImplementation(
+            $dmb->alias(
                     ClassAInterface::class,
                     testAsset\circularDependencyDetectionWithInterface\ClassA::class
                 )
@@ -325,11 +316,10 @@ abstract class AbstractContainerTestCase extends TestCase
     public function circularDependencyResolvedByProxyUsage(): void
     {
         self::skipIfProxyManagerNotInstalled();
-        $di = $this->createContainer(
-            static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(
+            static function (DefinitionMapBuilder $dmb): void {
                 // @formatter:off
-                $containerBuilder
-                    ->classDefinition(abstractContainerTest\circularDependencyDetection\ClassA::class)->end()
+                $dmb->classDefinition(abstractContainerTest\circularDependencyDetection\ClassA::class)->end()
 
                     ->classDefinition(abstractContainerTest\circularDependencyDetection\ClassD::class)
                         ->arguments()
@@ -352,11 +342,10 @@ abstract class AbstractContainerTestCase extends TestCase
     public function proxiedObjectInjectsItself(): void
     {
         self::skipIfProxyManagerNotInstalled();
-        $di = $this->createContainer(
-            static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(
+            static function (DefinitionMapBuilder $dmb): void {
                 // @formatter:off
-                $containerBuilder
-                    ->classDefinition(testAsset\proxiedObjectInjectsItself\ClassA::class)
+                $dmb->classDefinition(testAsset\proxiedObjectInjectsItself\ClassA::class)
                         ->arguments()
                             ->proxyArgument('classA', null)
                         ->endArguments()
@@ -373,10 +362,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateObjectWithInheritedArguments(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\instantiateObjectWithInheritedArguments\ClassD::class)
+            $dmb->classDefinition(testAsset\instantiateObjectWithInheritedArguments\ClassD::class)
                     ->arguments()
                         ->stringArgument('name','john')
                         ->stringArgument('nickname', 'qwerty')
@@ -417,10 +405,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateAliasAsClassArgument(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->virtualType('1some.virtual.type', testAsset\instantiateAliasAsClassArgument\ClassA::class)
+            $dmb->virtualType('1some.virtual.type', testAsset\instantiateAliasAsClassArgument\ClassA::class)
                     ->arguments()
                         ->stringArgument('someData', 'hello')
                     ->endArguments()
@@ -441,10 +428,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateAliasTypeWithArguments(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->virtualType('some.alias.type', testAsset\instantiateAliasTypeWithArguments\ClassA::class)
+            $dmb->virtualType('some.alias.type', testAsset\instantiateAliasTypeWithArguments\ClassA::class)
                     ->arguments()
                         ->intArgument('intArg', 42)
                         ->floatArgument('floatArg', 42.0)
@@ -478,10 +464,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function virtualTypeArgumentInheritance(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(ClassA::class)
+            $dmb->classDefinition(ClassA::class)
                     ->arguments()
                         ->stringArgument('param1','param1')
                     ->endArguments()
@@ -533,10 +518,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateAlwaysSameAlias(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->virtualType('always.same', testAsset\instantiateAlwaysSameAlias\ClassA::class)->end();
+            $dmb->virtualType('always.same', testAsset\instantiateAlwaysSameAlias\ClassA::class)->end();
             // @formatter:on
         });
 
@@ -548,10 +532,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateAlwaysNewAlias(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\instantiateAlwaysNewAlias\ClassA::class)->end()
+            $dmb->classDefinition(testAsset\instantiateAlwaysNewAlias\ClassA::class)->end()
                 ->virtualType('always.same', testAsset\instantiateAlwaysNewAlias\ClassA::class)
                     ->lifetime(PrototypeLifetime::get())
                 ->end();
@@ -567,10 +550,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function exceptionHappenedOnNotAllArgumentsProvided(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\exceptionHappenedOnNotAllArgumentsProvided\ClassA::class)
+            $dmb->classDefinition(testAsset\exceptionHappenedOnNotAllArgumentsProvided\ClassA::class)
                     ->lifetime(PrototypeLifetime::get())
                 ->end();
             // @formatter:on
@@ -585,10 +567,9 @@ abstract class AbstractContainerTestCase extends TestCase
     public function autoGeneratedProxyUsedAsConstructorArgument(): void
     {
         self::skipIfProxyManagerNotInstalled();
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-            ->classDefinition(testAsset\autoGeneratedProxyUsedAsConstructorArgument\ClassA::class)
+            $dmb->classDefinition(testAsset\autoGeneratedProxyUsedAsConstructorArgument\ClassA::class)
                 ->arguments()
                     ->proxyArgument('class', null)
                     ->arrayMapArgument('arrayMap')
@@ -615,10 +596,9 @@ abstract class AbstractContainerTestCase extends TestCase
     public function noConflictInAutoGeneratedProxyName(): void
     {
         self::skipIfProxyManagerNotInstalled();
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\noConflictInProxyNameAndAlias\ClassA::class)
+            $dmb->classDefinition(testAsset\noConflictInProxyNameAndAlias\ClassA::class)
                     ->arguments()
                         ->proxyArgument('b', testAsset\noConflictInProxyNameAndAlias\ClassB::class)
                         ->proxyArgument('c', 'vinyl.ditest.integration.testasset.noconflictinproxynameandalias.classb')
@@ -645,10 +625,9 @@ abstract class AbstractContainerTestCase extends TestCase
     public function proxyGenerationForVirtualType(): void
     {
         self::skipIfProxyManagerNotInstalled();
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\proxyGenerationForAlias\ClassA::class)
+            $dmb->classDefinition(testAsset\proxyGenerationForAlias\ClassA::class)
                     ->arguments()
                         ->proxyArgument('classB', 'class.b')
                     ->endArguments()
@@ -674,10 +653,9 @@ abstract class AbstractContainerTestCase extends TestCase
     public function proxyInheritLifetime(): void
     {
         self::skipIfProxyManagerNotInstalled();
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\proxyInheritLifetime\ClassC::class)
+            $dmb->classDefinition(testAsset\proxyInheritLifetime\ClassC::class)
                     ->arguments()
                         ->proxyArgument('first', 'class.b.alias')
                         ->proxyArgument('second', 'class.b.alias')
@@ -710,15 +688,14 @@ abstract class AbstractContainerTestCase extends TestCase
     public function proxyGenerationForAlias(): void
     {
         self::skipIfProxyManagerNotInstalled();
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
-            $containerBuilder
-                ->classDefinition(testAsset\proxyGenerationForInterface\ClassA::class)
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
+            $dmb->classDefinition(testAsset\proxyGenerationForInterface\ClassA::class)
                     ->arguments()
                         ->proxyArgument('interfaceB', null)
                     ->endArguments()
                 ->end()
                 ->classDefinition(testAsset\proxyGenerationForInterface\ClassB::class)->end()
-                ->interfaceImplementation(
+                ->alias(
                     testAsset\proxyGenerationForInterface\InterfaceB::class,
                     testAsset\proxyGenerationForInterface\ClassB::class
                 );
@@ -734,9 +711,8 @@ abstract class AbstractContainerTestCase extends TestCase
     public function proxyIsGeneratedOnReplacedClass(): void
     {
         self::skipIfProxyManagerNotInstalled();
-        $di = $this->createContainer(static function (DefinitionMapBuilder $definitionMapBuilder): void {
-            $definitionMapBuilder
-                ->classDefinition(testAsset\proxyIsGeneratedOnReplacedClass\ClassA::class)
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
+            $dmb->classDefinition(testAsset\proxyIsGeneratedOnReplacedClass\ClassA::class)
                     ->arguments()
                         ->proxyArgument('classB', null)
                     ->endArguments()
@@ -756,10 +732,9 @@ abstract class AbstractContainerTestCase extends TestCase
     {
         $this->expectException(DefinitionTransformerException::class);
 
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-        $containerBuilder
-            ->virtualType('first.virtual.type', 'second.virtual.type')->end()
+        $dmb->virtualType('first.virtual.type', 'second.virtual.type')->end()
             ->virtualType('second.virtual.type', 'first.virtual.type')->end();
             // @formatter:on
         });
@@ -770,10 +745,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function automaticRegisterClassArgument(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-        $containerBuilder
-            ->classDefinition(testAsset\automaticRegisterClassArgument\ClassA::class)
+        $dmb->classDefinition(testAsset\automaticRegisterClassArgument\ClassA::class)
                 ->arguments()
                     ->classArgument('className', testAsset\automaticRegisterClassArgument\ClassB::class)
                     ->arrayMapArgument('classMap')
@@ -804,10 +778,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function checksServiceAvailabilityInContainer(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\checksServiceAvailabilityInContainer\ClassA::class)->end();
+            $dmb->classDefinition(testAsset\checksServiceAvailabilityInContainer\ClassA::class)->end();
             // @formatter:on
         });
 
@@ -818,10 +791,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function aliasUsedAsArgument(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\aliasUsedAsArgument\ClassA::class)
+            $dmb->classDefinition(testAsset\aliasUsedAsArgument\ClassA::class)
                     ->arguments()
                         ->objectArgument('classB', 'test.test')
                     ->endArguments()
@@ -842,11 +814,10 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function interfaceImplementationOverriddenViaArgument(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\interfaceImplementationOverriddenViaArgument\ClassA::class)->end()
-                ->interfaceImplementation(testAsset\interfaceImplementationOverriddenViaArgument\InterfaceA::class, testAsset\interfaceImplementationOverriddenViaArgument\ClassA::class)
+            $dmb->classDefinition(testAsset\interfaceImplementationOverriddenViaArgument\ClassA::class)->end()
+                ->alias(testAsset\interfaceImplementationOverriddenViaArgument\InterfaceA::class, testAsset\interfaceImplementationOverriddenViaArgument\ClassA::class)
                 ->classDefinition(testAsset\interfaceImplementationOverriddenViaArgument\ClassC::class)
                     ->arguments()
                         ->objectArgument('interfaceA', testAsset\interfaceImplementationOverriddenViaArgument\ClassB::class)
@@ -864,10 +835,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function allDependenciesArePrototype(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
-            $containerBuilder
-                ->classDefinition(testAsset\allDependenciesArePrototype\ClassA::class)
+            $dmb->classDefinition(testAsset\allDependenciesArePrototype\ClassA::class)
                     ->lifetime(PrototypeLifetime::get())
                 ->end()
                 ->classDefinition(testAsset\allDependenciesArePrototype\ClassB::class)
@@ -891,9 +861,8 @@ abstract class AbstractContainerTestCase extends TestCase
     public function abstractClassUsedAsArgument(): void
     {
         $this->expectException(DefinitionTransformerException::class);
-        $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
-            $definitionMapBuilder
-                ->classDefinition(testAsset\abstractClassUsedAsArgument\ClassA::class)->end();
+        $di = static::createContainer(static function(DefinitionMapBuilder $dmb):void {
+            $dmb->classDefinition(testAsset\abstractClassUsedAsArgument\ClassA::class)->end();
         });
 
         $di->get(testAsset\abstractClassUsedAsArgument\ClassA::class);
@@ -902,9 +871,8 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function abstractOptionalClassUsedAsArgument(): void
     {
-        $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
-            $definitionMapBuilder
-                ->classDefinition(testAsset\abstractNullableClassUsedAsArgument\ClassA::class)->end();
+        $di = static::createContainer(static function(DefinitionMapBuilder $dmb):void {
+            $dmb->classDefinition(testAsset\abstractNullableClassUsedAsArgument\ClassA::class)->end();
         });
 
         $obj = $di->get(testAsset\abstractNullableClassUsedAsArgument\ClassA::class);
@@ -914,10 +882,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateObjectWithStaticMethodAsInstantiator(): void
     {
-        $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
+        $di = static::createContainer(static function(DefinitionMapBuilder $dmb):void {
             $testClass = testAsset\instantiateObjectWithStaticConstructor\ClassA::class;
-            $definitionMapBuilder
-                ->classDefinition($testClass)
+            $dmb->classDefinition($testClass)
                     ->changeInstantiator(StaticMethodInstantiator::create($testClass,'create'))
                     ->arguments()
                         ->stringArgument('data', 'hello world')
@@ -946,9 +913,9 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateObjectWithFunctionAsInstantiator(): void
     {
-        $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
+        $di = static::createContainer(static function(DefinitionMapBuilder $dmb):void {
             $function = 'vinyl\diTest\integration\testAsset\instantiateObjectWithFunctionAsInstantiator\create_class_a';
-            $definitionMapBuilder
+            $dmb
                 ->classDefinition(testAsset\instantiateObjectWithFunctionAsInstantiator\ClassA::class)
                     ->changeInstantiator(FunctionInstantiator::create($function))
                     ->arguments()
@@ -965,8 +932,8 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function classesDiscoveredInRuntimeMustThrowInCaseDirectInstantiation(): void
     {
-        $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
-            $definitionMapBuilder
+        $di = static::createContainer(static function(DefinitionMapBuilder $dmb): void {
+            $dmb
                 ->classDefinition(testAsset\classesDiscoveredInRuntimeMustThrowInCaseDirectInstantiation\ClassA::class)
                     ->arguments()
                         ->objectArgument('otherObject', testAsset\classesDiscoveredInRuntimeMustThrowInCaseDirectInstantiation\ClassC::class)
@@ -1022,8 +989,8 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function aliasInheritLifetime(): void
     {
-        $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
-            $definitionMapBuilder
+        $di = static::createContainer(static function(DefinitionMapBuilder $dmb): void {
+            $dmb
                 ->classDefinition(testAsset\aliasInheritLifetime\ClassA::class)
                     ->lifetime(PrototypeLifetime::get())
                 ->end()
@@ -1038,7 +1005,7 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function aliasInheritInstantiator(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
             $dmb->classDefinition(testAsset\aliasInheritInstantiator\ClassA::class)
                 ->changeInstantiator(
@@ -1058,7 +1025,7 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateObjectWithOptionalEnumArgument(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
             $dmb->classDefinition(testAsset\instantiateObjectWithOptionalEnumArgument\ClassA::class)
                 ->end();
@@ -1072,7 +1039,7 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateObjectWithRequiredEnumArgument(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
             $dmb->classDefinition(testAsset\instantiateObjectWithRequiredEnumArgument\ClassA::class)
                     ->arguments()
@@ -1091,7 +1058,7 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateObjectWithNullableEnumArguments(): void
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
             $dmb->classDefinition(testAsset\instantiateObjectWithNullableEnumArgument\ClassA::class)
                     ->arguments()
@@ -1109,7 +1076,7 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function instantiateObjectWithUnionArguments()
     {
-        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
             $dmb->classDefinition(testAsset\instantiateObjectWithUnionArguments\ClassA::class)
                     ->arguments()
@@ -1141,7 +1108,7 @@ abstract class AbstractContainerTestCase extends TestCase
     public function instantiateObjectWithIntersectionArguments(): void
     {
 
-        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             // @formatter:off
             $dmb->classDefinition(testAsset\instantiateObjectWithIntersectionArguments\ClassB::class)
                     ->arguments()
@@ -1168,8 +1135,8 @@ abstract class AbstractContainerTestCase extends TestCase
     #[Test]
     public function checkIfInstanceLifetimeRegisteredInContainer(): void
     {
-        $container = $this->createContainer(static function (DefinitionMapBuilder $dmp) {
-            $dmp->classDefinition(\stdClass::class)->end();
+        $container = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
+            $dmb->classDefinition(\stdClass::class)->end();
         });
 
         self::assertTrue($container->lifetimeMap()->contains(\stdClass::class));
@@ -1179,7 +1146,7 @@ abstract class AbstractContainerTestCase extends TestCase
     public function instantiateObjectWithRuntimeDefinition(): void
     {
         // @formatter:off
-        $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
+        $di = static::createContainer(static function (DefinitionMapBuilder $dmb): void {
             $dmb->classDefinition(Root::class)->end();
             $dmb->runtimeClassDefinition(RootChildRuntime::class);
             $dmb->runtimeInterfaceDefinition(RootRuntimeInterface::class);
@@ -1204,5 +1171,5 @@ abstract class AbstractContainerTestCase extends TestCase
      * @throws ClassCircularReferenceFoundException
      * @throws DefinitionTransformerException
      */
-    abstract protected function createContainer(callable $builderFunction): ContainerInterface;
+    abstract protected static function createContainer(callable $builderFunction): ContainerInterface;
 }
