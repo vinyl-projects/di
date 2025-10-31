@@ -11,7 +11,7 @@ use vinyl\std\lang\ClassObject;
  */
 interface ProxyGenerator
 {
-    public const PROXY_ARGUMENT_NAME = 'definitionId';
+    public const string PROXY_ARGUMENT_NAME = 'definitionId';
 
     /**
      * Generates proxy content for given class with given proxy class name
