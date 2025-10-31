@@ -18,4 +18,8 @@
             <file name="src/main/proxy/LazyLoadingValueHolderProxyGenerator.php"/>
         </ignoreFiles>
     </projectFiles>
+    <issueHandlers>
+        <MissingOverrideAttribute errorLevel="suppress" />
+        <ClassMustBeFinal errorLevel="suppress" />
+    </issueHandlers>
 </psalm>
