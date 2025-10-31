@@ -10,7 +10,7 @@ use vinyl\di\Definition;
 use vinyl\di\definition\value\NoValue;
 use vinyl\di\definition\valueProcessor\ValueProcessorCompositor;
 use vinyl\di\factory\FactoryMetadata;
-use vinyl\di\InterfaceImplementationDefinition;
+use vinyl\di\AliasDefinition;
 use vinyl\di\RuntimeDefinition;
 use vinyl\std\lang\collections\Map;
 use vinyl\std\lang\collections\MutableMap;
@@ -73,11 +73,34 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
         MutableMap $factoryMetadataMap,
         array $visitedClasses = []
     ): void {
-        $id = $definition->id();
 
         if ($definition instanceof RuntimeDefinition) {
             return;
         }
+
+        $aliasId = null;
+        if ($definition instanceof AliasDefinition) {
+            $implementation = $definition->definitionId();
+
+            if (!$definitionMap->containsKey($implementation)) {
+                throw new DefinitionTransformerException("An implementation '{$implementation}' for '{$definition->id()}' is not registered.");
+            }
+
+            $aliasDefinition = $definitionMap->get($implementation);
+
+            if ($aliasDefinition instanceof AliasDefinition) {
+                throw new DefinitionTransformerException('Alias on alias is not supported');
+            }
+
+            if ($aliasDefinition instanceof RuntimeDefinition) {
+                return;
+            }
+
+            $aliasId = $definition->id();
+            $definition = $aliasDefinition;
+        }
+
+        $id = $definition->id();
 
         try {
             $class = $this->classResolver->resolve($definition, $definitionMap);
@@ -111,6 +134,11 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
 
         $lifetime = $this->lifetimeResolver->resolve($definition, $definitionMap);
         $factoryMetadata = new FactoryMetadata($id, $className, $objectInstantiator->value(), $lifetime->code());
+
+        if ($aliasId !== null) {
+            $factoryMetadata->aliases[] = $aliasId;
+        }
+
         $factoryMetadataMap->put($factoryMetadata->id, $factoryMetadata);
 
         try {
@@ -185,7 +213,7 @@ final class RecursiveDefinitionTransformer implements DefinitionTransformer
             && $lifetime === SingletonLifetime::get()
             && !$definition instanceof RuntimeDefinition
             //todo InterfaceImplementationDefinition is not covered with test
-            && !($definition instanceof InterfaceImplementationDefinition && $definitionMap->containsKey($className) && $definitionMap->get($className) instanceof RuntimeDefinition)
+            && !($definition instanceof AliasDefinition && $definitionMap->containsKey($className) && $definitionMap->get($className) instanceof RuntimeDefinition)
         ) {
             throw DefinitionTransformerException::createIncompleteException($factoryMetadata);
         }

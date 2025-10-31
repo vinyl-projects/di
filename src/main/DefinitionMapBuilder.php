@@ -32,13 +32,13 @@ class DefinitionMapBuilder
     }
 
     /**
-     * Registers default interface implementation
+     * Registers an alias to definition
      */
-    public function interfaceImplementation(string $interface, string $className): self
+    public function alias(string $definitionAliasId, string $definitionId): self
     {
-        $interfaceImplementationDefinition = new InterfaceImplementationDefinition(
-            InterfaceObject::create($interface),
-            ClassObject::create($className)
+        $interfaceImplementationDefinition = new AliasDefinition(
+            $definitionAliasId,
+            $definitionId
         );
 
         $this->definitionMap->put($interfaceImplementationDefinition->id(), $interfaceImplementationDefinition);

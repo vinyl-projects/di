@@ -13,6 +13,7 @@ use vinyl\di\definition\PrototypeLifetime;
 use vinyl\di\DefinitionMapBuilder;
 use vinyl\di\NotFoundException;
 use vinyl\di\ObjectFactory;
+use vinyl\diTest\integration\objectFactory\testAsset\instantiateInterfaceAsAlias\InterfaceA;
 use vinyl\diTest\integration\objectFactory\testAsset\instantiateObjectWithNullableArgument\ClassA;
 
 /**
@@ -112,6 +113,22 @@ abstract class AbstractFactoryTestCase extends TestCase
         );
         self::assertNotNull($obj);
         self::assertInstanceOf(testAsset\instantiatePrototypeObjectThatDependsOnClassWithPrivateConstructor\ClassB::class, $obj->classB);
+    }
+
+    #[Test]
+    public function instantiateInterfaceAsAlias():void
+    {
+        $factory = $this->createFactory(static function (DefinitionMapBuilder $dmb){
+            $dmb->alias(
+                InterfaceA::class,
+                testAsset\instantiateInterfaceAsAlias\ClassA::class
+            );
+            $dmb->classDefinition(testAsset\instantiateInterfaceAsAlias\ClassA::class);
+        });
+
+        self::assertTrue($factory->has(InterfaceA::class));
+        $obj = $factory->create(InterfaceA::class);
+        self::assertInstanceOf(testAsset\instantiateInterfaceAsAlias\ClassA::class, $obj);
     }
 
     /**

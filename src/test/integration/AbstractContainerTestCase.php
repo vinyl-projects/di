@@ -21,15 +21,18 @@ use vinyl\di\definition\StaticMethodInstantiator;
 use vinyl\di\DefinitionMapBuilder;
 use vinyl\di\NotEnoughArgumentsPassedException;
 use vinyl\di\NotFoundException;
-use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassA;
-use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassB;
-use vinyl\diTest\integration\testAsset\aliasDefinition\argumentInheritance\ClassC;
-use vinyl\diTest\integration\testAsset\circularDependencyDetectionWithInterface\ClassAInterface;
-use vinyl\diTest\integration\testAsset\instantiateObjectWithRequiredEnumArgument\EnumArgument;
-use vinyl\diTest\integration\testAsset\instantiateObjectWithRuntimeDefinition\Root;
-use vinyl\diTest\integration\testAsset\instantiateObjectWithRuntimeDefinition\RootChildRuntime;
-use vinyl\diTest\integration\testAsset\instantiateObjectWithRuntimeDefinition\RootRuntimeInterface;
-use vinyl\diTest\integration\testAsset\instantiateObjectWithRuntimeDefinition\RootRuntimeInterfaceImpl;
+use vinyl\diTest\integration\testAsset\{
+    aliasDefinition\argumentInheritance\ClassA,
+    aliasDefinition\argumentInheritance\ClassB,
+    aliasDefinition\argumentInheritance\ClassC,
+    aliasForRuntimeClassDefinition\InterfaceA,
+    circularDependencyDetectionWithInterface\ClassAInterface,
+    instantiateObjectWithRequiredEnumArgument\EnumArgument,
+    instantiateObjectWithRuntimeDefinition\Root,
+    instantiateObjectWithRuntimeDefinition\RootChildRuntime,
+    instantiateObjectWithRuntimeDefinition\RootRuntimeInterface,
+    instantiateObjectWithRuntimeDefinition\RootRuntimeInterfaceImpl
+};
 
 /**
  * Class AbstractContainerTest
@@ -1160,6 +1163,53 @@ abstract class AbstractContainerTestCase extends TestCase
         $root = $di->get(Root::class);
         self::assertSame($object, $root->childRuntime);
         self::assertSame($impl, $root->rootRuntime);
+    }
+
+    #[Test]
+    public function aliasOnVirtualType():void
+    {
+        // @formatter:off
+        $di = static::createContainer(
+            static function (DefinitionMapBuilder $dmb): void {
+                $dmb->classDefinition(testAsset\aliasOnVirtualType\ClassA::class)
+                        ->arguments()
+                            ->stringArgument('data', 'class')
+                        ->endArguments()
+                    ->end();
+                $dmb->virtualType('class.a', testAsset\aliasOnVirtualType\ClassA::class)
+                        ->arguments()
+                            ->stringArgument('data', 'virtual type')
+                        ->endArguments()
+                    ->end();
+                $dmb->alias('class.a.alias', 'class.a');
+            }
+        );
+
+        $virtualType = $di->get('class.a');
+        $alias = $di->get('class.a.alias');
+        self::assertSame($virtualType, $alias);
+        self::assertSame('virtual type', $virtualType->data);
+    }
+
+    #[Test]
+    public function aliasForRuntimeClassDefinition(): void
+    {
+        // @formatter:off
+        $di = static::createContainer(
+            static function (DefinitionMapBuilder $dmb): void {
+                $dmb->runtimeClassDefinition(testAsset\aliasForRuntimeClassDefinition\ClassA::class);
+                $dmb->alias(
+                    InterfaceA::class,
+                    testAsset\aliasForRuntimeClassDefinition\ClassA::class
+                );
+            }
+        );
+
+        $di->insertSharedInstance(InterfaceA::class, new testAsset\aliasForRuntimeClassDefinition\ClassA());
+        self::assertInstanceOf(
+            testAsset\aliasForRuntimeClassDefinition\ClassA::class,
+            $di->get(InterfaceA::class)
+        );
     }
 
     /**

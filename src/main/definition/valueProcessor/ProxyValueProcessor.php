@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace vinyl\di\definition\valueProcessor;
 
 use ReflectionNamedType;
-use vinyl\di\VirtualTypeDefinition;
+use vinyl\di\AliasDefinition;
 use vinyl\di\ClassMaterializer;
 use vinyl\di\ClassMaterializerException;
 use vinyl\di\Definition;
@@ -29,7 +29,7 @@ use vinyl\di\proxy\LazyLoadingValueHolderProxyGenerator;
 use vinyl\di\proxy\ProxyGenerator;
 use vinyl\di\proxy\ProxyGeneratorException;
 use vinyl\di\ShadowClassDefinition;
-use vinyl\std\lang\ClassObject;
+use vinyl\di\VirtualTypeDefinition;
 use vinyl\std\lang\collections\Map;
 use function assert;
 use function class_exists;
@@ -158,8 +158,15 @@ final class ProxyValueProcessor implements ValueProcessor, ClassResolverAware
         Map $definitionMap,
         string $definitionId
     ): Definition {
-        if ($definitionMap->containsKey($definitionId)) {
-            return $definitionMap->get($definitionId);
+
+        $resolvedDefinition = $definitionMap->find($definitionId);
+
+        if ($resolvedDefinition !== null) {
+            if ($resolvedDefinition instanceof AliasDefinition) {
+                return $definitionMap->get($resolvedDefinition->definitionId());
+            }
+
+            return $resolvedDefinition;
         }
 
         if (!class_exists($definitionId)) {
