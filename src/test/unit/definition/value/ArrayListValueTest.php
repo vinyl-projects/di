@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\unit\definition\value;
 
+use PHPUnit\Framework\Attributes\Test;
 use vinyl\di\definition\ListValue;
 use vinyl\di\definition\value\ArrayListValue;
 
@@ -12,9 +13,7 @@ use vinyl\di\definition\value\ArrayListValue;
  */
 class ArrayListValueTest extends AbstractListValueTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createFromConstructor(): void
     {
         $value = $this->createValueMock(10);
@@ -24,9 +23,7 @@ class ArrayListValueTest extends AbstractListValueTestCase
         self::assertContains($value, $listValue->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function defaultValueIsEmptyArray(): void
     {
         $listValue = $this->createValue();

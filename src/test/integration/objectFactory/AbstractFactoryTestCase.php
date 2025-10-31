@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\integration\objectFactory;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use vinyl\di\definition\PrototypeLifetime;
@@ -19,9 +20,7 @@ use vinyl\diTest\integration\objectFactory\testAsset\instantiateObjectWithNullab
  */
 abstract class AbstractFactoryTestCase extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateAlwaysNewObjectWithoutArguments(): void
     {
         $factory = $this->createFactory(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -38,9 +37,7 @@ abstract class AbstractFactoryTestCase extends TestCase
         self::assertNotSame($obj1, $obj2);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithProvidedArguments(): void
     {
         $factory = $this->createFactory(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -77,9 +74,7 @@ abstract class AbstractFactoryTestCase extends TestCase
         self::assertSame($withoutArgumentsObject, $obj->param4);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function requiredDefinitionNotRegisteredInDi(): void
     {
         $this->expectException(NotFoundException::class);
@@ -87,9 +82,7 @@ abstract class AbstractFactoryTestCase extends TestCase
         $factory->create(stdClass::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithNullableArgument(): void
     {
         $factory = $this->createFactory(static function (DefinitionMapBuilder $definitionMapBuilder): void {
@@ -103,9 +96,7 @@ abstract class AbstractFactoryTestCase extends TestCase
         self::assertNull($obj->data);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiatePrototypeObjectThatDependsOnClassWithPrivateConstructor()
     {
         $factory = $this->createFactory(static function (DefinitionMapBuilder $definitionMapBuilder): void {

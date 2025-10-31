@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\unit\definition\value;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use vinyl\di\definition\DefinitionValue;
@@ -16,9 +17,7 @@ use vinyl\di\definition\value\Mergeable;
  */
 class ArrayMapValueTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function defaultValueIsEmptyArray(): void
     {
         $mapValue = $this->createValue();
@@ -26,9 +25,7 @@ class ArrayMapValueTest extends TestCase
         self::assertCount(0, $mapValue->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createFromConstructor(): void
     {
         $value = $this->createValueMock(10);
@@ -39,9 +36,7 @@ class ArrayMapValueTest extends TestCase
         self::assertArrayHasKey('some_key', $mapValue->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueIsAvailableAfterPut(): void
     {
         $valueMock = $this->createValueMock(10);
@@ -53,9 +48,7 @@ class ArrayMapValueTest extends TestCase
         self::assertArrayHasKey('key', $mapValue->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByKeyReturnsNullIfNoSuchKey(): void
     {
         $mapValue = $this->createValue();
@@ -63,9 +56,7 @@ class ArrayMapValueTest extends TestCase
         self::assertNull($mapValue->findByKey('key'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByNameReturnsCorrectValueObject(): void
     {
         $mockObject = $this->createValueMock(10);
@@ -74,9 +65,7 @@ class ArrayMapValueTest extends TestCase
         self::assertSame($mockObject, $mapValue->findByKey('key'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itemsAreClonedAfterCloningMap(): void
     {
         $item1 = $this->createValueMock(1);
@@ -89,9 +78,7 @@ class ArrayMapValueTest extends TestCase
         self::assertNotSame($item2, $clonedMap->findByKey(1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfTryingToMergeWithNotMapValue(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -104,9 +91,7 @@ class ArrayMapValueTest extends TestCase
         $this->createValue()->merge($mergeableValueMock);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function mergeReturnsNewArrayMapValue(): void
     {
         $mapValue1 = $this->createValue();
@@ -118,9 +103,7 @@ class ArrayMapValueTest extends TestCase
         self::assertNotSame($newMapValue, $mapValue2);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function mergeReturnsMapWithNewValuesFromFirstMap(): void
     {
         $value1 = $this->createValueMock(1);
@@ -137,9 +120,7 @@ class ArrayMapValueTest extends TestCase
         self::assertEquals($newMap->findByKey('value2')->value(), $value2->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function mergeReturnsMapWithNewValuesFromSecondMap(): void
     {
         $value1 = $this->createValueMock(1);
@@ -156,9 +137,7 @@ class ArrayMapValueTest extends TestCase
         self::assertEquals($newMap->findByKey('value2')->value(), $value2->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function mergeReturnsMapWithNewValuesFromSecondMapIfKeysAreDuplicate(): void
     {
         $value1 = $this->createValueMock(1);
@@ -174,9 +153,7 @@ class ArrayMapValueTest extends TestCase
         self::assertNotSame($newMap->findByKey('value1'), $value2);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function mergeCallMergeOnValuesIfTheyAreMergeableAndHaveSameKey(): void
     {
         $value2 = $this->getMockBuilder(\vinyl\di\definition\MapValue::class)

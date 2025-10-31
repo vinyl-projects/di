@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace vinyl\diTest\unit\definition;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionParameter;
 use vinyl\di\definition\StaticMethodInstantiator;
@@ -16,9 +17,7 @@ use function get_class;
  */
 final class StaticMethodInstantiatorTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfMethodNotStatic(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -34,9 +33,7 @@ final class StaticMethodInstantiatorTest extends TestCase
         new StaticMethodInstantiator($className, 'test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfStaticMethodNotPublic(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -52,9 +49,7 @@ final class StaticMethodInstantiatorTest extends TestCase
         new StaticMethodInstantiator($className, 'test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfStaticMethodHaveNoReturnType(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -71,9 +66,7 @@ final class StaticMethodInstantiatorTest extends TestCase
         new StaticMethodInstantiator($className, 'test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfStaticMethodReturnVoid(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -90,18 +83,14 @@ final class StaticMethodInstantiatorTest extends TestCase
         new StaticMethodInstantiator($className, 'test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfGivenClassNotExists(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new StaticMethodInstantiator('test', 'test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfMethodNotExists(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -111,9 +100,7 @@ final class StaticMethodInstantiatorTest extends TestCase
         new StaticMethodInstantiator(get_class($mock), 'test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueReturnsCallableString(): void
     {
         $mock = new class {
@@ -126,9 +113,7 @@ final class StaticMethodInstantiatorTest extends TestCase
         self::assertIsCallable($instantiator->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parametersReturnsAnArrayOfReflectionParameter(): void
     {
         $mock = new class {

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\unit\metadataBuilder;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use vinyl\di\VirtualTypeDefinition;
 use vinyl\di\ClassDefinition;
@@ -33,9 +34,7 @@ class ClassResolverTest extends TestCase
         $this->classResolver = $this->createClassResolver();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveClassForDefinition(): void
     {
         $testClass = new class
@@ -49,9 +48,7 @@ class ClassResolverTest extends TestCase
         self::assertEquals(get_class($testClass), $resolve->name());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveClassForDefinitionWhichNotDefinedInDefinitionMap(): void
     {
         $testClass = new class
@@ -63,9 +60,7 @@ class ClassResolverTest extends TestCase
         self::assertEquals(get_class($testClass), $resolve->name());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolve(): void
     {
         $testClass = new class
@@ -81,9 +76,7 @@ class ClassResolverTest extends TestCase
         self::assertEquals(get_class($testClass), $resolvedClass->name());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function circularDependencyDetection(): void
     {
         $this->expectException(DefinitionCircularReferenceFoundException::class);
@@ -99,9 +92,7 @@ class ClassResolverTest extends TestCase
         $this->classResolver->resolve($type, $config);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownWhenClassCantBeResolved(): void
     {
         $this->expectException(\vinyl\di\definition\ClassResolverException::class);

@@ -50,9 +50,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::$isProxyManagerInstalled = InstalledVersions::isInstalled('ocramius/proxy-manager');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithoutArguments(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -62,9 +60,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertInstanceOf(testAsset\instantiateObjectWithoutArguments\ClassA::class, $di->get(testAsset\instantiateObjectWithoutArguments\ClassA::class));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithArguments(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -151,9 +147,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertNull($obj->pp);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function alwaysReturnSameObject(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -169,9 +163,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertSame($firstCall, $secondCall);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function alwaysReturnNewObject(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -189,9 +181,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertNotSame($firstCall, $secondCall);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateInterfaceImplementation(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -213,9 +203,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertSame($interface, $obj);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateOverwrittenInterfaceImplementation(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -237,9 +225,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertInstanceOf(testAsset\instantiateInterfaceImplementation\ClassB::class, $obj);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function replaceClassNotOverrideArguments(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -271,9 +257,7 @@ abstract class AbstractContainerTestCase extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function interfaceUsedAsArgument(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -289,9 +273,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertInstanceOf(testAsset\interfaceUsedAsArgument\ClassA::class, $obj->interfaceA);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function optionalInterfaceUsedAsArgument(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -306,9 +288,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertNull($obj->interfaceB);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function circularDependencyDetection(): void
     {
         $this->expectException(ClassCircularReferenceFoundException::class);
@@ -323,9 +303,7 @@ abstract class AbstractContainerTestCase extends TestCase
         $di->get(abstractContainerTest\circularDependencyDetection\ClassA::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function circularDependencyDetectionWithInterface(): void
     {
         $this->expectException(ClassCircularReferenceFoundException::class);
@@ -343,9 +321,7 @@ abstract class AbstractContainerTestCase extends TestCase
         $di->get(testAsset\circularDependencyDetectionWithInterface\ClassA::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function circularDependencyResolvedByProxyUsage(): void
     {
         self::skipIfProxyManagerNotInstalled();
@@ -372,9 +348,7 @@ abstract class AbstractContainerTestCase extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function proxiedObjectInjectsItself(): void
     {
         self::skipIfProxyManagerNotInstalled();
@@ -396,9 +370,7 @@ abstract class AbstractContainerTestCase extends TestCase
 
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithInheritedArguments(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -442,9 +414,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertEquals('dasw', $obj->street);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateAliasAsClassArgument(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -468,9 +438,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertSame('hello', $object->classA->someData);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateAliasTypeWithArguments(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -507,9 +475,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertInstanceOf(stdClass::class, $obj->objectArgOptional);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function virtualTypeArgumentInheritance(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -564,9 +530,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertSame('virtual.def.2', $obj->param1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateAlwaysSameAlias(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -581,9 +545,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertSame($firstCall, $secondCall);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateAlwaysNewAlias(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -602,9 +564,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertNotSame($firstCall, $secondCall);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionHappenedOnNotAllArgumentsProvided(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -621,9 +581,7 @@ abstract class AbstractContainerTestCase extends TestCase
         $di->get(testAsset\exceptionHappenedOnNotAllArgumentsProvided\ClassA::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function autoGeneratedProxyUsedAsConstructorArgument(): void
     {
         self::skipIfProxyManagerNotInstalled();
@@ -653,9 +611,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertInstanceOf(VirtualProxyInterface::class, $obj->arrayMap['second']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function noConflictInAutoGeneratedProxyName(): void
     {
         self::skipIfProxyManagerNotInstalled();
@@ -685,10 +641,8 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertEquals('alias', $classA->c->id());
     }
 
-    /**
-     * @test
-     */
-    public function proxyGenerationForAlias(): void
+    #[Test]
+    public function proxyGenerationForVirtualType(): void
     {
         self::skipIfProxyManagerNotInstalled();
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -716,9 +670,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertEquals('hello world', $classA->classB()->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function proxyInheritLifetime(): void
     {
         self::skipIfProxyManagerNotInstalled();
@@ -754,10 +706,8 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertNotSame($classC->first, $classC->second);
     }
 
-    /**
-     * @test
-     */
-    public function proxyGenerationForInterface(): void
+    #[Test]
+    public function proxyGenerationForAlias(): void
     {
         self::skipIfProxyManagerNotInstalled();
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -780,9 +730,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertEquals('Hello world', $classA->interfaceB->test());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function proxyIsGeneratedOnReplacedClass(): void
     {
         self::skipIfProxyManagerNotInstalled();
@@ -803,9 +751,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertInstanceOf(testAsset\proxyIsGeneratedOnReplacedClass\ClassC::class, $classA->classB);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aliasTypeCircularDependencyDetection(): void
     {
         $this->expectException(DefinitionTransformerException::class);
@@ -821,9 +767,7 @@ abstract class AbstractContainerTestCase extends TestCase
         $di->get('first.virtual.type');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function automaticRegisterClassArgument(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -857,9 +801,7 @@ abstract class AbstractContainerTestCase extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function checksServiceAvailabilityInContainer(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -873,9 +815,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertFalse($di->has('Undefined'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aliasUsedAsArgument(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -899,9 +839,7 @@ abstract class AbstractContainerTestCase extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function interfaceImplementationOverriddenViaArgument(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -923,9 +861,7 @@ abstract class AbstractContainerTestCase extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function allDependenciesArePrototype(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $containerBuilder): void {
@@ -951,9 +887,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertNotSame($firstInstance->classB->classC, $secondInstance->classB->classC);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function abstractClassUsedAsArgument(): void
     {
         $this->expectException(DefinitionTransformerException::class);
@@ -965,9 +899,7 @@ abstract class AbstractContainerTestCase extends TestCase
         $di->get(testAsset\abstractClassUsedAsArgument\ClassA::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function abstractOptionalClassUsedAsArgument(): void
     {
         $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
@@ -979,9 +911,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertNull($obj->classB);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithStaticMethodAsInstantiator(): void
     {
         $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
@@ -1013,9 +943,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertEquals('without arguments', $alias->data);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithFunctionAsInstantiator(): void
     {
         $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
@@ -1034,9 +962,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertEquals('Hello World', $obj->message);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function classesDiscoveredInRuntimeMustThrowInCaseDirectInstantiation(): void
     {
         $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
@@ -1087,17 +1013,13 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertTrue($exceptionHappens);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithVariadicArgument(): void
     {
         $this->markTestSkipped('implement after introducing variadicArgument() in builder.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aliasInheritLifetime(): void
     {
         $di = $this->createContainer(static function(DefinitionMapBuilder $definitionMapBuilder):void {
@@ -1113,9 +1035,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertNotSame($di->get('alias.on.alias'), $di->get('alias.on.alias'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aliasInheritInstantiator(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
@@ -1135,9 +1055,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertInstanceOf(testAsset\aliasInheritInstantiator\ClassA::class, $di->get('test.2'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithOptionalEnumArgument(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
@@ -1151,9 +1069,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertEquals(testAsset\instantiateObjectWithOptionalEnumArgument\EnumTestProvider::ONE, $object->enumTestProvider);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithRequiredEnumArgument(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
@@ -1172,9 +1088,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertEquals('not enum', $object->argument2);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithNullableEnumArguments(): void
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
@@ -1192,9 +1106,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertNull($object->argument2);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithUnionArguments()
     {
         $di = $this->createContainer(static function (DefinitionMapBuilder $dmb) {
@@ -1225,9 +1137,7 @@ abstract class AbstractContainerTestCase extends TestCase
         self::assertEquals(testAsset\instantiateObjectWithUnionArguments\EnumArgument::DEBUG, $di->get('union.enum.param')->argument);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instantiateObjectWithIntersectionArguments(): void
     {
 

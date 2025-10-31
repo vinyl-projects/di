@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\unit\definition\value;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use vinyl\di\definition\DefinitionValue;
 use vinyl\di\definition\value\Mergeable;
@@ -16,9 +17,7 @@ use function get_class;
  */
 abstract class AbstractObjectValueTestCase extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfEmptyDefinitionIdProvided(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -26,9 +25,7 @@ abstract class AbstractObjectValueTestCase extends TestCase
         $this->createValue('');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function correctValueIsReturned(): void
     {
         $objectValue = $this->createValue('some.id');

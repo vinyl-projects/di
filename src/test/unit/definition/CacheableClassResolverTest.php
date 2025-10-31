@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\unit\definition;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use vinyl\di\Definition;
 use vinyl\di\definition\CacheableClassResolver;
@@ -17,9 +18,7 @@ use function vinyl\std\lang\collections\mutableMapOf;
  */
 final class CacheableClassResolverTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveMethodReturnsResolvedClassObject(): void
     {
         $classMock = new class {};
@@ -37,9 +36,7 @@ final class CacheableClassResolverTest extends TestCase
         self::assertSame($classObject, $resolvedClassObject);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function secondCallOfResolveMethodWillReturnsResultFromCache(): void
     {
         $classMock = new class {};
@@ -60,9 +57,7 @@ final class CacheableClassResolverTest extends TestCase
         self::assertSame($classObject, $resolvedClassObject);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function internalCacheIsResetIfDifferentDefinitionMapIsProvided(): void
     {
         $classMock = new class {};
@@ -82,9 +77,7 @@ final class CacheableClassResolverTest extends TestCase
         self::assertSame($classObject, $resolvedClassObject);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cleanCacheMethodCleansResolvedClassCache(): void
     {
         $classMock = new class {};

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace vinyl\diTest\unit\definition;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionParameter;
 use vinyl\di\definition\FunctionInstantiator;
@@ -15,9 +16,7 @@ use function array_walk;
  */
 final class FunctionInstantiatorTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfMethodNotExists(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -25,9 +24,7 @@ final class FunctionInstantiatorTest extends TestCase
         FunctionInstantiator::create('test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfFunctionReturnNotDeclared(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -37,9 +34,7 @@ final class FunctionInstantiatorTest extends TestCase
         FunctionInstantiator::create($functionName);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createFromClosure(): void
     {
         $functionName = \vinyl\diTest\unit\definition\functionInstantiatorTestAsset\ClassA::test(...);
@@ -47,9 +42,7 @@ final class FunctionInstantiatorTest extends TestCase
         self::assertIsCallable($instantiator->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfFunctionReturnVoid(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -59,18 +52,14 @@ final class FunctionInstantiatorTest extends TestCase
         FunctionInstantiator::create($functionName);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueReturnsCallableString(): void
     {
         $value = FunctionInstantiator::create('vinyl\diTest\unit\definition\functionInstantiatorTestAsset\function_with_parameters')->value();
         self::assertIsCallable($value);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parametersReturnsAnArrayOfReflectionParameter(): void
     {
         $parameters = FunctionInstantiator::create('vinyl\diTest\unit\definition\functionInstantiatorTestAsset\function_with_parameters')->parameters();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\unit\lifetime;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use vinyl\di\definition\Lifetime;
@@ -17,9 +18,7 @@ use function unserialize;
  */
 abstract class LifetimeTestCase extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrowOnSerialize(): void
     {
         $this->expectException(RuntimeException::class);
@@ -27,9 +26,7 @@ abstract class LifetimeTestCase extends TestCase
         serialize($lifetime);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownOnClone(): void
     {
         $this->expectException(RuntimeException::class);
@@ -38,9 +35,7 @@ abstract class LifetimeTestCase extends TestCase
         clone $lifetime;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionThrownOnUnserialize(): void
     {
         $this->expectException(RuntimeException::class);

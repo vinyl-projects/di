@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\unit\definition\value;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use vinyl\di\definition\DefinitionValue;
@@ -15,9 +16,7 @@ use vinyl\di\definition\value\Mergeable;
  */
 abstract class AbstractListValueTestCase extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function addedItemsAreAvailableInValue(): void
     {
         $value1 = $this->createValueMock(1);
@@ -31,9 +30,7 @@ abstract class AbstractListValueTestCase extends TestCase
         self::assertContains($value2, $listValue->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function allListItemsAreClonedAfterCloningList(): void
     {
         $value1 = $this->createValueMock(1);
@@ -49,9 +46,7 @@ abstract class AbstractListValueTestCase extends TestCase
         self::assertNotContains($value2, $clonedList->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfMergingWithNotListValue(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -62,9 +57,7 @@ abstract class AbstractListValueTestCase extends TestCase
         $value->merge($notListValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valuesFromBothListsAvailableAfterMerge(): void
     {
         $value1 = $this->createValueMock(1);
@@ -84,9 +77,7 @@ abstract class AbstractListValueTestCase extends TestCase
         self::assertTrue(self::listContainValue($mergedList, $value4));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function allValuesOfListAreClonedAfterMerging(): void
     {
         $value1 = $this->createValueMock(1);
@@ -106,9 +97,7 @@ abstract class AbstractListValueTestCase extends TestCase
         self::assertNotContains($value4, $mergedList->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function mergeReturnsNewListValue(): void
     {
         $firstList = $this->createValue();

@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\unit\metadataBuilder;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use vinyl\di\ClassDefinition;
@@ -26,9 +27,7 @@ use function vinyl\std\lang\collections\vectorOf;
  */
 class RecursionFreeValueCollectorTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function collectWithDisabledArgumentInheritance(): void
     {
         $testClass = new class
@@ -57,9 +56,7 @@ class RecursionFreeValueCollectorTest extends TestCase
         self::assertNotSame($secondValueHolder, $valueMap->find('second'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function collectWithEnabledArgumentInheritance(): void
     {
         $first = new class

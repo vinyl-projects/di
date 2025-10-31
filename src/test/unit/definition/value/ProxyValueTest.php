@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace vinyl\diTest\unit\definition\value;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use vinyl\di\definition\ProxyValue;
 
@@ -13,18 +14,14 @@ use vinyl\di\definition\ProxyValue;
  */
 class ProxyValueTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfEmptyDefinitionIdProvided(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->createValue('');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function correctValueReturned(): void
     {
         self::assertEquals('test', $this->createValue('test')->value());

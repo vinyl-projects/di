@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\unit\definition;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionParameter;
 use vinyl\di\definition\ConstructorInstantiator;
@@ -17,9 +18,7 @@ use function get_class;
  */
 final class ConstructorInstantiatorTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionIsThrownIfConstructorNotPublic(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -29,9 +28,7 @@ final class ConstructorInstantiatorTest extends TestCase
         new ConstructorInstantiator(ClassObject::create($className));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueMethodReturnsNull(): void
     {
         $mock = new class {};
@@ -39,18 +36,14 @@ final class ConstructorInstantiatorTest extends TestCase
         self::assertNull((new ConstructorInstantiator(ClassObject::create(get_class($mock))))->value());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parametersMethodReturnsEmptyArrayIfClassHaveNoConstructor(): void
     {
         $mock = new class {};
         self::assertCount(0, (new ConstructorInstantiator(ClassObject::create(get_class($mock))))->parameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parametersReturnsAnArrayOfReflectionParameter(): void
     {
         $mock = new class(1, '') {
