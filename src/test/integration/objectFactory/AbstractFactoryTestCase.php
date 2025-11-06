@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace vinyl\diTest\integration\objectFactory;
 
+use Closure;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -134,8 +135,8 @@ abstract class AbstractFactoryTestCase extends TestCase
     /**
      * Returns di factory
      *
-     * @param callable $builderFunction (containerBuilder)
+     * @param ?\Closure(\vinyl\di\DefinitionMapBuilder): void $builderFunction
      * @throws \vinyl\di\definition\DefinitionTransformerException
      */
-    abstract protected function createFactory(?callable $builderFunction = null): ObjectFactory;
+    abstract protected function createFactory(?Closure $builderFunction = null): ObjectFactory;
 }
