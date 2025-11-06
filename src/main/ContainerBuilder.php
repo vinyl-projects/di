@@ -72,6 +72,11 @@ final class ContainerBuilder
         return $this;
     }
 
+    /**
+     * Configures the builder to use the eval-based materializer strategy.
+     *
+     * If this strategy is used, the container will be built in memory (using eval php function) and not written to the filesystem.
+     */
     public function useEvalMaterializerStrategy(): self
     {
         $this->throwIfBuilderAlreadyUsed();
